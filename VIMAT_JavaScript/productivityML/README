@@ -1,0 +1,28 @@
+This is an XML schema for freeIPE. This is also the first file of the freeIPE project to be released.
+It may happen that XML is not the way to go for this project. Maybe it would change to SQLite.
+Maybe both would be needed. At any rate I'm tired of reading books and I'm ready to start something
+tangible. Please don't expect anything of useable quality here. I'm simply planning and intend to
+build by iterating.
+
+The tools that will be implemented in freeIPE will have an element declaration made globally that
+may reference previously-defined global elements.
+
+The aim here is to keep the tools and the data integrated.
+
+E.G.: If you want to start the time tracker you have the option of tracking time for a task, or a project,
+or a context, etc. If you want to mark your calendar with an appointment you could use these same
+options. A future mind map plugin could use a goal or a project as the center, while child nodes
+protruding from the center could represent subprojects or tasks.
+
+Users are also global.
+
+TODO:
+The next version of this XSD file will inlcude an attempt to automate the various philosophies regarding productivity.
+
+
+https://sourceforge.net/projects/freeipe/
+
+
+Nicholas D. Warner
+BS IT
+nick@dsgfloss.net

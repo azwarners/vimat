@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Tasks</title>
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+		 <link rel="stylesheet" href="../jquery.mobile-1.2.0.min.css" />
+		 <script src="../backbone-master/test/vendor/jquery-1.7.1.js"></script>
+		 <script src="../jquery.mobile-1.2.0.min.js"></script>
+</head>
+
+<body>
+
+  <div data-role="page" id="taskapp" data-title="Tasks Page">
+
+    <div data-role="header" id="tasksHeader">
+      <h1>Tasks</h1>
+    </div>
+      <input id="new-task" type="text" placeholder="new task description">
+<!--      <input id="new-task-civlife" type="text" placeholder="CivLife"> -->
+		<select id="new-task-civlife">
+			<option value="growth" style="color:green">Growth</option>
+			<option value="science" style="color:blue">Science</option>
+			<option value="gold" style="color:gold">Gold</option>
+			<option value="culture" style="color:pink">Culture</option>
+			<option value="defense" style="color:grey">Defense</option>
+			<option value="wonders" style="color:purple">Wonders</option>
+		</select> 
+    <div data-role="content" id="main">
+<!--      <input id="toggle-all" type="checkbox">
+      <label for="toggle-all">Mark all as complete</label>-->
+	<form>
+		<ul data-role="listview">
+			<li data-role="fieldcontain">
+	        	<fieldset data-role="controlgroup" id="task-list">
+			    </fieldset>
+			</li>
+		</ul>
+	</form>
+    </div>
+
+    <div data-role="footer" id="tasksFooter">
+      <a data-role="button" id="clear-completed">Clear completed</a>
+		<a data-role="button" id="new-task-button">Add task</a> 
+		<a data-role="button" rel="external" href="../index.html">Back</a>
+      <div id="task-count"></div>
+    </div>
+  <div id="credits">
+    Created by
+    <br />
+    <a href="http://jgn.me/">J&eacute;r&ocirc;me Gravel-Niquet</a>.
+    <br />Rewritten by: <a href="http://addyosmani.github.com/todomvc">TodoMVC</a>.
+  </div>
+
+  </div>
+
+  <div id="instructions">
+    Double-click to edit a task.
+  </div>
+
+
+  <script src="../backbone-master/test/vendor/json2.js"></script>
+  <script src="../backbone-master/test/vendor/jquery-1.7.1.js"></script>
+  <script src="../backbone-master/test/vendor/underscore.js"></script>
+  <script src="../backbone-master/backbone.js"></script>
+  <script src="../backbone-master/backbone-localstorage.js"></script>
+  <script src="tasks.js"></script>
+
+  <!-- Templates -->
+
+  <script type="text/template" id="item-template">
+    <div class="view">
+      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <label><%- title %></label>
+      <label><%- civlife %></label>
+      <a class="destroy"></a>
+    </div>
+    <!--<input class="edit" type="text" value="<%- title %>" />-->
+  </script>
+
+  <script type="text/template" id="stats-template">
+    <% if (done) { %>
+      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
+    <% } %>
+    <div class="task-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
+  </script>
+
+  </body>
+</html>

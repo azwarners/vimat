@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<!--
+	******************************************************************
+	 Copyright 2012 Nicholas Warner
+
+	 This file is part of VIMAT.
+
+    VIMAT is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    freeIPE is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with VIMAT.  If not, see <http://www.gnu.org/licenses/>.
+	******************************************************************
+
+	This is a jQuery Mobile UI made using Intel's Rapid Interface Builder (RIB)
+	https://01.org/rib/online/
+	RIB is licensed under Apache Software License v.2.0 which is GPL compatible
+		according to http://www.gnu.org/licenses/license-list.html .
+
+	Rewrote parts of Todos app to look more like jQuery Mobile
+
+-->
+
+<html>
+    
+    <head>
+       <title>VIMAT</title>
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+		 <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+		 <script src="backbone-master/test/vendor/jquery-1.7.1.js"></script>
+		 <script src="jquery.mobile-1.2.0.min.js"></script>
+	<link rel="icon" type="image/ico" href="favicon.ico"/>
+    </head>
+    
+    <body>
+        <div data-role="page" id="mainMenuPage" data-title="VIMAT Main Menu">
+            <div data-role="header" id="mainHeader">
+                <h1>VIMAT Main Menu</h1>
+            </div>
+            <div data-role="content">
+                <div data-role="controlgroup" id="mainButtonGroup">
+                    <a data-role="button" id="listsButton" href="#listsMenuPage" data-icon="check">Lists</a>
+                    <a data-role="button" id="calendarButton" href="#calendarPage" data-icon="grid">Calendar</a>
+                    <a data-role="button" id="timeTrackerButton" href="#timeTrackerPage" data-icon="gear">Time Tracker</a>
+                    <a data-role="button" id="notepadButton" href="#notepadPage" data-icon="info">Notepad</a>
+                    <a data-role="button" id="exitButton" data-icon="delete">Exit</a>
+                </div>
+            </div>
+				<div data-role="footer" id="mainFooter">
+                <h1>VIMAT</h1>
+            </div>
+        </div>
+        <div data-role="page" id="listsMenuPage" data-title="Lists Menu">
+            <div data-role="header" id="listsMenuHeader">
+                <h1>Lists Menu</h1>
+            </div>
+            <div data-role="content">
+                <div data-role="controlgroup" id="listsButtonGroup">
+                    <a data-role="button" id="taskListButton" rel="external" href="tasks/tasks.html">Tasks</a>
+                    <a data-role="button" id="projectListButton" href="#listPage">Projects</a>
+                    <a data-role="button" id="contextListButton" href="#listPage">Contexts</a>
+                    <a data-role="button" id="tagListButton" href="#listPage">Tags</a>
+                    <a data-role="button" id="userListButton" href="#listPage">Users</a>
+                    <a data-role="button" id="exitListsPageButton" href="#mainMenuPage">Main Menu</a>
+                </div>
+            </div>
+        </div>
+        <div data-role="page" id="calendarPage" data-title="Calendar">
+            <div data-role="header" id="calendarHeader">
+                <h1>Calendar</h1>
+            </div>
+            <div data-role="content">
+                <a data-role="button" id="exitCalendarPageButton" href="#mainMenuPage">Main Menu</a>
+            </div>
+        </div>
+        <div data-role="page" id="timeTrackerPage" data-title="Time Tracker">
+            <div data-role="header" id="timeTrackerHeader">
+                <h1>Time Tracker</h1>
+            </div>
+            <div data-role="content">
+                <select data-native-menu="false" id="trackedTimeCategorySelectMenu">
+                    <option value="Value">Task</option>
+                    <option value="Value">Project</option>
+                    <option value="Value">Context</option>
+                    <option value="Value">Tag</option>
+                </select>
+                <fieldset data-role="controlgroup">
+                    <legend>Choose an item from list above</legend>
+                    <input type="radio" id="radio1" name="radio1"
+                    checked="checked">
+                    <label for="radio1">Radio Button</label>
+                    <input type="radio" id="radio2" name="radio1">
+                    <label for="radio2">Radio Button</label>
+                    <input type="radio" id="radio3" name="radio1">
+                    <label for="radio3">Radio Button</label>
+                </fieldset>
+                <select data-role="slider">
+                    <option value="off">Stopped</option>
+                    <option value="on">Started</option>
+                </select>
+                <span id="elapsedTimeText">Elapsed Time</span>
+                <a data-role="button" id="exitTimeTrackerButton" href="#mainMenuPage">Main Menu</a>
+            </div>
+        </div>
+        <div data-role="page" id="notepadPage" data-title="Notepad">
+            <div data-role="header" id="notepadHeader">
+                <h1>Notepad</h1>
+            </div>
+            <div data-role="content">
+                <textarea></textarea>
+                <div data-role="controlgroup" data-type="horizontal">
+                    <a data-role="button" id="previousNoteButton" data-icon="arrow-l">Previous</a>
+                    <a data-role="button" id="nextNoteButton" data-icon="arrow-r">Next</a>
+                    <a data-role="button" id="deleteNoteButton" data-icon="minus">Delete</a>
+                    <a data-role="button" id="newNoteButton" data-icon="plus">New</a>
+                </div>
+                <a data-role="button" id="exitNotepadButton" href="#mainMenuPage">Main Menu</a>
+            </div>
+        </div>
+        <div data-role="page" id="listPage" data-title="List Page">
+            <div data-role="header" id="listPageHeader">
+                <h1>Chosen List</h1>
+            </div>
+            <div data-role="content">
+                <fieldset data-role="controlgroup" id="listCheckboxGroup">
+                    <legend></legend>
+                    <input type="checkbox" id="listCheckbox1">
+                    <label for="listCheckbox1">Values from chosen list</label>
+                    <input type="checkbox" id="checkbox2">
+                    <label for="checkbox2">Checkbox</label>
+                    <input type="checkbox" id="checkbox3">
+                    <label for="checkbox3">Checkbox</label>
+                </fieldset>
+                <div data-role="controlgroup" data-type="horizontal">
+                    <a data-role="button" id="clearCheckedItemsButton" data-icon="refresh">Clear</a>
+                    <a data-role="button" id="editCheckedItemButton" data-icon="info">Edit</a>
+                    <a data-role="button" id="deleteCheckedItembutton" data-icon="minus">Delete</a>
+                    <a data-role="button" id="newItemButton" data-icon="plus">New</a>
+                </div>
+                <a data-role="button" id="exitListPageButton" href="#listsMenuPage">Lists Menu</a>
+            </div>
+        </div>
+    </body>
+
+</html>
