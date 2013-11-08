@@ -130,7 +130,7 @@ $(function(){
 			var value = this.input.val();
 			if (!value) {
 				this.clear();
-      	}
+      	    }
 			else {
 				this.model.save({title: value});
 				this.$el.removeClass("editing");
