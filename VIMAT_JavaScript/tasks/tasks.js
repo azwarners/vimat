@@ -17,7 +17,8 @@ $(function(){
     defaults: function() {
       return {
         title: "empty todo...",
-			civlife: "defense",
+		civlife: "defense",
+		date: "date",
         order: Tasks.nextOrder(),
         done: false
       };
@@ -69,10 +70,14 @@ $(function(){
 
 		// Tasks are sorted by their original insertion order.
 		comparator: function(task) {
-			return task.get('order');
+			return task.get('date');
 		}
 
 	});
+
+    // TaskList.groupBy( function(Task){
+    //     return Task.get('civlife');
+    // });
 
 	// Create our global collection of **Tasks**.
 	var Tasks = new TaskList;
@@ -215,7 +220,10 @@ $(function(){
 
     // Add all items in the **Tasks** collection at once.
     addAll: function() {
-      Tasks.each(this.addOne);
+        // Tasks.groupBy( function(Task){
+        //     return Task.get('civlife');
+        // });
+        Tasks.each(this.addOne);
     },
 
     // If you hit return in the main input field, create new **Task** model,
@@ -233,9 +241,13 @@ $(function(){
     // persisting it to *localStorage*.
     createOnClick: function() {
 		var cl = document.getElementById("new-task-civlife");
+//		var d = new Date();
+        if (document.getElementById('duedate').value === '')
+            document.getElementById('duedate').valueAsDate = new Date();
       Tasks.create({ title: document.getElementById('new-task').value,
-//							civlife: document.getElementById('new-task-civlife').value 
-							civlife: cl.options[cl.selectedIndex].value });
+					civlife: cl.options[cl.selectedIndex].value,
+					date: document.getElementById('duedate').value
+				});
       document.getElementById('new-task').value = '';
 		//document.getElementById('new-task-civlife').value = '';
 //      this.input.val('');

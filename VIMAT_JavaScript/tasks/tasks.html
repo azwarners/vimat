@@ -18,14 +18,15 @@
     </div>
       <input id="new-task" type="text" placeholder="new task description">
 <!--      <input id="new-task-civlife" type="text" placeholder="CivLife"> -->
-		<select id="new-task-civlife">
+        Due date:<input type="date" id="duedate">
+<!--		<select id="new-task-civlife">
 			<option value="growth" style="color:green">Growth</option>
 			<option value="science" style="color:blue">Science</option>
 			<option value="gold" style="color:gold">Gold</option>
 			<option value="culture" style="color:pink">Culture</option>
 			<option value="defense" style="color:grey">Defense</option>
 			<option value="wonders" style="color:purple">Wonders</option>
-		</select> 
+		</select> -->
     <div data-role="content" id="main">
 <!--      <input id="toggle-all" type="checkbox">
       <label for="toggle-all">Mark all as complete</label>-->
@@ -65,7 +66,8 @@
     <div class="view">
       <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
       <label><%- title %></label>
-      <label><%- civlife %></label>
+<!--      <label><%- civlife %></label>-->
+      <label><%- date %></label>
       <a class="destroy"></a>
     </div>
     <!--<input class="edit" type="text" value="<%- title %>" />-->
