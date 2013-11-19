@@ -18,7 +18,8 @@ $(function(){
       return {
         title: "empty todo...",
 		civlife: "defense",
-		date: "date",
+		date: 0,
+		duedatestring: "",
         order: Tasks.nextOrder(),
         done: false
       };
@@ -68,16 +69,16 @@ $(function(){
 			return this.last().get('order') + 1;
 		},
 
+        groupBy: function(Task) {
+            return Task.get('civlife');
+        },
+
 		// Tasks are sorted by their original insertion order.
 		comparator: function(task) {
 			return task.get('date');
 		}
 
 	});
-
-    // TaskList.groupBy( function(Task){
-    //     return Task.get('civlife');
-    // });
 
 	// Create our global collection of **Tasks**.
 	var Tasks = new TaskList;
@@ -172,7 +173,6 @@ $(function(){
       "keypress #new-task":  "createOnEnter",
 		"click #new-task-button": "createOnClick",
       "click #clear-completed": "clearCompleted",
-//      "click #toggle-all": "toggleAllComplete"
     },
 
     // At initialization we bind to the relevant events on the `Tasks`
@@ -198,7 +198,6 @@ $(function(){
     render: function() {
       var done = Tasks.done().length;
       var remaining = Tasks.remaining().length;
-
       if (Tasks.length) {
         this.main.show();
         this.footer.show();
@@ -214,15 +213,15 @@ $(function(){
     // Add a single task item to the list by creating a view for it, and
     // appending its element to the `<ul>`.
     addOne: function(task) {
+         if (task.get("date") <= (new Date()).getTime())
+         {
       var view = new TaskView({model: task});
       this.$("#task-list").append(view.render().el);
+         }
     },
 
     // Add all items in the **Tasks** collection at once.
     addAll: function() {
-        // Tasks.groupBy( function(Task){
-        //     return Task.get('civlife');
-        // });
         Tasks.each(this.addOne);
     },
 
@@ -241,16 +240,22 @@ $(function(){
     // persisting it to *localStorage*.
     createOnClick: function() {
 		var cl = document.getElementById("new-task-civlife");
-//		var d = new Date();
-        if (document.getElementById('duedate').value === '')
-            document.getElementById('duedate').valueAsDate = new Date();
+		var y = document.getElementById('year');
+		var m = document.getElementById('month');
+		var d = document.getElementById('day');
+		var dueDate = new Date();
+ 		dueDate.setFullYear(parseInt(y.options[y.selectedIndex].value));
+ 		dueDate.setMonth((parseInt(m.options[m.selectedIndex].value)) - 1);
+		dueDate.setDate(parseInt(d.options[d.selectedIndex].value));
+		var dueDateMs = dueDate.getTime();
+		var dueDateString = dueDate.toDateString();
       Tasks.create({ title: document.getElementById('new-task').value,
-					civlife: cl.options[cl.selectedIndex].value,
-					date: document.getElementById('duedate').value
-				});
+					 civlife: cl.options[cl.selectedIndex].value,
+					 date: dueDateMs,
+					 duedatestring: dueDateString
+				}); 
+				   
       document.getElementById('new-task').value = '';
-		//document.getElementById('new-task-civlife').value = '';
-//      this.input.val('');
     },
 
     // Clear all done task items, destroying their models.
@@ -258,11 +263,6 @@ $(function(){
       _.invoke(Tasks.done(), 'destroy');
       return false;
     },
-
-//    toggleAllComplete: function () {
-//      var done = this.allCheckbox.checked;
-//      Tasks.each(function (task) { task.save({'done': done}); });
-//    }
 
   });
 

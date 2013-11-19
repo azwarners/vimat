@@ -1,27 +1,39 @@
-This is an XML schema for freeIPE. This is also the first file of the freeIPE project to be released.
-It may happen that XML is not the way to go for this project. Maybe it would change to SQLite.
-Maybe both would be needed. At any rate I'm tired of reading books and I'm ready to start something
-tangible. Please don't expect anything of useable quality here. I'm simply planning and intend to
-build by iterating.
+freeIPE v0.003
 
-The tools that will be implemented in freeIPE will have an element declaration made globally that
-may reference previously-defined global elements.
+freeIPE aims to be a free Integrated Productivity Environment.
 
-The aim here is to keep the tools and the data integrated.
+What I am aiming for with freeIPE is a big set of productivity tools (borrowed or new) that all share the same data.
 
-E.G.: If you want to start the time tracker you have the option of tracking time for a task, or a project,
-or a context, etc. If you want to mark your calendar with an appointment you could use these same
-options. A future mind map plugin could use a goal or a project as the center, while child nodes
-protruding from the center could represent subprojects or tasks.
+The GUI was built with Intel's RIB, Rapid Interface Builder (https://01.org/rib/). Intel has licensed RIB under Apache Software License v.2.0 which is GPL compatible. I chose jQuery Mobile for the interface in an attempt to reach the most possible users.
 
-Users are also global.
+The first tool I chose to implement is a task list. The Todos example program appears to fall under the MIT license along with its parent project, Backbone.js (http://backbonejs.org). I have converted Todos to jQuery Mobile to blend with the rest of freeIPE.
 
-TODO:
-The next version of this XSD file will inlcude an attempt to automate the various philosophies regarding productivity.
+My goal is to study Todos, thereby gaining an introduction to the Backbone.js structured programming methodology. I think the model, collections, and views approach will allow my code to be easier to read and extend while using a RESTful JSON interface. Honestly, JSON sounds more appealing than DOM traversal. This might make my existing XML schema useless for right now, but I do plan on rewriting freeIPE in C or C++ for a desktop version eventually. Maybe the schema will come in handy then. 
 
+My ultimate goal for freeIPE is to have something for everyone to use, professionally or personally. This means children and grandparents, too. I would like users to have customized sharing of data with other users. I would like to be able to synchronize data over LAN or bluetooth, rather than being forced to use a commercial (and often proprietary) website.
+
+TODO: Add user support.
+
+TODO: Add more tools.
+
+CHANGELOG:
+
+2012-12-27 Nick Warner
+	* todos.html: fixed or disabled all of the broken features of Todos after switch to jQuery Mobile
+	* freeIPE: updated readme and released latest stable version
+
+2012-12-24 Nick Warner
+	* freeIPE: set up Git for the project and performed initial commit
+
+2012-12-23 Nick Warner
+	* todos.html: Changed Todos styling from todos.css to jQuery Mobile CSS
+	* index.html, todos.html: Changed script tags for jQuery Mobile to point to local files rather than the remote server, which hopefully sped things up
 
 https://sourceforge.net/projects/freeipe/
 
+License information (GPL) for freeIPE can be found inside the COPYING file.
+
+Any advice, constructive criticism, or ridicule would be greatly appreciated. I could use any feedback to make the program better.
 
 Nicholas D. Warner
 BS IT
