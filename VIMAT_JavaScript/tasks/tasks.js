@@ -20,6 +20,7 @@ $(function(){
 		civlife: "defense",
 		date: 0,
 		duedatestring: "",
+		repeat: "n",
         order: Tasks.nextOrder(),
         done: false
       };
@@ -225,6 +226,43 @@ $(function(){
         Tasks.each(this.addOne);
     },
 
+    repeatTask: function(task) {
+           if ((task.get("done") == true) && (task.get("repeat") != "n"))
+           {
+               var d = new Date();
+               var ds;
+               var currentDate = task.get("date");
+               var newDate;
+               var msInDay = 1000 * 60 * 60 * 24;
+               switch (task.get("repeat")){
+                   case "a":
+                       newDate = currentDate + 365 * msInDay;
+                        d.setTime(newDate);
+                        ds = d.toDateString();
+				        task.save({date: newDate, done: false, duedatestring: ds});
+                       break;
+                    case "m":
+                        newDate = currentDate + 365 / 12 * msInDay;
+                        d.setTime(newDate);
+                        ds = d.toDateString();
+				        task.save({date: newDate, done: false, duedatestring: ds});
+                        break;
+                    case "w":
+                        newDate = currentDate + 7 * msInDay;
+                        d.setTime(newDate);
+                        ds = d.toDateString();
+				        task.save({date: newDate, done: false, duedatestring: ds});
+                        break;
+                    case "d":
+                        newDate = currentDate + msInDay;
+                        d.setTime(newDate);
+                        ds = d.toDateString();
+				        task.save({date: newDate, done: false, duedatestring: ds});
+                        break;
+               }
+           }
+    },
+
     // If you hit return in the main input field, create new **Task** model,
     // persisting it to *localStorage*.
     createOnEnter: function(e) {
@@ -249,10 +287,12 @@ $(function(){
 		dueDate.setDate(parseInt(d.options[d.selectedIndex].value));
 		var dueDateMs = dueDate.getTime();
 		var dueDateString = dueDate.toDateString();
+		var rpt = document.getElementById('repeat').value;
       Tasks.create({ title: document.getElementById('new-task').value,
 					 civlife: cl.options[cl.selectedIndex].value,
 					 date: dueDateMs,
-					 duedatestring: dueDateString
+					 duedatestring: dueDateString,
+					 repeat: rpt
 				}); 
 				   
       document.getElementById('new-task').value = '';
@@ -260,6 +300,7 @@ $(function(){
 
     // Clear all done task items, destroying their models.
     clearCompleted: function() {
+        Tasks.each(this.repeatTask);
       _.invoke(Tasks.done(), 'destroy');
       return false;
     },
