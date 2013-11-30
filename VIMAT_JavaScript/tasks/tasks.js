@@ -173,8 +173,10 @@ $(function(){
     events: {
       "keypress #new-task":  "createOnEnter",
 		"click #new-task-button": "createOnClick",
-      "click #clear-completed": "clearCompleted",
+      "click #clear-completed": "clearCompleted"
     },
+
+    currentCivLife: "",
 
     // At initialization we bind to the relevant events on the `Tasks`
     // collection, when items are added or changed. Kick things off by
@@ -214,7 +216,7 @@ $(function(){
     // Add a single task item to the list by creating a view for it, and
     // appending its element to the `<ul>`.
     addOne: function(task) {
-         if (task.get("date") <= (new Date()).getTime())
+         if ( (task.get("date") <= (new Date()).getTime()) && (task.get("civlife") == currentCivLife) )
          {
       var view = new TaskView({model: task});
       this.$("#task-list").append(view.render().el);
@@ -223,6 +225,52 @@ $(function(){
 
     // Add all items in the **Tasks** collection at once.
     addAll: function() {
+        var taskListElement = document.getElementById("task-list");
+        var clheading=document.createElement("h3");
+        var clnode=document.createTextNode("Growth");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "growth";
+        Tasks.each(this.addOne);
+        
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Science");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "science";
+        Tasks.each(this.addOne);
+        
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Gold");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "gold";
+        Tasks.each(this.addOne);
+        
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Culture");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "culture";
+        Tasks.each(this.addOne);
+        
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Defense");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "defense";
+        Tasks.each(this.addOne);
+        
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Wonders");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "wonders";
         Tasks.each(this.addOne);
     },
 

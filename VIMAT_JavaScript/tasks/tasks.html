@@ -16,6 +16,7 @@
     <div data-role="header" id="tasksHeader">
       <h1>Tasks</h1>
     </div>
+    <div id="taskinputs">
       <input id="new-task" type="text" placeholder="new task description">
 <!--      <input id="new-task-civlife" type="text" placeholder="CivLife"> -->
         <!--Due date:<input type="date" id="duedate">-->
@@ -98,6 +99,7 @@
 			<option value="defense" style="color:grey">Defense</option>
 			<option value="wonders" style="color:purple">Wonders</option>
 		</select>
+	</div>
     <div data-role="content" id="main">
 <!--      <input id="toggle-all" type="checkbox">
       <label for="toggle-all">Mark all as complete</label>-->
@@ -115,6 +117,7 @@
       <a data-role="button" id="clear-completed">Clear completed</a>
 		<a data-role="button" id="new-task-button">Add task</a> 
 		<a data-role="button" rel="external" href="../index.html">Back</a>
+		<!--Add something to switch to tickler/future tasks-->
       <div id="task-count"></div>
     </div>
   </div>
@@ -137,7 +140,6 @@
     <div class="view">
       <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
       <label><%- title %></label>
-      <label><%- civlife %></label>
       <label><%- duedatestring %></label>
       <a class="destroy"></a>
     </div>
@@ -149,6 +151,10 @@
       <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
     <% } %>
     <div class="task-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
+  </script>
+
+  </body>
+</html>v class="task-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
   </script>
 
   </body>
