@@ -194,6 +194,11 @@ $(function(){
       this.main = $('#main');
 
       Tasks.fetch();
+      
+      var todaysdate = new Date();
+      document.getElementById("year").value = todaysdate.getFullYear();
+      document.getElementById("month").value = todaysdate.getMonth() + 1;
+      document.getElementById("day").value = todaysdate.getDate();
     },
 
     // Re-rendering the App just means refreshing the statistics -- the rest
@@ -216,10 +221,10 @@ $(function(){
     // Add a single task item to the list by creating a view for it, and
     // appending its element to the `<ul>`.
     addOne: function(task) {
-         if ( (task.get("date") <= (new Date()).getTime()) && (task.get("civlife") == currentCivLife) )
+         if ( (task.get("date") <= ( new Date() ).getTime() ) && (task.get("civlife") == currentCivLife) )
          {
-      var view = new TaskView({model: task});
-      this.$("#task-list").append(view.render().el);
+            var view = new TaskView({model: task});
+            this.$("#task-list").append(view.render().el);
          }
     },
 
@@ -330,9 +335,15 @@ $(function(){
 		var m = document.getElementById('month');
 		var d = document.getElementById('day');
 		var dueDate = new Date();
- 		dueDate.setFullYear(parseInt(y.options[y.selectedIndex].value));
- 		dueDate.setMonth((parseInt(m.options[m.selectedIndex].value)) - 1);
-		dueDate.setDate(parseInt(d.options[d.selectedIndex].value));
+//  		dueDate.setFullYear(parseInt(y.options[y.selectedIndex].value));
+//  		dueDate.setMonth((parseInt(m.options[m.selectedIndex].value)) - 1);
+// 		dueDate.setDate(parseInt(d.options[d.selectedIndex].value));
+ 		dueDate.setFullYear(y.value);
+ 		dueDate.setMonth(m.value - 1);
+		dueDate.setDate(d.value);
+		dueDate.setHours(0);
+		dueDate.setMinutes(0);
+		dueDate.setSeconds(0);
 		var dueDateMs = dueDate.getTime();
 		var dueDateString = dueDate.toDateString();
 		var rpt = document.getElementById('repeat').value;
