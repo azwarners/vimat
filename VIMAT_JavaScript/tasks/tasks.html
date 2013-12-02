@@ -4,16 +4,17 @@
 <head>
   <title>Tasks</title>
        <meta name="viewport" content="width=device-width, initial-scale=1">
-		 <link rel="stylesheet" href="../jquery.mobile-1.2.0.min.css" />
+		 <link rel="stylesheet" href="../jquery.mobile-1.2.0.css" />
 		 <script src="../backbone-master/test/vendor/jquery-1.7.1.js"></script>
 		 <script src="../jquery.mobile-1.2.0.min.js"></script>
+		 <link rel="icon" type="image/ico" href="../favicon.ico"/>
 </head>
 
 <body>
 
   <div data-role="page" id="taskapp" data-title="Tasks Page">
 
-    <div data-role="header" id="tasksHeader">
+    <div data-role="header" data-position="fixed" id="tasksHeader">
       <h1>Tasks</h1>
     </div>
     <div id="taskinputs">
@@ -112,7 +113,7 @@
 	</form>
     </div>
 
-    <div data-role="footer" id="tasksFooter">
+    <div data-role="footer" data-position="fixed" id="tasksFooter">
       <a data-role="button" id="clear-completed">Clear completed</a>
 		<a data-role="button" id="new-task-button">Add task</a> 
 		<a data-role="button" rel="external" href="../index.html">Back</a>

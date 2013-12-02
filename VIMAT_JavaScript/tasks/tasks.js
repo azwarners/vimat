@@ -335,9 +335,6 @@ $(function(){
 		var m = document.getElementById('month');
 		var d = document.getElementById('day');
 		var dueDate = new Date();
-//  		dueDate.setFullYear(parseInt(y.options[y.selectedIndex].value));
-//  		dueDate.setMonth((parseInt(m.options[m.selectedIndex].value)) - 1);
-// 		dueDate.setDate(parseInt(d.options[d.selectedIndex].value));
  		dueDate.setFullYear(y.value);
  		dueDate.setMonth(m.value - 1);
 		dueDate.setDate(d.value);
@@ -353,8 +350,8 @@ $(function(){
 					 duedatestring: dueDateString,
 					 repeat: rpt
 				}); 
-				   
       document.getElementById('new-task').value = '';
+      location.reload();
     },
 
     // Clear all done task items, destroying their models.
