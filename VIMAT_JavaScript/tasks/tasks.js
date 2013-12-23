@@ -12,32 +12,46 @@ $(function(){
 
 	var Task = Backbone.Model.extend({
 
-	// Default attributes for the todo item.
-	// Our basic **Task** model has `title`, 'civlife', `order`, and `done` attributes.
-    defaults: function() {
-      return {
-        title: "empty todo...",
-		civlife: "defense",
-		date: 0,
-		duedatestring: "",
-		repeat: "n",
-        order: Tasks.nextOrder(),
-        done: false
-      };
-    },
+        // Default attributes for the todo item.
+        // Our basic **Task** model has `title`, 'civlife', `order`, and `done` attributes.
+        defaults: function() {
+          return {
+            title: "empty todo...",
+            civlife: "defense",
+            date: 0,
+            duedatestring: "",
+            repeat: "n",
+            context: "all",
+            order: Tasks.nextOrder(),
+            done: false
+          };
+        },
 
-	// Ensure that each task created has `title`.
-	initialize: function() {
-		if (!this.get("title")) {
-		this.set({"title": this.defaults().title});
-		}
-	},
-
-	// Toggle the `done` state of this task item.
-	toggle: function() {
-		this.save({done: !this.get("done")});
-		}
-
+        // Convert task to a string
+        toString: function() {
+            var ts; //(taskString)
+            ts = this.title + "^";
+            ts += this.civlife + "^";
+            ts += this.date + "^";
+            ts += this.duedatestring + "^";
+            ts += this.repeat + "^";
+            ts += this.context + "^";
+            ts += this.done + "^";
+            return (ts);
+        },
+    
+        // Ensure that each task created has `title`.
+        initialize: function() {
+            if (!this.get("title")) {
+                this.set({"title": this.defaults().title});
+            }
+        },
+    
+        // Toggle the `done` state of this task item.
+        toggle: function() {
+            this.save({done: !this.get("done")});
+        }
+    
 	});
 
 	// Task Collection
@@ -137,7 +151,7 @@ $(function(){
 			var value = this.input.val();
 			if (!value) {
 				this.clear();
-      	    }
+            }
 			else {
 				this.model.save({title: value});
 				this.$el.removeClass("editing");
@@ -149,12 +163,14 @@ $(function(){
 			if (e.keyCode == 13) this.close();
 		},
 
-																																																										    //				Remove the item, destroy the model.
+    // Remove the item, destroy the model.
     clear: function() {
       this.model.destroy();
     }
 
   });
+  
+  var uniqueContexts = new Array();
 
   // The Application
   // ---------------
@@ -171,34 +187,42 @@ $(function(){
 
     // Delegated events for creating new items, and clearing completed ones.
     events: {
-      "keypress #new-task":  "createOnEnter",
-		"click #new-task-button": "createOnClick",
-      "click #clear-completed": "clearCompleted"
+        "keypress #new-task":  "createOnEnter",
+        "click #new-task-button": "createOnClick",
+        "click #clear-completed": "clearCompleted",
+        "click #display-taskstrings-button": "displayTasksToString",
+        "click #create-task-from-text": "createFromString"
     },
 
     currentCivLife: "",
+    currentContext: "",
 
-    // At initialization we bind to the relevant events on the `Tasks`
-    // collection, when items are added or changed. Kick things off by
-    // loading any preexisting tasks that might be saved in *localStorage*.
+    gatherUniqueContexts: function(task) {
+        if ( jQuery.inArray(task.get("context"), uniqueContexts) == -1 )
+            uniqueContexts.push(task.get("context"));
+    },
+
     initialize: function() {
+        this.input = this.$("#new-task");
+        // this.allCheckbox = this.$("#toggle-all")[0];
 
-      this.input = this.$("#new-task");
-//      this.allCheckbox = this.$("#toggle-all")[0];
+        // Bind to relevant events on `Tasks` collection, when items are added/changed.
+        this.listenTo(Tasks, 'add', this.addOne);
+        this.listenTo(Tasks, 'reset', this.addAll);
+        this.listenTo(Tasks, 'all', this.render);
 
-      this.listenTo(Tasks, 'add', this.addOne);
-      this.listenTo(Tasks, 'reset', this.addAll);
-      this.listenTo(Tasks, 'all', this.render);
+        this.footer = this.$('footer');
+        this.main = $('#main');
 
-      this.footer = this.$('footer');
-      this.main = $('#main');
-
-      Tasks.fetch();
+        Tasks.fetch(); // load any preexisting tasks saved in localStorage.
       
-      var todaysdate = new Date();
-      document.getElementById("year").value = todaysdate.getFullYear();
-      document.getElementById("month").value = todaysdate.getMonth() + 1;
-      document.getElementById("day").value = todaysdate.getDate();
+        // Set date input to today's date
+        var todaysdate = new Date();
+        document.getElementById("year").value = todaysdate.getFullYear();
+        document.getElementById("month").value = todaysdate.getMonth() + 1;
+        document.getElementById("day").value = todaysdate.getDate();
+        
+        // Tasks.each(this.gatherUniqueContexts);
     },
 
     // Re-rendering the App just means refreshing the statistics -- the rest
@@ -218,9 +242,26 @@ $(function(){
 //      this.allCheckbox.checked = !remaining;
     },
 
+    //  Display task as string
+    displayTaskString: function(task) {
+        var ts; //(taskString)
+        ts = task.get("title") + "^";
+        ts += task.get("civlife") + "^";
+        ts += task.get("date") + "^";
+        ts += task.get("duedatestring") + "^";
+        ts += task.get("repeat") + "^";
+        ts += task.get("context") + "^";
+        document.getElementById('new-task').value += ts;
+    },
+
     // Add a single task item to the list by creating a view for it, and
     // appending its element to the `<ul>`.
     addOne: function(task) {
+        //  if ( (task.get("date") <= ( new Date() ).getTime() ) && (task.get("context") == currentContext) )
+        //  {
+            // var view = new TaskView({model: task});
+            // this.$("#task-list").append(view.render().el);
+        //  }
          if ( (task.get("date") <= ( new Date() ).getTime() ) && (task.get("civlife") == currentCivLife) )
          {
             var view = new TaskView({model: task});
@@ -230,6 +271,20 @@ $(function(){
 
     // Add all items in the **Tasks** collection at once.
     addAll: function() {
+
+        // var taskListElement = document.getElementById("task-list");
+        // var contextheading=document.createElement("h3");
+        // var contextnode=document.createTextNode("");
+        // for (i = 0; i < uniqueContexts.length; i++) {
+        //     taskListElement = document.getElementById("task-list");
+        //     contextheading=document.createElement("h3");
+        //     contextnode=document.createTextNode(uniqueContexts[i]);
+        //     contextheading.appendChild(contextnode);
+        //     taskListElement.appendChild(contextheading);
+        //     currentContext = uniqueContexts[i];
+        // Tasks.each(this.addOne);
+        // }
+        
         var taskListElement = document.getElementById("task-list");
         var clheading=document.createElement("h3");
         var clnode=document.createTextNode("Growth");
@@ -277,16 +332,24 @@ $(function(){
         taskListElement.appendChild(clheading);
         currentCivLife = "wonders";
         Tasks.each(this.addOne);
+
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("No CivLife");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "";
+        Tasks.each(this.addOne);
     },
 
     repeatTask: function(task) {
            if ((task.get("done") == true) && (task.get("repeat") != "n"))
            {
                var d = new Date();
-               var ds;
+               var ds; // date string
                var currentDate = task.get("date");
                var newDate;
-               var msInDay = 1000 * 60 * 60 * 24;
+               var msInDay = 1000 * 60 * 60 * 24; // milliseconds in a day
                switch (task.get("repeat")){
                    case "a":
                        newDate = currentDate + 365 * msInDay;
@@ -327,31 +390,109 @@ $(function(){
       this.input.val('');
     },
 
+//     getDueDateInMsFromDateInputs: function() {
+// 		var y = document.getElementById('year');
+// 		var m = document.getElementById('month');
+// 		var d = document.getElementById('day');
+// 		var dueDate = new Date();
+//  		dueDate.setFullYear(y.value);
+//  		dueDate.setMonth(m.value - 1);
+// 		dueDate.setDate(d.value);
+// 		dueDate.setHours(0);
+// 		dueDate.setMinutes(0);
+// 		dueDate.setSeconds(0);
+// 		var dueDateMs = dueDate.getTime();
+//         return (dueDateMs);
+//     },
+
+//     getDueDateStringFromDateInputs: function() {
+// 		var y = document.getElementById('year');
+// 		var m = document.getElementById('month');
+// 		var d = document.getElementById('day');
+// 		var dueDate = new Date();
+//         dueDate.setFullYear(y.value);
+//         dueDate.setMonth(m.value - 1);
+// 		dueDate.setDate(d.value);
+// 		dueDate.setHours(0);
+// 		dueDate.setMinutes(0);
+// 		dueDate.setSeconds(0);
+// 		var dueDateString = dueDate.toDateString();
+//         return (dueDateString);
+//     },
+
     // If you click the new task button, create new **Task** model,
     // persisting it to *localStorage*.
     createOnClick: function() {
 		var cl = document.getElementById("new-task-civlife");
+		
 		var y = document.getElementById('year');
 		var m = document.getElementById('month');
 		var d = document.getElementById('day');
 		var dueDate = new Date();
- 		dueDate.setFullYear(y.value);
- 		dueDate.setMonth(m.value - 1);
+        dueDate.setFullYear(y.value);
+        dueDate.setMonth(m.value - 1);
 		dueDate.setDate(d.value);
 		dueDate.setHours(0);
 		dueDate.setMinutes(0);
 		dueDate.setSeconds(0);
 		var dueDateMs = dueDate.getTime();
 		var dueDateString = dueDate.toDateString();
-		var rpt = document.getElementById('repeat').value;
-      Tasks.create({ title: document.getElementById('new-task').value,
-					 civlife: cl.options[cl.selectedIndex].value,
-					 date: dueDateMs,
-					 duedatestring: dueDateString,
-					 repeat: rpt
-				}); 
-      document.getElementById('new-task').value = '';
-      location.reload();
+		
+        Tasks.create({
+            title: document.getElementById('new-task').value,
+            civlife: cl.options[cl.selectedIndex].value,
+            date: dueDateMs,
+			duedatestring: dueDateString,
+			repeat: document.getElementById('repeat').value,
+			context: document.getElementById('contextinput').value
+		});
+		
+        document.getElementById('new-task').value = '';
+        document.getElementById('contextinput').value = '';
+        
+        // Tasks.each(this.gatherUniqueContexts);
+        // location.reload();
+    },
+
+    createFromString: function() {
+        var ttl, cvlf, dt, ddtstrng, rpt, cntxt;
+        var ts = document.getElementById('new-task').value;
+        var chopPoint;
+        
+        var extractPropertyFromTaskString = function(){
+            chopPoint = ts.indexOf("^");
+            var propString;
+            if (chopPoint > -1){
+                propString = ts.substring(0, chopPoint);
+                ts = ts.substring(chopPoint+1, ts.length);
+            }
+            return propString;
+        };
+        
+        while (ts.length > 0) {
+            ttl = extractPropertyFromTaskString();
+            cvlf = extractPropertyFromTaskString();
+            dt = extractPropertyFromTaskString();
+    		ddtstrng = extractPropertyFromTaskString();
+    		rpt = extractPropertyFromTaskString();
+    		cntxt = extractPropertyFromTaskString();
+
+            Tasks.create({
+                title: ttl,
+                civlife: cvlf,
+                date: dt,
+                duedatestring: ddtstrng,
+                repeat: rpt,
+                context: cntxt
+            });
+        }
+		
+        document.getElementById('new-task').value = '';
+        // location.reload();
+    },
+
+    displayTasksToString: function() {
+        Tasks.each(this.displayTaskString);
     },
 
     // Clear all done task items, destroying their models.
