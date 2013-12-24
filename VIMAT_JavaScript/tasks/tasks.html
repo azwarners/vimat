@@ -61,8 +61,9 @@
     </div>
 
     <div data-role="footer" data-position="fixed" id="tasksFooter">
-      <a data-role="button" id="clear-completed">Clear Completed</a>
-		<a data-role="button" id="new-task-button">Add Task</a>
+        <a data-role="button" id="toggle-all-button">Check All</a>
+        <a data-role="button" id="clear-completed">Clear Completed</a>
+		<a data-role="button" href="#newtaskpage">Add Task</a>
 		<a data-role="button" id="display-taskstrings-button">Display Task(s) As Text</a>
         <a data-role="button" id="create-task-from-text">Create Task(s) From Text</a>
 		<a data-role="button" rel="external" href="../index.html">Back</a>
@@ -71,8 +72,11 @@
     </div>
   </div>
 
-  <div id="instructions">
-    Double-click to edit a task.
+  <div data-role="page" id="newtaskpage">
+    <div data-role="content">
+    I'm a new task page
+    </div>
+	<a data-role="button" id="new-task-button">Add Task</a>
   </div>
 
 

@@ -191,7 +191,8 @@ $(function(){
         "click #new-task-button": "createOnClick",
         "click #clear-completed": "clearCompleted",
         "click #display-taskstrings-button": "displayTasksToString",
-        "click #create-task-from-text": "createFromString"
+        "click #create-task-from-text": "createFromString",
+        "click #toggle-all-button": "toggleAllComplete"
     },
 
     currentCivLife: "",
@@ -501,6 +502,14 @@ $(function(){
       _.invoke(Tasks.done(), 'destroy');
       return false;
     },
+    
+    toggleAllComplete: function () {
+        //var done = this.allCheckbox.checked;
+        Tasks.each(function (task) {
+            task.save({done: true});
+        });
+//        Tasks.each(this.save({done: true}));
+    }
 
   });
 
