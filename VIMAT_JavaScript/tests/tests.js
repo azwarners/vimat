@@ -24,13 +24,13 @@ QUnit.test("myNewTest", function( assert ){
 QUnit.module("taskList");
 QUnit.test("newTaskForTaskList", function( assert ){
     Tasks.create({ title: "test task title",
-    		 civlife: "test task civlife",
-    		 date: 19000000,
-    		 duedatestring: "Wed Apr 19 2019",
-    		 repeat: "n",
-    		 context: "test task context"
+        civlife: "test task civlife",
+        date: 19000000,
+        duedatestring: "Wed Apr 19 2019",
+        repeat: "n",
+        context: "test task context"
     });
-    assert.ok()
-})
+    assert.ok;
+});
 
 

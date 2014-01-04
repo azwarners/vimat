@@ -4,10 +4,10 @@
 <head>
   <title>Tasks</title>
        <meta name="viewport" content="width=device-width, initial-scale=1">
-		 <link rel="stylesheet" href="../jquery.mobile-1.2.0.css" />
-		 <script src="../backbone-master/test/vendor/jquery-1.7.1.js"></script>
-		 <script src="../jquery.mobile-1.2.0.min.js"></script>
-		 <link rel="icon" type="image/ico" href="../favicon.ico"/>
+		 <link rel="stylesheet" href="../lib/jquery.mobile-1.2.0.css" />
+		 <script src="../lib/backbone-master/test/vendor/jquery-1.7.1.js"></script>
+		 <script src="../lib/jquery.mobile-1.2.0.min.js"></script>
+		 <link rel="icon" type="image/ico" href="../res/favicon.ico"/>
 </head>
 
 <body>
@@ -19,7 +19,7 @@
     </div>
     <div id="taskinputs">
         <textarea id="new-task" placeholder="new task description"></textarea>
-        <input id="contextinput" type="text" placeholder="new task context">
+        <!--<input id="contextinput" type="text" placeholder="new task context">-->
 		<table>
     		<tr>
         		<td>
@@ -50,20 +50,20 @@
 		</select>
 	</div>
     <div data-role="content" id="main">
-	<form>
-		<ul data-role="listview">
-			<li data-role="fieldcontain">
+	<!--<form>-->
+		<!--<ul data-role="listview">-->
+			<div data-role="fieldcontain">
 	        	<fieldset data-role="controlgroup" id="task-list">
 			    </fieldset>
-			</li>
-		</ul>
-	</form>
+			</div>
+		<!--</ul>-->
+	<!--</form>-->
     </div>
 
     <div data-role="footer" data-position="fixed" id="tasksFooter">
         <a data-role="button" id="toggle-all-button">Check All</a>
         <a data-role="button" id="clear-completed">Clear Completed</a>
-		<a data-role="button" href="#newtaskpage">Add Task</a>
+		<a data-role="button" id="new-task-button">Add Task</a>
 		<a data-role="button" id="display-taskstrings-button">Display Task(s) As Text</a>
         <a data-role="button" id="create-task-from-text">Create Task(s) From Text</a>
 		<a data-role="button" rel="external" href="../index.html">Back</a>
@@ -76,27 +76,23 @@
     <div data-role="content">
     I'm a new task page
     </div>
-	<a data-role="button" id="new-task-button">Add Task</a>
+        <a data-role="button">Add Task</a>
   </div>
 
-
-  <script src="../backbone-master/test/vendor/json2.js"></script>
-  <script src="../backbone-master/test/vendor/jquery-1.7.1.js"></script>
-  <script src="../backbone-master/test/vendor/underscore.js"></script>
-  <script src="../backbone-master/backbone.js"></script>
-  <script src="../backbone-master/backbone-localstorage.js"></script>
+  <script src="../lib/backbone-master/test/vendor/json2.js"></script>
+  <script src="../lib/backbone-master/test/vendor/jquery-1.7.1.js"></script>
+  <script src="../lib/backbone-master/test/vendor/underscore.js"></script>
+  <script src="../lib/backbone-master/backbone.js"></script>
+  <script src="../lib/backbone-master/backbone-localstorage.js"></script>
   <script src="tasks.js"></script>
 
   <!-- Templates -->
 
   <script type="text/template" id="item-template">
     <div class="view">
-      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
-      <label><%- title %></label>
-      <label><%- duedatestring %></label>
-      <a class="destroy"></a>
+      <input class="toggle" type="checkbox" id="<%- title %>" <%= done ? 'checked="checked"' : '' %> />
+      <label for="<%- title %>"><%- title %> <br>&nbsp&nbsp&nbsp&nbsp&nbsp<%- duedatestring %></label>
     </div>
-    <!--<input class="edit" type="text" value="<%- title %>" />-->
   </script>
 
   <script type="text/template" id="stats-template">
@@ -104,10 +100,6 @@
       <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
     <% } %>
     <div class="task-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
-  </script>
-
-  </body>
-</html>v class="task-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
   </script>
 
   </body>
