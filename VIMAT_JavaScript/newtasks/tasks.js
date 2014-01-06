@@ -263,11 +263,11 @@ $(function(){
             // var view = new TaskView({model: task});
             // this.$("#task-list").append(view.render().el);
         //  }
-         if ( task.get("date") <=  (new Date()).getTime() )
-         {
-            var view = new TaskView({model: task});
-            this.$("#task-list").append(view.render().el);
-         }
+        //  if ( (task.get("date") <=  (new Date()).getTime()) && (task.get("civlife") == currentCivLife) )
+        //  {
+        //     var view = new TaskView({model: task});
+        //     this.$("#task-list").append(view.render().el);
+        //  }
     },
 
     // Add all items in the **Tasks** collection at once.
@@ -283,64 +283,64 @@ $(function(){
         //     contextheading.appendChild(contextnode);
         //     taskListElement.appendChild(contextheading);
         //     currentContext = uniqueContexts[i];
-        Tasks.each(this.addOne);
+        // Tasks.each(this.addOne);
         // }
         
-        // var taskListElement = document.getElementById("task-list");
-        // var clheading=document.createElement("h3");
-        // var clnode=document.createTextNode("Growth");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "growth";
-        // Tasks.each(this.addOne);
+        var taskListElement = document.getElementById("task-list");
+        var clheading=document.createElement("h3");
+        var clnode=document.createTextNode("Growth");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "growth";
+        Tasks.each(this.addOne);
         
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("Science");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "science";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Science");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "science";
+        Tasks.each(this.addOne);
         
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("Gold");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "gold";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Gold");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "gold";
+        Tasks.each(this.addOne);
         
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("Culture");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "culture";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Culture");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "culture";
+        Tasks.each(this.addOne);
         
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("Defense");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "defense";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Defense");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "defense";
+        Tasks.each(this.addOne);
         
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("Wonders");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "wonders";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("Wonders");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "wonders";
+        Tasks.each(this.addOne);
 
-        // taskListElement = document.getElementById("task-list");
-        // clheading=document.createElement("h3");
-        // clnode=document.createTextNode("No CivLife");
-        // clheading.appendChild(clnode);
-        // taskListElement.appendChild(clheading);
-        // currentCivLife = "";
-        // Tasks.each(this.addOne);
+        taskListElement = document.getElementById("task-list");
+        clheading=document.createElement("h3");
+        clnode=document.createTextNode("No Category");
+        clheading.appendChild(clnode);
+        taskListElement.appendChild(clheading);
+        currentCivLife = "";
+        Tasks.each(this.addOne);
     },
 
     repeatTask: function(task) {

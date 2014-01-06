@@ -15,22 +15,53 @@
   <div data-role="page" id="taskapp" data-title="Tasks Page">
 
     <div data-role="header" data-position="fixed" id="tasksHeader">
-      <h1>Tasks by Date</h1>
+      <h1>New Tasks</h1>
     </div>
+    <div id="taskinputs">
+        <input id="new-task" type="text" placeholder="new task description">
+        <!--<input id="contextinput" type="text" placeholder="new task context">-->
+		<table>
+    		<tr>
+        		<td>
+        		    <input type="number" id="year" min="2013" max="2100">
+        		</td>
+        		<td>
+        		    <input type="number" id="month" min="1" max="12">
+        		</td>
+        		<td>
+        		    <input type="number" id="day" min="1" max="31">
+        		</td>
+    		</tr>
+		</table>
+	    <select id="repeat" data-icon="false">
+		    <option value=n selected="selected">none</option>
+		    <option value=a>annual</option>
+		    <option value=m>monthly</option>
+		    <option value=w>weekly</option>
+		    <option value=d>daily</option>
+	    </select>
+		<select id="new-task-civlife" data-icon="false">
+			<option value="growth">Growth</option>
+			<option value="science">Science</option>
+			<option value="gold">Gold</option>
+			<option value="culture">Culture</option>
+			<option value="defense" selected="selected">Defense</option>
+			<option value="wonders">Wonders</option>
+		</select>
+	</div>
     <div data-role="content" id="main">
-	<!--<form>-->
+	<form>
 		<ul data-role="listview">
 			<div data-role="fieldcontain">
 	        	<fieldset data-role="controlgroup" id="task-list">
 			    </fieldset>
 			</div>
 		</ul>
-	<!--</form>-->
+	</form>
     </div>
 
     <div data-role="footer" data-position="fixed" id="tasksFooter">
-        <a data-role="button" id="toggle-all-button">Check All</a>
-        <a data-role="button" id="clear-completed">Clear Completed</a>
+		<a data-role="button" id="new-task-button">Add Task</a>
 		<a data-role="button" rel="external" href="../index.html#listsMenuPage">Back</a>
 		<!--Add something to switch to tickler/future tasks-->
       <div id="task-count"></div>
