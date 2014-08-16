@@ -23,6 +23,7 @@ function displayTaskListTool() {
     var htmlToAdd = '';
     
     htmlToAdd += '<button onclick="newTaskButtonClicked()">New Task</button>';
+    htmlToAdd += '<button onclick="clearCompletedButtonClicked()">Clear completed</button>';
     htmlToAdd += '<div id="newTaskForm"></div>';
     htmlToAdd += '<div id="taskListDiv"></div>';
     
@@ -50,6 +51,16 @@ function displayTaskList() {
         document.getElementById('taskListDiv').innerHTML += htmlToAdd;
         
     }
+}
+
+function displayProjectListTool() {
+    var htmlToAdd = '';
+    
+    htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
+    htmlToAdd += '<button onclick="addProjectButtonClicked()">Add Project</button>';
+    htmlToAdd += '<div id="projectListDiv"></div>';
+
+    document.getElementById('projectListTool').innerHTML = htmlToAdd;    
 }
 
 function displayProjectList() {

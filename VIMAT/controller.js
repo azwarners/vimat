@@ -34,6 +34,16 @@ function taskListHeaderClicked() {
     }
 }
 
+function projectListHeaderClicked() {
+    if (document.getElementById('projectListTool').innerHTML) {
+        document.getElementById('projectListTool').innerHTML = '';
+    }
+    else {
+        displayProjectListTool();
+        displayProjectList();
+    }
+}
+
 function addTaskButtonClicked() {
     var task = new Task(document.getElementById("taskInput").value);
     hideNewTaskForm();
@@ -60,4 +70,16 @@ function addProjectButtonClicked() {
 
 function newTaskButtonClicked(){
     displayNewTaskForm();
+}
+
+function clearCompletedButtonClicked() {
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].finished) {
+            tasks.splice(i, 1);
+            i--;
+        }
+    }
+
+    persistTasks();
+    displayTaskList();
 }
