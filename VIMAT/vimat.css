@@ -1,0 +1,8 @@
+body {
+    background-image: url("resources/woodgrain.png");
+    width: 400px;
+    word-wrap: break-word; /*Still not quite happy about this
+        it doesn't seem to work in Chrome on my netbook,
+        although it works fine on my android phone and tablet (both galaxies)*/
+    /*word-break: break-all;*/ /*this was recommended by some, but didn't help */
+}
