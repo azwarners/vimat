@@ -48,7 +48,7 @@ function addTaskButtonClicked() {
     var task = new Task(document.getElementById("taskInput").value);
     hideNewTaskForm();
     tasks.push(task);
-    persistTasks();
+    saveTasks();
     displayTaskList();
 }
 
@@ -56,14 +56,14 @@ function checkBoxChanged(e) {
     var et = e.currentTarget;
     var t = et.id;
     tasks[t].finished = document.getElementById(t).checked;
-    persistTasks();
+    saveTasks();
 }
 
 function addProjectButtonClicked() {
     var project = new Project(document.getElementById("projectInput").value);
     hideNewProjectForm();
     projects.push(project);
-    persistProjects();
+    saveProjects();
     displayProjectList();
 }
 
@@ -83,12 +83,24 @@ function clearCompletedButtonClicked() {
         }
     }
 
-    persistTasks();
+    saveTasks();
     displayTaskList();
 }
 
 function taskClicked(e) {
     var et = e.currentTarget;
+    
+    // id of <span> containing task description that was clicked
     var t = et.id;
-    // edit the task
+    displayEditTaskForm(t);
+}
+
+function editTaskButtonClicked() {
+    // index of the current task in the array
+    var t = currentTaskBeingEdited.slice(2);
+
+    tasks[t].description = document.getElementById("taskInput").value;
+    saveTasks();
+    displayTaskList();
+    // hideEditTaskForm(currentTaskBeingEdited);
 }

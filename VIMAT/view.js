@@ -46,29 +46,37 @@ function taskListToolIsDisplayed() {
 }
 
 function displayTaskList() {
-    var htmlToAdd = '';
+    // creating a string to insert into the <div> container for the task list
+    var htmlToAdd;
+    
+    // clearing the <div> for the new string
     document.getElementById('taskListDiv').innerHTML = '';
+    
+    // iterating through the task list array to build the string
     for (var i in tasks) {
         
-        //checkbox
+        // checkbox
         htmlToAdd = '<input type="checkbox" ';
         htmlToAdd += 'onchange="checkBoxChanged(event)" ';
-        htmlToAdd += 'id="';
-        htmlToAdd += i + '"';
+        htmlToAdd += 'id="' + i + '"';
         if (tasks[i].finished){
             htmlToAdd += ' checked';
         }
         htmlToAdd += '>';
         
-        //description
+        // description
         htmlToAdd += '<span onclick="taskClicked(event)" id="td';
         htmlToAdd += i + '">';
         htmlToAdd += (tasks[i].description).toString();
         htmlToAdd += '</span>';
         
-        //line break
+        // line break
         htmlToAdd += '<br/>';
         
+        // container for an optional edit form
+        htmlToAdd += '<div id="ef' + i.toString() + '"></div><br/>';
+        
+        // put the task on the page
         document.getElementById('taskListDiv').innerHTML += htmlToAdd;
     }
 }
@@ -86,12 +94,35 @@ function hideNewTaskForm() {
     document.getElementById('newTaskForm').innerHTML = '';
 }
 
-function displayEditTaskForm() {
+var editTaskFormIsDisplayed = false;
+
+// id of task description <span> of task being edited
+var currentTaskBeingEdited;
+
+function displayEditTaskForm(t) {
+    hideNewTaskForm();
+    if (editTaskFormIsDisplayed) {
+        hideEditTaskForm(currentTaskBeingEdited);
+    }
+
+    // tasks[] index of the task being edited    
+    var i = parseInt(t.slice(2), 10);
     
+    var htmlToAdd = '';
+    
+    htmlToAdd += 'Description: <input type="text" id="taskInput"';
+    htmlToAdd += ' value="' + tasks[i].description + '"/>';
+    htmlToAdd += '<button onclick="editTaskButtonClicked()">Save Changes</button>';
+    
+    var ef = 'ef' + i.toString();
+    document.getElementById(ef).innerHTML = htmlToAdd;
+    
+    editTaskFormIsDisplayed = true;
+    currentTaskBeingEdited = t;
 }
 
-function hideEditTaskForm() {
-    
+function hideEditTaskForm(t) {
+    document.getElementById('ef' + t.slice(2)).innerHTML = '';
 }
 
 // Projects

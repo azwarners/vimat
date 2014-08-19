@@ -38,10 +38,10 @@ function loadData(){
     }
 }
 
-function persistTasks(){
+function saveTasks(){
     localStorage.tasksdb = JSON.stringify(tasks);
 }
 
-function persistProjects(){
+function saveProjects(){
     localStorage.projectsdb = JSON.stringify(projects);
 }
