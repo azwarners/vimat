@@ -47,9 +47,10 @@ function taskListToolIsDisplayed() {
 
 function displayTaskList() {
     var htmlToAdd = '';
-
+    document.getElementById('taskListDiv').innerHTML = '';
     for (var i in tasks) {
         
+        //checkbox
         htmlToAdd = '<input type="checkbox" ';
         htmlToAdd += 'onchange="checkBoxChanged(event)" ';
         htmlToAdd += 'id="';
@@ -59,16 +60,20 @@ function displayTaskList() {
         }
         htmlToAdd += '>';
         
+        //description
+        htmlToAdd += '<span onclick="taskClicked(event)" id="td';
+        htmlToAdd += i + '">';
         htmlToAdd += (tasks[i].description).toString();
+        htmlToAdd += '</span>';
         
+        //line break
         htmlToAdd += '<br/>';
         
-        document.getElementById('taskListDiv').innerHTML = htmlToAdd;
-        
+        document.getElementById('taskListDiv').innerHTML += htmlToAdd;
     }
 }
 
-function displayNewTaskForm(){
+function displayNewTaskForm() {
     var htmlToAdd = '';
     
     htmlToAdd += 'Enter a task: <input type="text" id="taskInput"/>';
@@ -77,8 +82,16 @@ function displayNewTaskForm(){
     document.getElementById('newTaskForm').innerHTML = htmlToAdd;
 }
 
-function hideNewTaskForm(){
+function hideNewTaskForm() {
     document.getElementById('newTaskForm').innerHTML = '';
+}
+
+function displayEditTaskForm() {
+    
+}
+
+function hideEditTaskForm() {
+    
 }
 
 // Projects
@@ -106,31 +119,21 @@ function projectListToolIsDisplayed() {
     }
 }
 
-
 function displayProjectList() {
     var htmlToAdd = '';
+    
     document.getElementById('projectListDiv').innerHTML = '';
+    
     for (var i in projects) {
-        
-        // htmlToAdd = '<input type="checkbox" ';
-        // htmlToAdd += 'onchange="checkBoxChanged(event)" ';
-        // htmlToAdd += 'id="p';
-        // htmlToAdd += i + '"';
-        // if (projects[i].finished){
-        //     htmlToAdd += ' checked';
-        // }
-        // htmlToAdd += '>';
-        
         htmlToAdd = (projects[i].description).toString();
         
         htmlToAdd += '<br/>';
         
         document.getElementById('projectListDiv').innerHTML += htmlToAdd;
-        
     }
 }
 
-function displayNewProjectForm(){
+function displayNewProjectForm() {
     var htmlToAdd = '';
     
     htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
@@ -139,7 +142,7 @@ function displayNewProjectForm(){
     document.getElementById('newProjectForm').innerHTML = htmlToAdd;
 }
 
-function hideNewProjectForm(){
+function hideNewProjectForm() {
     document.getElementById('newProjectForm').innerHTML = '';
 }
 

@@ -86,3 +86,9 @@ function clearCompletedButtonClicked() {
     persistTasks();
     displayTaskList();
 }
+
+function taskClicked(e) {
+    var et = e.currentTarget;
+    var t = et.id;
+    // edit the task
+}
