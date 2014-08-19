@@ -25,8 +25,8 @@ function initialize(){
 }
 
 function taskListHeaderClicked() {
-    if (document.getElementById('taskListTool').innerHTML) {
-        document.getElementById('taskListTool').innerHTML = '';
+    if (taskListToolIsDisplayed()) {
+        hideTaskListTool();
     }
     else {
         displayTaskListTool();   
@@ -35,8 +35,8 @@ function taskListHeaderClicked() {
 }
 
 function projectListHeaderClicked() {
-    if (document.getElementById('projectListTool').innerHTML) {
-        document.getElementById('projectListTool').innerHTML = '';
+    if (projectListToolIsDisplayed()) {
+        hideProjectListTool();
     }
     else {
         displayProjectListTool();
@@ -50,7 +50,6 @@ function addTaskButtonClicked() {
     tasks.push(task);
     persistTasks();
     displayTaskList();
-    //document.getElementById("taskInput").value='';
 }
 
 function checkBoxChanged(e) {
@@ -62,14 +61,18 @@ function checkBoxChanged(e) {
 
 function addProjectButtonClicked() {
     var project = new Project(document.getElementById("projectInput").value);
+    hideNewProjectForm();
     projects.push(project);
     persistProjects();
     displayProjectList();
-    document.getElementById("projectInput").value='';
 }
 
 function newTaskButtonClicked(){
     displayNewTaskForm();
+}
+
+function newProjectButtonClicked(){
+    displayNewProjectForm();
 }
 
 function clearCompletedButtonClicked() {

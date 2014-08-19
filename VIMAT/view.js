@@ -19,6 +19,8 @@
 	******************************************************************
 */
 
+// Tasks
+
 function displayTaskListTool() {
     var htmlToAdd = '';
     
@@ -30,9 +32,22 @@ function displayTaskListTool() {
     document.getElementById('taskListTool').innerHTML = htmlToAdd;    
 }
 
+function hideTaskListTool() {
+    document.getElementById('taskListTool').innerHTML = '';
+}
+
+function taskListToolIsDisplayed() {
+    if (document.getElementById('taskListTool').innerHTML) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 function displayTaskList() {
     var htmlToAdd = '';
-    document.getElementById('taskListDiv').innerHTML = '';
+
     for (var i in tasks) {
         
         htmlToAdd = '<input type="checkbox" ';
@@ -48,20 +63,49 @@ function displayTaskList() {
         
         htmlToAdd += '<br/>';
         
-        document.getElementById('taskListDiv').innerHTML += htmlToAdd;
+        document.getElementById('taskListDiv').innerHTML = htmlToAdd;
         
     }
 }
 
-function displayProjectListTool() {
+function displayNewTaskForm(){
     var htmlToAdd = '';
     
-    htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
-    htmlToAdd += '<button onclick="addProjectButtonClicked()">Add Project</button>';
+    htmlToAdd += 'Enter a task: <input type="text" id="taskInput"/>';
+    htmlToAdd += '<button onclick="addTaskButtonClicked()">Add Task</button>';
+    
+    document.getElementById('newTaskForm').innerHTML = htmlToAdd;
+}
+
+function hideNewTaskForm(){
+    document.getElementById('newTaskForm').innerHTML = '';
+}
+
+// Projects
+
+function displayProjectListTool() {
+    var htmlToAdd = '';
+
+    htmlToAdd += '<button onclick="newProjectButtonClicked()">New Project</button>';
+    htmlToAdd += '<div id="newProjectForm"></div>';
     htmlToAdd += '<div id="projectListDiv"></div>';
 
     document.getElementById('projectListTool').innerHTML = htmlToAdd;    
 }
+
+function hideProjectListTool() {
+    document.getElementById('projectListTool').innerHTML = '';
+}
+
+function projectListToolIsDisplayed() {
+    if (document.getElementById('projectListTool').innerHTML) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 
 function displayProjectList() {
     var htmlToAdd = '';
@@ -86,15 +130,27 @@ function displayProjectList() {
     }
 }
 
-function displayNewTaskForm(){
+function displayNewProjectForm(){
     var htmlToAdd = '';
     
-    htmlToAdd += 'Enter a task: <input type="text" id="taskInput"/>';
-    htmlToAdd += '<button onclick="addTaskButtonClicked()">Add Task</button>';
-    
-    document.getElementById('newTaskForm').innerHTML = htmlToAdd;
+    htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
+    htmlToAdd += '<button onclick="addProjectButtonClicked()">Add Project</button>';
+
+    document.getElementById('newProjectForm').innerHTML = htmlToAdd;
 }
 
-function hideNewTaskForm(){
-    document.getElementById('newTaskForm').innerHTML = '';
+function hideNewProjectForm(){
+    document.getElementById('newProjectForm').innerHTML = '';
+}
+
+// Calendar
+
+function displayCalendarTool() {
+    var htmlToAdd = '';
+    
+    htmlToAdd += 'Enter a calendar event: <input type="text" id="eventInput"/>';
+    htmlToAdd += '<button onclick="addEventButtonClicked()">Add event</button>';
+    htmlToAdd += '<div id="calendarDiv"></div>';
+
+    document.getElementById('CalendarTool').innerHTML = htmlToAdd;    
 }

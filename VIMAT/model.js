@@ -32,3 +32,10 @@ function Project(description) {
     this.description = description;
     this.finished = false;
 }
+
+var calendar = [];
+
+function Event(description) {
+    this.description = description;
+    this.date;
+}
