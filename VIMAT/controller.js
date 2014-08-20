@@ -20,9 +20,12 @@
 */
 
 function initialize(){
+    detectResolution();
     loadData();
     displayProjectList();
 }
+
+// Task List
 
 function taskListHeaderClicked() {
     if (taskListToolIsDisplayed()) {
@@ -31,16 +34,6 @@ function taskListHeaderClicked() {
     else {
         displayTaskListTool();   
         displayTaskList();
-    }
-}
-
-function projectListHeaderClicked() {
-    if (projectListToolIsDisplayed()) {
-        hideProjectListTool();
-    }
-    else {
-        displayProjectListTool();
-        displayProjectList();
     }
 }
 
@@ -59,20 +52,8 @@ function checkBoxChanged(e) {
     saveTasks();
 }
 
-function addProjectButtonClicked() {
-    var project = new Project(document.getElementById("projectInput").value);
-    hideNewProjectForm();
-    projects.push(project);
-    saveProjects();
-    displayProjectList();
-}
-
 function newTaskButtonClicked(){
     displayNewTaskForm();
-}
-
-function newProjectButtonClicked(){
-    displayNewProjectForm();
 }
 
 function clearCompletedButtonClicked() {
@@ -92,7 +73,14 @@ function taskClicked(e) {
     
     // id of <span> containing task description that was clicked
     var t = et.id;
-    displayEditTaskForm(t);
+    if (t === currentTaskBeingEdited) {
+        hideEditTaskForm(t);
+        editTaskFormIsDisplayed = false;
+        currentTaskBeingEdited = -1;
+    }
+    else {
+        displayEditTaskForm(t);
+    }
 }
 
 function editTaskButtonClicked() {
@@ -100,7 +88,32 @@ function editTaskButtonClicked() {
     var t = currentTaskBeingEdited.slice(2);
 
     tasks[t].description = document.getElementById("taskInput").value;
+    tasks[t].dueDate = document.getElementById("dueDate").value;
     saveTasks();
     displayTaskList();
-    // hideEditTaskForm(currentTaskBeingEdited);
 }
+
+// Project List
+
+function projectListHeaderClicked() {
+    if (projectListToolIsDisplayed()) {
+        hideProjectListTool();
+    }
+    else {
+        displayProjectListTool();
+        displayProjectList();
+    }
+}
+
+function addProjectButtonClicked() {
+    var project = new Project(document.getElementById("projectInput").value);
+    hideNewProjectForm();
+    projects.push(project);
+    saveProjects();
+    displayProjectList();
+}
+
+function newProjectButtonClicked(){
+    displayNewProjectForm();
+}
+

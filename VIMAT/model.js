@@ -24,6 +24,7 @@ var tasks = [];
 function Task(description) {
     this.description = description;
     this.finished = false;
+    var dueDate;
 }
 
 var projects = [];

@@ -19,6 +19,18 @@
 	******************************************************************
 */
 
+// Initialize
+
+var userWidth;
+var userHeight;
+
+function detectResolution() {
+    userWidth = screen.availWidth;
+    userHeight = screen.availHeight;
+    var w = userWidth.toString + 'px';
+    document.getElementById("body").style.width = w;
+}
+
 // Tasks
 
 function displayTaskListTool() {
@@ -68,10 +80,12 @@ function displayTaskList() {
         htmlToAdd += '<span onclick="taskClicked(event)" id="td';
         htmlToAdd += i + '">';
         htmlToAdd += (tasks[i].description).toString();
-        htmlToAdd += '</span>';
+        htmlToAdd += '</span><br/>';
         
-        // line break
-        htmlToAdd += '<br/>';
+        // due date
+        if (typeof tasks[i].dueDate != 'undefined') {
+        htmlToAdd += tasks[i].dueDate + '<br/>';
+        }
         
         // container for an optional edit form
         htmlToAdd += '<div id="ef' + i.toString() + '"></div><br/>';
@@ -110,8 +124,15 @@ function displayEditTaskForm(t) {
     
     var htmlToAdd = '';
     
+    // description text box
     htmlToAdd += 'Description: <input type="text" id="taskInput"';
-    htmlToAdd += ' value="' + tasks[i].description + '"/>';
+    htmlToAdd += ' value="' + tasks[i].description + '"/><br/>';
+    
+    // date
+    var d = new Date(); // for setting the default to today's date
+    htmlToAdd += 'Date: <input type="date" id="dueDate"><br/>';
+    
+    // save button
     htmlToAdd += '<button onclick="editTaskButtonClicked()">Save Changes</button>';
     
     var ef = 'ef' + i.toString();
