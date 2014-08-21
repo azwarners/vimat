@@ -22,13 +22,13 @@
 function initialize(){
     detectResolution();
     loadData();
-    displayProjectList();
+    applySettings();
 }
 
 // Task List
 
 function taskListHeaderClicked() {
-    if (taskListToolIsDisplayed()) {
+    if (settings.taskListToolIsDisplayed) {
         hideTaskListTool();
     }
     else {
@@ -117,3 +117,11 @@ function newProjectButtonClicked(){
     displayNewProjectForm();
 }
 
+// Settings
+
+function applySettings() {
+    if (settings.taskListToolIsDisplayed) {
+        displayTaskListTool();
+    }
+    
+}

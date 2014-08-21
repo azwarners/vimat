@@ -41,21 +41,18 @@ function displayTaskListTool() {
     htmlToAdd += '<div id="newTaskForm"></div>';
     htmlToAdd += '<div id="taskListDiv"></div>';
     
-    document.getElementById('taskListTool').innerHTML = htmlToAdd;    
+    document.getElementById('taskListTool').innerHTML = htmlToAdd;
+    
+    displayTaskList();
 }
 
 function hideTaskListTool() {
     document.getElementById('taskListTool').innerHTML = '';
+    settings.taskListToolIsDisplayed = false;
+    saveSettings();
 }
 
-function taskListToolIsDisplayed() {
-    if (document.getElementById('taskListTool').innerHTML) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
+
 
 function displayTaskList() {
     // creating a string to insert into the <div> container for the task list
@@ -92,6 +89,9 @@ function displayTaskList() {
         
         // put the task on the page
         document.getElementById('taskListDiv').innerHTML += htmlToAdd;
+        
+        settings.taskListToolIsDisplayed = true;
+        saveSettings();
     }
 }
 
@@ -209,3 +209,5 @@ function displayCalendarTool() {
 
     document.getElementById('CalendarTool').innerHTML = htmlToAdd;    
 }
+
+// Settings

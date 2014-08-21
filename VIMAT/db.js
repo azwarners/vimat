@@ -32,8 +32,15 @@ function loadData(){
             if (isArray(p)){
                 projects = p;
             }
-        } 
-    } else {
+        }
+        if (localStorage.settingsdb) {
+            var s = JSON.parse(localStorage.settingsdb);
+            if (typeof s == 'object'){
+                settings = s;
+            }
+        }
+    }
+    else {
         alert('Sorry, no local storage on this browser.');
     }
 }
@@ -44,4 +51,8 @@ function saveTasks(){
 
 function saveProjects(){
     localStorage.projectsdb = JSON.stringify(projects);
+}
+
+function saveSettings(){
+    localStorage.settingsdb = JSON.stringify(settings);
 }

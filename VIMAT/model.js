@@ -40,3 +40,9 @@ function Event(description) {
     this.description = description;
     this.date;
 }
+
+var settings = new Settings();
+
+function Settings() {
+    var taskListToolIsDisplayed = false;
+}
