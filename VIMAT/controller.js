@@ -89,6 +89,7 @@ function editTaskButtonClicked() {
 
     tasks[t].description = document.getElementById("taskInput").value;
     tasks[t].dueDate = document.getElementById("dueDate").value;
+    tasks[t].compass = document.getElementById("compass").value;
     saveTasks();
     displayTaskList();
 }

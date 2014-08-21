@@ -36,8 +36,9 @@ function detectResolution() {
 function displayTaskListTool() {
     var htmlToAdd = '';
     
-    htmlToAdd += '<button onclick="newTaskButtonClicked()">New Task</button>';
-    htmlToAdd += '<button onclick="clearCompletedButtonClicked()">Clear completed</button>';
+    htmlToAdd += '<button onclick="newTaskButtonClicked()">New<br/>Task</button>';
+    htmlToAdd += '<button onclick="clearCompletedButtonClicked()">Clear<br/>';
+    htmlToAdd += 'completed</button>';
     htmlToAdd += '<div id="newTaskForm"></div>';
     htmlToAdd += '<div id="taskListDiv"></div>';
     
@@ -79,6 +80,11 @@ function displayTaskList() {
         htmlToAdd += (tasks[i].description).toString();
         htmlToAdd += '</span><br/>';
         
+        // compass
+        if (tasks[i].compass) {
+            htmlToAdd += tasks[i].compass + '   ';
+        }
+        
         // due date
         if (typeof tasks[i].dueDate != 'undefined') {
         htmlToAdd += tasks[i].dueDate + '<br/>';
@@ -98,7 +104,7 @@ function displayTaskList() {
 function displayNewTaskForm() {
     var htmlToAdd = '';
     
-    htmlToAdd += 'Enter a task: <input type="text" id="taskInput"/>';
+    htmlToAdd += 'Enter a task:<br/><input type="text" id="taskInput"/><br/>';
     htmlToAdd += '<button onclick="addTaskButtonClicked()">Add Task</button>';
     
     document.getElementById('newTaskForm').innerHTML = htmlToAdd;
@@ -128,7 +134,17 @@ function displayEditTaskForm(t) {
     htmlToAdd += 'Description: <input type="text" id="taskInput"';
     htmlToAdd += ' value="' + tasks[i].description + '"/><br/>';
     
-    // date
+    // compass drop down
+    htmlToAdd += 'Compass: <select id="compass"><option value="Wellness">Wellness</option>';
+    htmlToAdd += '<option value="Education">Education</option>';
+    htmlToAdd += '<option value="Finance">Finance</option>';
+    htmlToAdd += '<option value="Art">Art</option>';
+    htmlToAdd += '<option value="Chores">Chores</option>';
+    htmlToAdd += '<option value="Relations">Relations</option>';
+    htmlToAdd += '<option value="Projects">Projects</option>';
+    htmlToAdd += '</select><br/>';
+    
+    // date picker
     var d = new Date(); // for setting the default to today's date
     htmlToAdd += 'Date: <input type="date" id="dueDate"><br/>';
     

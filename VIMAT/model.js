@@ -38,6 +38,7 @@ var calendar = [];
 
 function Event(description) {
     this.description = description;
+    this.compass = '';
     this.date;
 }
 
