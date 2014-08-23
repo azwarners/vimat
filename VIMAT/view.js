@@ -95,7 +95,7 @@ function displayTaskList() {
         htmlToAdd += '<div id="ef' + i.toString() + '"></div><br/>';
         
         // put the task on the page
-        if (tasks[i].dueDate <= now) {
+        if (!(tasks[i].dueDate > now)) {
             document.getElementById('taskListDiv').innerHTML += htmlToAdd;
         }
     }

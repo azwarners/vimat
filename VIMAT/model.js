@@ -24,7 +24,8 @@ var tasks = [];
 function Task(description) {
     this.description = description;
     this.finished = false;
-    var dueDate;
+    this.dueDate = new Date();
+    this.compass = 'Chores';
 }
 
 var projects = [];
@@ -42,9 +43,16 @@ function Event(description) {
     this.date;
 }
 
-var settings = new Settings();
 
 function Settings() {
+    
+    // task list
+    var defaultTaskDueDate = new Date();
+    var defaultTaskCompass = 'Chores';
     var taskListToolIsDisplayed = false;
+    
+    // tickler
     var ticklerToolIsDisplayed = false;
 }
+
+var settings = new Settings();
