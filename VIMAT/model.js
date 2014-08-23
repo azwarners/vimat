@@ -46,4 +46,5 @@ var settings = new Settings();
 
 function Settings() {
     var taskListToolIsDisplayed = false;
+    var ticklerToolIsDisplayed = false;
 }

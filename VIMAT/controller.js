@@ -22,7 +22,17 @@
 function initialize(){
     detectResolution();
     loadData();
+    fixDates();
     applySettings();
+}
+
+// tempory code to fix old dueDates being saved as strings instead of dates
+function fixDates() {
+    for (var i in tasks) {
+        if (typeof tasks[i].dueDate === 'string') {
+            tasks[i].dueDate = new Date(tasks[i].dueDate);
+        }
+    }
 }
 
 // Task List
@@ -88,11 +98,24 @@ function editTaskButtonClicked() {
     var t = currentTaskBeingEdited.slice(2);
 
     tasks[t].description = document.getElementById("taskInput").value;
-    tasks[t].dueDate = document.getElementById("dueDate").value;
+    tasks[t].dueDate = new Date(document.getElementById("dueDate").value);
     tasks[t].compass = document.getElementById("compass").value;
     saveTasks();
     displayTaskList();
 }
+
+// Tickler
+
+function ticklerHeaderClicked() {
+    if (settings.ticklerToolIsDisplayed) {
+        hideTicklerTool();
+    }
+    else {
+        displayTicklerTool();   
+        displayTickler();
+    }
+}
+
 
 // Project List
 
@@ -121,8 +144,12 @@ function newProjectButtonClicked(){
 // Settings
 
 function applySettings() {
+    
     if (settings.taskListToolIsDisplayed) {
         displayTaskListTool();
     }
     
+    if (settings.ticklerToolIsDisplayed) {
+        displayTicklerTool();
+    }
 }

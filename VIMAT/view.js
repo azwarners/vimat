@@ -27,8 +27,8 @@ var userHeight;
 function detectResolution() {
     userWidth = screen.availWidth;
     userHeight = screen.availHeight;
-    var w = userWidth.toString + 'px';
-    document.getElementById("body").style.width = w;
+    // var w = userWidth.toString + 'px';
+    // document.getElementById("body").style.width = w;
 }
 
 // Tasks
@@ -53,14 +53,15 @@ function hideTaskListTool() {
     saveSettings();
 }
 
-
-
 function displayTaskList() {
     // creating a string to insert into the <div> container for the task list
     var htmlToAdd;
     
     // clearing the <div> for the new string
     document.getElementById('taskListDiv').innerHTML = '';
+    
+    // creating a variable with the current time/date stamp for comparing
+    var now = new Date();
     
     // iterating through the task list array to build the string
     for (var i in tasks) {
@@ -87,18 +88,21 @@ function displayTaskList() {
         
         // due date
         if (typeof tasks[i].dueDate != 'undefined') {
-        htmlToAdd += tasks[i].dueDate + '<br/>';
+        htmlToAdd += tasks[i].dueDate.toDateString() + '<br/>';
         }
         
         // container for an optional edit form
         htmlToAdd += '<div id="ef' + i.toString() + '"></div><br/>';
         
         // put the task on the page
-        document.getElementById('taskListDiv').innerHTML += htmlToAdd;
-        
-        settings.taskListToolIsDisplayed = true;
-        saveSettings();
+        if (tasks[i].dueDate <= now) {
+            document.getElementById('taskListDiv').innerHTML += htmlToAdd;
+        }
     }
+    
+    settings.taskListToolIsDisplayed = true;
+    saveSettings();
+
 }
 
 function displayNewTaskForm() {
@@ -162,7 +166,71 @@ function hideEditTaskForm(t) {
     document.getElementById('ef' + t.slice(2)).innerHTML = '';
 }
 
+
+// Tickler
+
+
+function displayTicklerTool() {
+    // creating a string to insert into the <div> container for the task list
+    var htmlToAdd;
+    
+    // clearing the <div> for the new string
+    // document.getElementById('taskListDiv').innerHTML = '';
+    document.getElementById('ticklerTool').innerHTML = '';
+    
+    // creating a variable with the current time/date stamp for comparing
+    var now = new Date();
+    
+    // iterating through the task list array to build the string
+    for (var i in tasks) {
+        
+        // checkbox
+        htmlToAdd = '<input type="checkbox" ';
+        htmlToAdd += 'onchange="checkBoxChanged(event)" ';
+        htmlToAdd += 'id="' + i + '"';
+        if (tasks[i].finished){
+            htmlToAdd += ' checked';
+        }
+        htmlToAdd += '>';
+        
+        // description
+        htmlToAdd += '<span onclick="taskClicked(event)" id="td';
+        htmlToAdd += i + '">';
+        htmlToAdd += (tasks[i].description).toString();
+        htmlToAdd += '</span><br/>';
+        
+        // compass
+        if (tasks[i].compass) {
+            htmlToAdd += tasks[i].compass + '   ';
+        }
+        
+        // due date
+        if (typeof tasks[i].dueDate != 'undefined') {
+        htmlToAdd += tasks[i].dueDate.toDateString() + '<br/>';
+        }
+        
+        // container for an optional edit form
+        htmlToAdd += '<div id="ef' + i.toString() + '"></div><br/>';
+        
+        // put the task on the page
+        if (tasks[i].dueDate > now) {
+            document.getElementById('ticklerTool').innerHTML += htmlToAdd;
+        }
+    }
+
+    settings.ticklerToolIsDisplayed = true;
+    saveSettings();
+
+}
+
+function hideTicklerTool() {
+    document.getElementById('ticklerTool').innerHTML = '';
+    settings.ticklerToolIsDisplayed = false;
+    saveSettings();
+}
+
 // Projects
+
 
 function displayProjectListTool() {
     var htmlToAdd = '';
@@ -214,7 +282,9 @@ function hideNewProjectForm() {
     document.getElementById('newProjectForm').innerHTML = '';
 }
 
+
 // Calendar
+
 
 function displayCalendarTool() {
     var htmlToAdd = '';
@@ -225,5 +295,6 @@ function displayCalendarTool() {
 
     document.getElementById('CalendarTool').innerHTML = htmlToAdd;    
 }
+
 
 // Settings
