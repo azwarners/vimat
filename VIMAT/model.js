@@ -19,40 +19,75 @@
 	******************************************************************
 */
 
+// tasks
+
+
 var tasks = [];
 
 function Task(description) {
     this.description = description;
     this.finished = false;
-    this.dueDate = new Date();
+    this.dueDate = '';
     this.compass = 'Chores';
 }
+
+
+// projects
+
 
 var projects = [];
 
 function Project(description) {
     this.description = description;
     this.finished = false;
+    var projectTasks = [];
 }
+
+
+// calendar
+
 
 var calendar = [];
 
 function Event(description) {
     this.description = description;
-    this.compass = '';
     this.date;
 }
+
+
+// Notes
+
+
+function Note(description, content) {
+    this.description = description;
+    this.content = content;
+    var project;
+}
+
+var notes = [];
+
+// settings
 
 
 function Settings() {
     
     // task list
-    var defaultTaskDueDate = new Date();
+    var defaultTaskDueDate = '';
     var defaultTaskCompass = 'Chores';
     var taskListToolIsDisplayed = false;
     
     // tickler
     var ticklerToolIsDisplayed = false;
+    
+    // calendar
+    var calendarToolIsDisplayed = false;
+    
+    // compass
+    var compassToolIsDisplayed = false;
+
+    // notes
+    var notesToolIsDisplayed = false;
+
 }
 
 var settings = new Settings();

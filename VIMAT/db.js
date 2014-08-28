@@ -33,6 +33,12 @@ function loadData(){
                 projects = p;
             }
         }
+        if (localStorage.notesdb) {
+            var n = JSON.parse(localStorage.notesdb);
+            if (isArray(n)){
+                notes = n;
+            }
+        }
         if (localStorage.settingsdb) {
             var s = JSON.parse(localStorage.settingsdb);
             if (typeof s == 'object'){
@@ -51,6 +57,10 @@ function saveTasks(){
 
 function saveProjects(){
     localStorage.projectsdb = JSON.stringify(projects);
+}
+
+function saveNotes() {
+    localStorage.notesdb = JSON.stringify(notes);
 }
 
 function saveSettings(){

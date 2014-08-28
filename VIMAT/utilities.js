@@ -19,6 +19,25 @@
 	******************************************************************
 */
 
+
+// View
+
+
+function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
+    var h = '<input type="checkbox" ';
+    h += 'onchange="' + onChange + '" ';
+    h += 'id="' + checkBoxId + '"';
+    if (checked){
+        h += ' checked';
+    }
+    h += '>';
+    return (h);
+}
+
+
+// General
+
+
 // Thanks to w3schools for this one
 // http://www.w3schools.com/js/js_arrays.asp
 function isArray(myArray) {

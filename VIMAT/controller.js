@@ -20,20 +20,20 @@
 */
 
 function initialize(){
-    detectResolution();
+    // detectResolution();
     loadData();
-    fixDates();
+    // fixDates()
     applySettings();
 }
 
 // tempory code to fix old dueDates being saved as strings instead of dates
-function fixDates() {
-    for (var i in tasks) {
-        if (typeof tasks[i].dueDate === 'string') {
-            tasks[i].dueDate = new Date(tasks[i].dueDate);
-        }
-    }
-}
+// function fixDates() {
+//     for (var i in tasks) {
+//         if (typeof tasks[i].dueDate === 'string') {
+//             tasks[i].dueDate = (new Date(tasks[i].dueDate)).toJSON();
+//         }
+//     }
+// }
 
 // Task List
 
@@ -53,6 +53,9 @@ function addTaskButtonClicked() {
     tasks.push(task);
     saveTasks();
     displayTaskList();
+    if (settings.ticklerToolIsDisplayed) {
+        displayTicklerTool();
+    }
 }
 
 function checkBoxChanged(e) {
@@ -73,8 +76,27 @@ function clearCompletedButtonClicked() {
             i--;
         }
     }
-
     saveTasks();
+    displayTaskList();
+}
+
+function moveToProjectButtonClicked() {
+    var targetProject;
+    // find out what project the tasks are going into
+
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].finished) {
+            // add the task to the selected project's task list
+            
+            // remove the task from the task list
+            tasks.splice(i, 1);
+            
+            i--;
+        }
+    }
+    
+    saveTasks();
+    // saveProjects;
     displayTaskList();
 }
 
@@ -98,7 +120,7 @@ function editTaskButtonClicked() {
     var t = currentTaskBeingEdited.slice(2);
 
     tasks[t].description = document.getElementById("taskInput").value;
-    tasks[t].dueDate = new Date(document.getElementById("dueDate").value);
+    tasks[t].dueDate = (new Date(document.getElementById("dueDate").value)).toJSON();
     tasks[t].compass = document.getElementById("compass").value;
     saveTasks();
     displayTaskList();
@@ -112,8 +134,48 @@ function ticklerHeaderClicked() {
     }
     else {
         displayTicklerTool();   
-        displayTickler();
     }
+}
+
+
+// Compass
+
+
+function compassHeaderClicked() {
+    if (settings.compassToolIsDisplayed) {
+        hideCompassTool();
+    }
+    else {
+        displayCompassTool();
+    }
+    saveSettings();
+}
+
+
+// Notes
+
+
+function notesHeaderClicked() {
+    if (settings.notesToolIsDisplayed) {
+        hideNotesTool();
+    }
+    else {
+        displayNotesTool();
+    }
+    saveSettings();
+}
+
+function newNoteButtonClicked(){
+    displayNewNoteForm();
+}
+
+function addNoteButtonClicked() {
+    var note = new Note(document.getElementById("noteDescriptionInput").value,
+        document.getElementById("noteContentInput").value);
+    hideNewNoteForm();
+    notes.push(note);
+    saveNotes();
+    displayNotes();
 }
 
 
@@ -141,7 +203,23 @@ function newProjectButtonClicked(){
     displayNewProjectForm();
 }
 
+
+// calendar
+
+
+function calendarHeaderClicked() {
+    if (calendarToolIsDisplayed()) {
+        hideCalendarTool();
+    }
+    else {
+        displayCalendarTool();
+        displayCalendar();
+    }
+}
+
+
 // Settings
+
 
 function applySettings() {
     
