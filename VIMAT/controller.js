@@ -152,6 +152,116 @@ function compassHeaderClicked() {
 }
 
 
+// Time Tracker
+
+
+function punchIn(e) {
+    var et = e.currentTarget;
+    var punchInId = et.id;
+    var dt = new Date();
+    var tt;
+    
+    if (punchInId === 'piw') {    
+        tt = new TrackedTime(dt, 'Wellness');
+    }
+    if (punchInId === 'pie') {
+        tt = new TrackedTime(dt, 'Education');
+    }
+    if (punchInId === 'pif') {
+        tt = new TrackedTime(dt, 'Finance');
+    }
+    if (punchInId === 'pia') {
+        tt = new TrackedTime(dt, 'Art');
+    }
+    if (punchInId === 'pic') {
+        tt = new TrackedTime(dt, 'Chores');        
+    }
+    if (punchInId === 'pir') {
+        tt = new TrackedTime(dt, 'Relations');        
+    }
+    if (punchInId === 'pip') {
+        tt = new TrackedTime(dt, 'Projects');        
+    }
+    if (punchInId === 'pit') {
+        tt = new TrackedTime(dt, 'Tools');        
+    }
+
+    trackedTimes.push(tt);
+    var ttVarForCompass = setInterval(function () {displayTimeTrackerStatsForCompass()}, 1000);
+}
+
+function punchOut(e) {
+    var et = e.currentTarget;
+    var punchOutId = et.id;
+    var dt = new Date();
+
+    if (punchOutId === 'pow') {    
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Wellness') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'poe') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Education') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'pof') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Finance') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'poa') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Art') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'poc') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Chores') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'por') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Relations') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'pop') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Projects') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+    if (punchOutId === 'pot') {
+        for (var i in trackedTimes) {
+            if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Tools') {
+                trackedTimes[i].endTime = dt;
+                break;
+            }
+        }
+    }
+}
+
+
 // Notes
 
 

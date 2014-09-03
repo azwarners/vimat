@@ -262,25 +262,44 @@ function displayCompassTool() {
     
     document.getElementById('compassTool').innerHTML = '';
     
-    h += '<h3>Wellness</h3><div id="wellness"></div>';
-    h += '<h3>Education</h3><div id="education"></div>';
-    h += '<h3>Finance</h3><div id="finance"></div>';
-    h += '<h3>Art</h3><div id="art"></div>';
-    h += '<h3>Chores</h3><div id="chores"></div>';
-    h += '<h3>Relations</h3><div id="relations"></div>';
-    h += '<h3>Projects</h3><div id="projects"></div>';
-    h += '<h3>Tools</h3><div id="tools"></div>';
+    h += '<h3 id="wellnessHeader"></h3><button onclick="punchIn(event)" id="piw">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pow">Punch<br/>Out</button><div id="wellness"></div>';
     
+    h += '<h3 id="educationHeader"></h3><button onclick="punchIn(event)" id="pie">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poe">Punch<br/>Out</button><div id="education"></div>';
+    
+    h += '<h3 id="financeHeader"></h3><button onclick="punchIn(event)" id="pif">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pof">Punch<br/>Out</button><div id="finance"></div>';
+    
+    h += '<h3 id="artHeader"></h3><button onclick="punchIn(event)" id="pia">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poa">Punch<br/>Out</button><div id="art"></div>';
+    
+    h += '<h3 id="choresHeader"></h3><button onclick="punchIn(event)" id="pic">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poc">Punch<br/>Out</button><div id="chores"></div>';
+    
+    h += '<h3 id="relationsHeader"></h3><button onclick="punchIn(event)" id="pir">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="por">Punch<br/>Out</button><div id="relations"></div>';
+    
+    h += '<h3 id="projectsHeader"></h3><button onclick="punchIn(event)" id="pip">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pop">Punch<br/>Out</button><div id="projects"></div>';
+    
+    h += '<h3 id="toolsHeader"></h3><button onclick="punchIn(event)" id="pit">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pot">Punch<br/>Out</button><div id="tools"></div>';
+
     document.getElementById('compassTool').innerHTML = h;
     
     displayCompass();
     
-    settings.compassToolIsDisplayed = true;
+    displayTimeTrackerStatsForCompass();
     
+    settings.compassToolIsDisplayed = true;
 }
 
 function hideCompassTool() {
     document.getElementById('compassTool').innerHTML = '';
+    // if (ttVarForCompass) {
+    //     window.clearInterval(ttVarForCompass);
+    // }
     settings.compassToolIsDisplayed = false;
 }
 
@@ -338,6 +357,53 @@ function displayCompass() {
                 document.getElementById('tools').innerHTML += htm;
             }
         }
+    }
+}
+
+
+// Time tracker
+
+
+function displayTimeTrackerStatsForCompass() {
+    var stats = timeTrackerStatsForCompass();
+    for (var i in stats) {
+        switch (i) {
+            case '0':
+                document.getElementById("wellnessHeader").innerHTML = 'Wellness   ' + stats[i];
+                break;
+            
+            case '1':
+                document.getElementById("educationHeader").innerHTML = 'Education   ' + stats[i];
+                break;
+
+            case '2':
+                document.getElementById("financeHeader").innerHTML = 'Finance   ' + stats[i];
+                break;
+
+            case '3':
+                document.getElementById("artHeader").innerHTML = 'Art   ' + stats[i];
+                break;
+
+            case '4':
+                document.getElementById("choresHeader").innerHTML = 'Chores   ' + stats[i];
+                break;
+
+            case '5':
+                document.getElementById("relationsHeader").innerHTML = 'Relations   ' + stats[i];
+                break;
+
+            case '6':
+                document.getElementById("projectsHeader").innerHTML = 'Projects   ' + stats[i];
+                break;
+
+            case '7':
+                document.getElementById("toolsHeader").innerHTML = 'Tools   ' + stats[i];
+                break;
+
+            default:
+                break;
+        }
+        
     }
 }
 
