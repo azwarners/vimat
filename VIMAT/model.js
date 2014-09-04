@@ -42,6 +42,7 @@ var msInWeek = msInDay * 7;
 var msInMonth = msInWeek * (13/4);
 
 function TrackedTime(st, c) {
+    // expects a JSON time/date string for st and a string for c
     this.startTime = st;
     this.endTime;
     this.compass = c;
@@ -57,40 +58,38 @@ function timeTrackerStatsForCompass() {
         var w = 0;
         var m = 0;
         for (var i in trackedTimes) {
+            alert(dt - new Date(trackedTimes[i].startTime) + msInMonth);
             if (trackedTimes[i].compass === compassCategories[j]) {
-                if (dt - trackedTimes[i].startTime < msInMonth) {
+                if (dt - new Date(trackedTimes[i].startTime) < msInMonth) {
                     if (trackedTimes[i].endTime) {
-                        m += (trackedTimes[i].endTime - trackedTimes[i].startTime) / 60000;
+                        m += (new Date(trackedTimes[i].endTime) - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                     else {
-                        m += (dt - trackedTimes[i].startTime) / 60000;
+                        m += (dt - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                 }
-                if (dt - trackedTimes[i].startTime < msInWeek) {
+                if (dt - new Date(trackedTimes[i].startTime) < msInWeek) {
                     if (trackedTimes[i].endTime) {
-                        w += (trackedTimes[i].endTime - trackedTimes[i].startTime) / 60000;
+                        w += (new Date(trackedTimes[i].endTime) - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                     else {
-                        w += (dt - trackedTimes[i].startTime) / 60000;
+                        w += (dt - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                 }
-                if (dt - trackedTimes[i].startTime < msInDay) {
+                if (dt - new Date(trackedTimes[i].startTime) < msInDay) {
                     if (trackedTimes[i].endTime) {
-                        d += (trackedTimes[i].endTime - trackedTimes[i].startTime) / 60000;
-                        ds += ((trackedTimes[i].endTime - trackedTimes[i].startTime) / 1000) % 60;
+                        d += (new Date(trackedTimes[i].endTime) - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                     else {
-                        d += (dt - trackedTimes[i].startTime) / 60000;
-                        ds += ((dt - trackedTimes[i].startTime) / 1000) % 60;
+                        d += (dt - new Date(trackedTimes[i].startTime)) / 60000;
                     }
                 }
             }
         }
-        
+        ds = (d - Math.floor(d)) * 60;
         if (ds < 10) {
             ds = '0' + Math.floor(ds).toString();
-            // h += d.toFixed(0) + ':' + ds + ' / W ' + w.toFixed(0) + ' / M ' + m.toFixed(0);
-            h += Math.floor(d) + ':' + ds + ' / W ' +Math.floor(w) + ' / M ' + Math.floor(m);
+            h += Math.floor(d) + ':' + ds + ' / W ' + Math.floor(w) + ' / M ' + Math.floor(m);
         }
         else {
             // h += d.toFixed(0) + ':' + ds.toFixed(0) + ' / W ' + w.toFixed(0) + ' / M ' + m.toFixed(0);

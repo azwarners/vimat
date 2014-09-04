@@ -39,6 +39,12 @@ function loadData(){
                 notes = n;
             }
         }
+        if (localStorage.trackedTimesdb) {
+            var tt = JSON.parse(localStorage.trackedTimesdb);
+            if (isArray(tt)){
+                trackedTimes = tt;
+            }
+        }
         if (localStorage.settingsdb) {
             var s = JSON.parse(localStorage.settingsdb);
             if (typeof s == 'object'){
@@ -61,6 +67,10 @@ function saveProjects(){
 
 function saveNotes() {
     localStorage.notesdb = JSON.stringify(notes);
+}
+
+function saveTrackedTimes() {
+    localStorage.trackedTimesdb = JSON.stringify(trackedTimes);
 }
 
 function saveSettings(){

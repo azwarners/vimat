@@ -158,7 +158,8 @@ function compassHeaderClicked() {
 function punchIn(e) {
     var et = e.currentTarget;
     var punchInId = et.id;
-    var dt = new Date();
+    var d = new Date();
+    var dt = d.toJSON();
     var tt;
     
     if (punchInId === 'piw') {    
@@ -187,18 +188,27 @@ function punchIn(e) {
     }
 
     trackedTimes.push(tt);
+    saveTrackedTimes(trackedTimes);
+    
     var ttVarForCompass = setInterval(function () {displayTimeTrackerStatsForCompass()}, 1000);
+    var ttstest = '';
+    for (var i in trackedTimes) {
+        ttstest += trackedTimes[i].startTime + trackedTimes[i].endTime + '\n';    
+    }
+    alert(ttstest);
 }
 
 function punchOut(e) {
     var et = e.currentTarget;
     var punchOutId = et.id;
-    var dt = new Date();
+    var d = new Date();
+    var dt = d.toJSON();
 
     if (punchOutId === 'pow') {    
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Wellness') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -207,6 +217,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Education') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -215,6 +226,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Finance') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -223,6 +235,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Art') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -231,6 +244,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Chores') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -239,6 +253,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Relations') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -247,6 +262,7 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Projects') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
@@ -255,10 +271,12 @@ function punchOut(e) {
         for (var i in trackedTimes) {
             if (trackedTimes[i].startTime && !trackedTimes[i].endTime && trackedTimes[i].compass === 'Tools') {
                 trackedTimes[i].endTime = dt;
+                saveTrackedTimes(trackedTimes);
                 break;
             }
         }
     }
+    
 }
 
 
