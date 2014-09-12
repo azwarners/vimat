@@ -58,7 +58,6 @@ function timeTrackerStatsForCompass() {
         var w = 0;
         var m = 0;
         for (var i in trackedTimes) {
-            alert(dt - new Date(trackedTimes[i].startTime) + msInMonth);
             if (trackedTimes[i].compass === compassCategories[j]) {
                 if (dt - new Date(trackedTimes[i].startTime) < msInMonth) {
                     if (trackedTimes[i].endTime) {
@@ -92,7 +91,6 @@ function timeTrackerStatsForCompass() {
             h += Math.floor(d) + ':' + ds + ' / W ' + Math.floor(w) + ' / M ' + Math.floor(m);
         }
         else {
-            // h += d.toFixed(0) + ':' + ds.toFixed(0) + ' / W ' + w.toFixed(0) + ' / M ' + m.toFixed(0);
             h += Math.floor(d) + ':' + Math.floor(ds) + ' / W ' + Math.floor(w) + ' / M ' + Math.floor(m);
     
         }

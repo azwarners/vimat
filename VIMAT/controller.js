@@ -19,6 +19,12 @@
 	******************************************************************
 */
 
+// Root Namespace
+var VIMAT = VIMAT || {};
+
+// Create the namespace for the task list
+VIMAT.createNS("VIMAT.CONTROLLER");
+
 function initialize(){
     // detectResolution();
     loadData();
@@ -195,7 +201,6 @@ function punchIn(e) {
     for (var i in trackedTimes) {
         ttstest += trackedTimes[i].startTime + trackedTimes[i].endTime + '\n';    
     }
-    alert(ttstest);
 }
 
 function punchOut(e) {
