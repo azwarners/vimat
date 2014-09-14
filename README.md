@@ -15,7 +15,4 @@ v14.37
         Notes (a tool for adding notes)
         Time Tracker (data for which is displayed within various tools)
         
-    Other work:
-        Refactored to include namespaces
-            Followed Kenneth Truyers' namespace and module tutorial:
-                http://www.kenneth-truyers.net/2013/04/27/javascript-namespaces-and-modules/
+    New branch for modules and tests
