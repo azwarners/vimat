@@ -32,15 +32,6 @@ function initialize(){
     applySettings();
 }
 
-// tempory code to fix old dueDates being saved as strings instead of dates
-// function fixDates() {
-//     for (var i in tasks) {
-//         if (typeof tasks[i].dueDate === 'string') {
-//             tasks[i].dueDate = (new Date(tasks[i].dueDate)).toJSON();
-//         }
-//     }
-// }
-
 // Task List
 
 function taskListHeaderClicked() {
@@ -51,6 +42,11 @@ function taskListHeaderClicked() {
         displayTaskListTool();   
         displayTaskList();
     }
+}
+
+function stringifyTasks() {
+    var t = JSON.stringify(tasks);
+    document.getElementById('divForStringify').innerHTML = '<textarea>' + t + '</textarea>';
 }
 
 function addTaskButtonClicked() {
@@ -77,9 +73,27 @@ function newTaskButtonClicked(){
 
 function clearCompletedButtonClicked() {
     for (var i = 0; i < tasks.length; i++) {
+                alert('were good');
         if (tasks[i].finished) {
-            tasks.splice(i, 1);
-            i--;
+            
+            // check to see if the task repeats before deleting it
+            if (tasks[i].repeat.repeats) {
+                // repeat the task
+                // wrong implementation for test
+                var d;
+                d = new Date(tasks[i].dueDate);
+                d.setHours(0);
+                d.setMinutes(0);
+                d.setDate(d.getDate() + 1);
+                tasks[i].dueDate = (d).toJSON();
+                tasks[i].finished = false;
+                
+            }
+            else {
+                // else delete it
+                tasks.splice(i, 1);
+                i--;
+            }
         }
     }
     saveTasks();
@@ -124,10 +138,27 @@ function taskClicked(e) {
 function editTaskButtonClicked() {
     // index of the current task in the array
     var t = currentTaskBeingEdited.slice(2);
-
+    var d;
+    
     tasks[t].description = document.getElementById("taskInput").value;
-    tasks[t].dueDate = (new Date(document.getElementById("dueDate").value)).toJSON();
+    d = new Date(document.getElementById("dueDate").value);
+    d.setHours(0);
+    d.setMinutes(0);
+    d.setDate(d.getDate() + 1);
+    tasks[t].dueDate = (d).toJSON();
     tasks[t].compass = document.getElementById("compass").value;
+    // add code to fetch information about repeating
+    if (!tasks[t].repeat) {
+        tasks[t].repeat = function () {
+            this.repeats = false;
+            this.dueOrCompletion = ""; // 'due' or 'completion' to tell from when it repeats
+            this.frequency = 0;
+            this.interval = ""; // 'day', 'week', 'month', or 'year'
+        };
+    }
+    tasks[t].repeat.repeats = document.getElementById("repeatCheckBox").checked;
+    // hideEditTaskForm(t);
+    editTaskFormIsDisplayed = false;
     saveTasks();
     displayTaskList();
 }

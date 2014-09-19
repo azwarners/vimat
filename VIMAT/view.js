@@ -31,6 +31,8 @@ function displayTaskListTool() {
     htmlToAdd += 'completed</button>';
     htmlToAdd += '<button onclick="moveToProjectButtonClicked()">Move to<br/>';
     htmlToAdd += 'project</button>';
+    htmlToAdd += '<button onclick="stringifyTasks()">Text for<br/>Export</button>';
+    htmlToAdd += '<div id="divForStringify"></div>';
     htmlToAdd += '<div id="newTaskForm"></div>';
     htmlToAdd += '<div id="taskListDiv"></div>';
     
@@ -53,6 +55,7 @@ function displayTaskList() {
     }
     
     settings.taskListToolIsDisplayed = true;
+    
     saveSettings();
 
 }
@@ -174,6 +177,15 @@ function displayEditTaskForm(t) {
     htmlToAdd += 'Date: <input type="date" id="dueDate" value="';
     htmlToAdd += tasks[i].dueDate.slice(0, 10) + '"><br/>';
     
+    // repeat
+    htmlToAdd += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"><br/>';
+    htmlToAdd += 'Repeat from: <input type="radio" name="repeatFrom" value="due">Due Date ';
+    htmlToAdd += '<input type="radio" name="repeatFrom" value="completion" checked="true">Completion Date<br/>';
+    htmlToAdd += 'Every <input type="number" id="frequency" min="1"> ';
+    htmlToAdd += '<select id="interval"><option value="day">day</option>';
+    htmlToAdd += '<option value="week">week</option><option value="month">month</option>';
+    htmlToAdd += '<option value="year">year</option></select><br/>';
+
     // save button
     htmlToAdd += '<button onclick="editTaskButtonClicked()">Save Changes</button>';
     
@@ -193,6 +205,10 @@ function hideEditTaskForm(t) {
 
 
 function displayTicklerTool() {
+    // *** Refactor display task list to require a boolean to tell the function to use
+    //      present dates or future dates and call it in here to cut repeated code
+    
+    
     // creating a string to insert into the <div> container for the task list
     var htmlToAdd;
     

@@ -1,5 +1,5 @@
 body {
-    background-image: url("resources/woodgrain.png");
+    background-color: #FFAD33;
     width: 400px;
     word-wrap: break-word; /*Still not quite happy about this
         it doesn't seem to work in Chrome on my netbook,
