@@ -19,9 +19,37 @@
 	******************************************************************
 */
 
+var VIMAT = VIMAT || {};
+
+// General
+
+VIMAT.namespace = function (ns_string) {
+    var parts = ns_string.split('.'),
+        parent = VIMAT,
+        i;
+        
+    // strip redundant leading global
+    if (parts[0] === "VIMAT") {
+        parts = parts.slice(1);
+    }
+    
+    for (i = 0; i < parts.length; i += 1) {
+        // create a property if it doesn't exist
+        if (typeof parent[parts[i]] === "undefined") {
+            parent[parts[i]] = {};
+        }
+        parent = parent[parts[i]];
+    }
+    return parent;
+};
+
+// Thanks to w3schools for this one
+// http://www.w3schools.com/js/js_arrays.asp
+function isArray(myArray) {
+    return myArray.constructor.toString().indexOf("Array") > -1;
+}
 
 // View
-
 
 function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
     var h = '<input type="checkbox" ';
@@ -35,11 +63,3 @@ function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
 }
 
 
-// General
-
-
-// Thanks to w3schools for this one
-// http://www.w3schools.com/js/js_arrays.asp
-function isArray(myArray) {
-    return myArray.constructor.toString().indexOf("Array") > -1;
-}
