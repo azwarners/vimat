@@ -5,9 +5,14 @@ a
 todo list
 
 About:
-vimat is an attempt at an integrated productivity environment
+vimat is an integrated productivity environment
 
 Changelog
+
+v14.38
+    New Features:
+        started on repeating tasks
+
 v14.37
     New features:
         Compass (guide for creating tasks and choosing which to do)

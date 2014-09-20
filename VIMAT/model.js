@@ -29,14 +29,12 @@ function Task(description) {
     this.finished = false;
     this.dueDate = '';
     this.compass = 'Chores';
-}
-
-Task.prototype.repeat = function () {
     this.repeats = false;
     this.dueOrCompletion = ''; // 'due' or 'completion' to tell from when it repeats
-    this.frequency = 0;
-    this.interval = ''; // 'day', 'week', 'month', or 'year'
-};
+    this.frequency = 0; // how often it repeats
+    this.interval = ''; // repeats every 'day', 'week', 'month', or 'year'
+}
+
 
 // time tracker
 

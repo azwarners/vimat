@@ -23,13 +23,28 @@
 var VIMAT = VIMAT || {};
 
 // Create the namespace for the task list
-VIMAT.createNS("VIMAT.CONTROLLER");
+// VIMAT.createNS("VIMAT.CONTROLLER");
 
 function initialize(){
     // detectResolution();
     loadData();
     // fixDates()
     applySettings();
+
+    // temporary code to update old tasks with repeat
+    var i,
+        s = "",
+        l = tasks.length;
+    for (i = 0; i < l; i++) {
+        if (!(typeof tasks[i].repeats === 'boolean')) {
+            tasks[i].repeats = false;
+            tasks[i].dueOrCompletion = ""; // 'due' or 'completion' to tell from when it repeats
+            tasks[i].frequency = 0;
+            tasks[i].interval = ""; // 'day', 'week', 'month', or 'year'
+            s += tasks[i].repeats;
+        }
+    }
+    alert(s);
 }
 
 // Task List
@@ -61,8 +76,9 @@ function addTaskButtonClicked() {
 }
 
 function checkBoxChanged(e) {
-    var et = e.currentTarget;
-    var t = et.id;
+    var et = e.currentTarget,
+        t = et.id;
+    
     tasks[t].finished = document.getElementById(t).checked;
     saveTasks();
 }
@@ -72,12 +88,13 @@ function newTaskButtonClicked(){
 }
 
 function clearCompletedButtonClicked() {
-    for (var i = 0; i < tasks.length; i++) {
-                alert('were good');
+    var i;
+
+    for (i = 0; i < tasks.length; i++) {
         if (tasks[i].finished) {
             
             // check to see if the task repeats before deleting it
-            if (tasks[i].repeat.repeats) {
+            if (tasks[i].repeats) {
                 // repeat the task
                 // wrong implementation for test
                 var d;
@@ -148,15 +165,7 @@ function editTaskButtonClicked() {
     tasks[t].dueDate = (d).toJSON();
     tasks[t].compass = document.getElementById("compass").value;
     // add code to fetch information about repeating
-    if (!tasks[t].repeat) {
-        tasks[t].repeat = function () {
-            this.repeats = false;
-            this.dueOrCompletion = ""; // 'due' or 'completion' to tell from when it repeats
-            this.frequency = 0;
-            this.interval = ""; // 'day', 'week', 'month', or 'year'
-        };
-    }
-    tasks[t].repeat.repeats = document.getElementById("repeatCheckBox").checked;
+    tasks[t].repeats = document.getElementById("repeatCheckBox").checked;
     // hideEditTaskForm(t);
     editTaskFormIsDisplayed = false;
     saveTasks();

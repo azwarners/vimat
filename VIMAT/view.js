@@ -68,7 +68,7 @@ function displayTaskListItemById(i) {
     var now = (new Date()).toJSON();
 
     // checkbox
-    htm += returnCheckBoxMarkup('checkBoxChanged(event)', i, tasks[i].finished);
+    htm += returnCheckBoxMarkup("checkBoxChanged(event)", i, tasks[i].finished);
 
     // description
     htm += '<span onclick="taskClicked(event)" id="td';
