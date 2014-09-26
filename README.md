@@ -9,10 +9,15 @@ vimat is an integrated productivity environment
 
 Changelog
 
+v14.9
+    Added CSS styling
+
 v14.38
     New Features:
         started on repeating tasks
         started on exporting
+        converted controller to a module
+        created a facade for the html
 
 v14.37
     New features:

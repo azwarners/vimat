@@ -23,27 +23,27 @@ function loadData(){
     if(typeof(Storage) !== "undefined") {
         if (localStorage.tasksdb) {
             var t = JSON.parse(localStorage.tasksdb);
-            if (isArray(t)){
+            // if (isArray(t)){
                 tasks = t;
-            }
+            // }
         } 
         if (localStorage.projectsdb) {
             var p = JSON.parse(localStorage.projectsdb);
-            if (isArray(p)){
+            // if (isArray(p)){
                 projects = p;
-            }
+            // }
         }
         if (localStorage.notesdb) {
             var n = JSON.parse(localStorage.notesdb);
-            if (isArray(n)){
+            // if (isArray(n)){
                 notes = n;
-            }
+            // }
         }
         if (localStorage.trackedTimesdb) {
             var tt = JSON.parse(localStorage.trackedTimesdb);
-            if (isArray(tt)){
+            // if (isArray(tt)){
                 trackedTimes = tt;
-            }
+            // }
         }
         if (localStorage.settingsdb) {
             var s = JSON.parse(localStorage.settingsdb);

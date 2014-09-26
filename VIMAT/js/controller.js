@@ -23,7 +23,11 @@ var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.CONTROLLER");
 
-// Turn this into a module
+/*
+    This module is essentially a container for functions triggered by
+        onclick events calling functions in the facade (/vimat.js).
+        Until I get a better grasp of event handlers that is.
+*/
 
 VIMAT.CONTROLLER = (function () {
     // *** Dependencies
@@ -32,7 +36,7 @@ VIMAT.CONTROLLER = (function () {
     function initialize(){
         loadData();
         applySettings();
-    
+        
         // temporary code to update old tasks with repeat
         var i,
             l = tasks.length;
@@ -73,7 +77,6 @@ VIMAT.CONTROLLER = (function () {
     function checkBoxChanged(e) {
         var et = e.currentTarget,
             t = et.id;
-        
         tasks[t].finished = document.getElementById(t).checked;
         saveTasks();
     }
@@ -316,7 +319,40 @@ VIMAT.CONTROLLER = (function () {
         saveNotes();
         displayNotes();
     }
-    
+
+    // List Of Lists
+    function listOfListsHeaderClicked() {
+        if (VIMAT.SETTINGS.LISTOFLISTS.displayed) {
+            VIMAT.VIEW.LISTOFLISTS.hideListOfListsTool();            
+        }
+        else {
+            VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
+            VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+                    VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
+        }
+    }
+    function listItemCheckBoxChanged(e) {
+        var et = e.currentTarget,
+            licbid = et.id,
+            liid = licbid.splice(0, 5);
+        // Code to change the checked value for the correct li    
+        // tasks[t].finished = document.getElementById(t).checked;
+        if (document.getElementById(li).checked) {
+            
+        }
+
+    }
+    function newItemButtonClicked() {
+        var d = document.getElementById('newItemInput').value,
+            li = new VIMAT.MODEL.LISTOFLISTS.ListItem(d);
+            VIMAT.MODEL.LISTOFLISTS.addItemToCurrentList(li);
+    }
+    function currentListChanged() {
+        var cl = document.getElementById('listSelect').value;
+        VIMAT.SETTINGS.LISTOFLISTS.setCurrentListName(cl);
+        VIMAT.VIEW.displayListByListName(cl);
+    }
+
     // Project List
     function projectListHeaderClicked() {
         if (projectListToolIsDisplayed()) {
@@ -380,6 +416,10 @@ VIMAT.CONTROLLER = (function () {
         projectListHeaderClicked:       projectListHeaderClicked,
         addProjectButtonClicked:        addProjectButtonClicked,
         newProjectButtonClicked:        newProjectButtonClicked,
-        calendarHeaderClicked:          calendarHeaderClicked
+        calendarHeaderClicked:          calendarHeaderClicked,
+        listOfListsHeaderClicked:       listOfListsHeaderClicked,
+        listItemCheckBoxChanged:        listItemCheckBoxChanged,
+        newItemButtonClicked:           newItemButtonClicked,
+        currentListChanged:             currentListChanged
     };
 }());

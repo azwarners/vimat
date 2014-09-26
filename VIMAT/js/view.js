@@ -19,13 +19,50 @@
 	******************************************************************
 */
 
+var VIMAT = VIMAT || {};
+
+VIMAT.namespace("VIMAT.VIEW.LISTOFLISTS");
+
+VIMAT.VIEW.LISTOFLISTS = (function () {
+    // *** Private Methods
+    function displayListOfListsTool() {
+        document.getElementById('listOfListsTool').innerHTML =
+                VIMAT.HTM.listOfListsTool();
+    }
+    function hideListOfListsTool() {
+        document.getElementById('listOfListsTool').innerHTML = '';
+    }
+    function displayListByListName(ln) {
+        var list = VIMAT.MODEL.LISTOFLISTS.listOfLists.getListByListName(ln),
+            l,
+            h = '',
+            i;
+        list = [].concat(list);
+        l = list.length;
+        if (l > 0) {
+            for (i = 0; i < l; i++) {
+                h += VIMAT.UTILITIES.getCheckBoxMarkup("listItemCheckBoxChanged(event)",
+                        'lolcb' + i, list[i].getChecked());
+                h += list[i].getDescription() + '<br/>';
+            }
+            document.getElementById('listOfListsListDiv').innerHTML = h;
+        }
+    }
+    
+    // *** Public API
+    return {
+        displayListOfListsTool: displayListOfListsTool,
+        hideListOfListsTool:    hideListOfListsTool,
+        displayListByListName:  displayListByListName
+    };
+}());
+
 // Initialize
 
 // Tasks
-
 function displayTaskListTool() {
     var htmlToAdd = '';
-    
+    htmlToAdd += "<style>html, body {font-size: 5px;color: #46220A;}</style>";    
     htmlToAdd += '<button onclick="newTaskButtonClicked()">New<br/>Task</button>';
     htmlToAdd += '<button onclick="clearCompletedButtonClicked()">Clear<br/>';
     htmlToAdd += 'completed</button>';
@@ -39,13 +76,11 @@ function displayTaskListTool() {
     document.getElementById('taskListTool').innerHTML = htmlToAdd;
     displayTaskList();
 }
-
 function hideTaskListTool() {
     document.getElementById('taskListTool').innerHTML = '';
     settings.taskListToolIsDisplayed = false;
     saveSettings();
 }
-
 function displayTaskList() {
     // clearing the <div> for the new string
     document.getElementById('taskListDiv').innerHTML = '';
@@ -59,7 +94,6 @@ function displayTaskList() {
     saveSettings();
 
 }
-
 function displayTaskListItemById(i) {
     // creating a string to store the html for the task list item
     var htm = '';
@@ -95,7 +129,6 @@ function displayTaskListItemById(i) {
     }
     
 }
-
 function displayNewTaskForm() {
     var htmlToAdd = '';
     
@@ -104,16 +137,11 @@ function displayNewTaskForm() {
     
     document.getElementById('newTaskForm').innerHTML = htmlToAdd;
 }
-
 function hideNewTaskForm() {
     document.getElementById('newTaskForm').innerHTML = '';
 }
-
-var editTaskFormIsDisplayed = false;
-
-// id of task description <span> of task being edited
+var editTaskFormIsDisplayed = false; // id of task description <span> of task being edited
 var currentTaskBeingEdited;
-
 function displayEditTaskForm(t) {
     hideNewTaskForm();
     if (editTaskFormIsDisplayed) {
@@ -195,15 +223,11 @@ function displayEditTaskForm(t) {
     editTaskFormIsDisplayed = true;
     currentTaskBeingEdited = t;
 }
-
 function hideEditTaskForm(t) {
     document.getElementById('ef' + t.slice(2)).innerHTML = '';
 }
 
-
 // Tickler
-
-
 function displayTicklerTool() {
     // *** Refactor display task list to require a boolean to tell the function to use
     //      present dates or future dates and call it in here to cut repeated code
@@ -260,17 +284,13 @@ function displayTicklerTool() {
     saveSettings();
 
 }
-
 function hideTicklerTool() {
     document.getElementById('ticklerTool').innerHTML = '';
     settings.ticklerToolIsDisplayed = false;
     saveSettings();
 }
 
-
 // Compass
-
-
 function displayCompassTool() {
     var h = '';
     
@@ -310,7 +330,6 @@ function displayCompassTool() {
     
     settings.compassToolIsDisplayed = true;
 }
-
 function hideCompassTool() {
     document.getElementById('compassTool').innerHTML = '';
     // if (ttVarForCompass) {
@@ -318,7 +337,6 @@ function hideCompassTool() {
     // }
     settings.compassToolIsDisplayed = false;
 }
-
 function displayCompass() {
     // creating a string to store the html for the task list item
     var htm = '';
@@ -376,10 +394,7 @@ function displayCompass() {
     }
 }
 
-
 // Time tracker
-
-
 function displayTimeTrackerStatsForCompass() {
     var stats = timeTrackerStatsForCompass();
     for (var i in stats) {
@@ -423,10 +438,7 @@ function displayTimeTrackerStatsForCompass() {
     }
 }
 
-
 // Notes
-
-
 function displayNotesTool() {
     var htmlToAdd = '';
     
@@ -444,12 +456,10 @@ function displayNotesTool() {
     settings.notesToolIsDisplayed = true;
     
 }
-
 function hideNotesTool() {
     document.getElementById('notesTool').innerHTML = '';
     settings.notesToolIsDisplayed = false;
 }
-
 function displayNotes() {
     var htm = '';
     document.getElementById('noteListDiv').innerHTML = htm;
@@ -473,7 +483,6 @@ function displayNotes() {
         document.getElementById('noteListDiv').innerHTML += htm;
     }
 }
-
 function displayNewNoteForm() {
     var htmlToAdd = '';
     
@@ -484,14 +493,11 @@ function displayNewNoteForm() {
     
     document.getElementById('newNoteForm').innerHTML = htmlToAdd;
 }
-
 function hideNewNoteForm() {
     document.getElementById('newNoteForm').innerHTML = '';
 }
 
-
 // Projects
-
 
 function displayProjectListTool() {
     var htmlToAdd = '';
@@ -502,11 +508,9 @@ function displayProjectListTool() {
 
     document.getElementById('projectListTool').innerHTML = htmlToAdd;    
 }
-
 function hideProjectListTool() {
     document.getElementById('projectListTool').innerHTML = '';
 }
-
 function projectListToolIsDisplayed() {
     if (document.getElementById('projectListTool').innerHTML) {
         return true;
@@ -515,7 +519,6 @@ function projectListToolIsDisplayed() {
         return false;
     }
 }
-
 function displayProjectList() {
     var htmlToAdd = '';
     
@@ -529,7 +532,6 @@ function displayProjectList() {
         document.getElementById('projectListDiv').innerHTML += htmlToAdd;
     }
 }
-
 function displayNewProjectForm() {
     var htmlToAdd = '';
     
@@ -538,15 +540,11 @@ function displayNewProjectForm() {
 
     document.getElementById('newProjectForm').innerHTML = htmlToAdd;
 }
-
 function hideNewProjectForm() {
     document.getElementById('newProjectForm').innerHTML = '';
 }
 
-
 // Calendar
-
-
 function displayCalendarTool() {
     var htmlToAdd = '';
     
@@ -556,6 +554,5 @@ function displayCalendarTool() {
 
     document.getElementById('CalendarTool').innerHTML = htmlToAdd;    
 }
-
 
 // Settings

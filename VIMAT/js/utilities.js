@@ -22,7 +22,6 @@
 var VIMAT = VIMAT || {};
 
 // General
-
 VIMAT.namespace = function (ns_string) {
     var parts = ns_string.split('.'),
         parent = VIMAT,
@@ -43,14 +42,15 @@ VIMAT.namespace = function (ns_string) {
     return parent;
 };
 
-// Thanks to w3schools for this one
-// http://www.w3schools.com/js/js_arrays.asp
-function isArray(myArray) {
-    return myArray.constructor.toString().indexOf("Array") > -1;
-}
+VIMAT.namespace('VIMAT.UTILITIES');
+
+VIMAT.UTILITIES.isArray = (function (myArray) {
+    // This one appears to be broken. Maybe it can be fixed.
+    // http://www.w3schools.com/js/js_arrays.asp
+    // return myArray.constructor.toString().indexOf("Array") > -1;
+}());
 
 // View
-
 function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
     var h = '<input type="checkbox" ';
     h += 'onchange="' + onChange + '" ';
@@ -61,5 +61,59 @@ function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
     h += '>';
     return (h);
 }
+VIMAT.namespace('VIMAT.UTILITIES.VIEW');
+VIMAT.UTILITIES.VIEW = (function () {
+    // *** Private method
+    function buildSelectTagFromList(list, selected, id, onchange) {
+        var l,
+            h = '<select id="' + id + '" onchange="' + onchange + '"><option value="',
+            i;
+        if (typeof list === 'object') {
+            l = list.length;
+            for (i = 0; i < l; i++) {
+                h += list[i] + '"';
+                if (list[i] === selected) {
+                    h += ' selected';
+                }
+                h += '>' + list[i] + '</option><option value="';
+            }
+        }
+        h += '</select>';
+        return h;
+    }
+    
+    // *** Public API
+    return {
+        buildSelectTagFromList: buildSelectTagFromList
+    };
+}());
+VIMAT.UTILITIES.buildSelectTagFromList = (function (list, selected, id, onchange) {
+    var l,
+        h = '<select id="' + id + '" onchange="' + onchange + '"><option value="',
+        i;
+    if (typeof list === 'object') {
+        l = list.length;
+        for (i = 0; i < l; i++) {
+            h += l[i] + '"';
+            if (l[i] === selected) {
+                h += ' selected';
+            }
+            h += '>' + l[i] + '"</option><option value="';
+        }
+    }
+    h += '</select>';
+    return h;
+}());
+VIMAT.UTILITIES.createHTMLChecklistFromVimatList = (function (list) {
+VIMAT.UTILITIES.getCheckBoxMarkup = (function (onChange, checkBoxId, checked) {
+    var h = '<input type="checkbox" ';
+    h += 'onchange="' + onChange + '" ';
+    h += 'id="' + checkBoxId + '"';
+    if (checked){
+        h += ' checked';
+    }
+    h += '>';
+    return (h);
+}());
 
-
+}());

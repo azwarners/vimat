@@ -27,34 +27,51 @@
 
         <title>vimat</title>
 
+        <meta name="viewport" content="width=min-width" maximum-scale="1.0" />
+        
         <link rel="icon" type="image/png" href="resources/rosiefavicon.png">
         <link rel="stylesheet" type="text/css" href="vimat.css">
         
         <script src="js/utilities.js"></script>
         <script src="js/controller.js"></script>
+        <script src="js/settings.js"></script>
         <script src="vimat.js"></script>
         <script src="js/model.js"></script>
+        <script src="htm/htm.js"></script>
         <script src="js/view.js"></script>
         <script src="js/db.js"></script>
 
     </head>
     
     <body onload="initialize()" id="body">
-
+        <section class="tool">
         <h1>vimat</h1>
-    
+        </section>
+        
+        <section class="tool">
         <h2 onclick="taskListHeaderClicked()">Task List</h2>
         <div id="taskListTool"></div>
+        </section>
         
+        <section class="tool">
         <h2 onclick="ticklerHeaderClicked()">Tickler</h2>
         <div id="ticklerTool"></div>
+        </section>
         
+        <section class="tool">
         <h2 onclick="compassHeaderClicked()">Compass/Timetracker</h2>
         <div id="compassTool"></div>
-
+        </section>
+        
+        <section class="tool">
         <h2 onclick="notesHeaderClicked()">Notes</h2>
         <div id="notesTool"></div>
-
+        </section>
+        
+        <!--<section class="tool">-->
+        <!--<h2 onclick="listOfListsHeaderClicked()">List Of Lists</h2>-->
+        <!--<div id="listOfListsTool"></div>-->
+        <!--</section>-->
     </body>
     
 </html>

@@ -41,102 +41,86 @@ function initialize(){
 }
 
 // Task List
-
 function taskListHeaderClicked() {
     VIMAT.CONTROLLER.taskListHeaderClicked();
 }
-
 function stringifyTasks() {
     VIMAT.CONTROLLER.stringifyTasks();
 }
-
 function addTaskButtonClicked() {
     VIMAT.CONTROLLER.addTaskButtonClicked();
 }
-
 function checkBoxChanged(e) {
     VIMAT.CONTROLLER.checkBoxChanged(e);
 }
-
 function newTaskButtonClicked(){
     VIMAT.CONTROLLER.newTaskButtonClicked();
 }
-
 function clearCompletedButtonClicked() {
     VIMAT.CONTROLLER.clearCompletedButtonClicked();
 }
-
 function moveToProjectButtonClicked() {
     VIMAT.CONTROLLER.moveToProjectButtonClicked();
 }
-
 function taskClicked(e) {
     VIMAT.CONTROLLER.taskClicked(e);
 }
-
 function editTaskButtonClicked() {
     VIMAT.CONTROLLER.editTaskButtonClicked();
 }
 
 // Tickler
-
 function ticklerHeaderClicked() {
     VIMAT.CONTROLLER.ticklerHeaderClicked();
 }
 
 // Compass
-
 function compassHeaderClicked() {
     VIMAT.CONTROLLER.compassHeaderClicked();
 }
 
-
 // Time Tracker
-
-
 function punchIn(e) {
     VIMAT.CONTROLLER.punchIn(e);
 }
-
 function punchOut(e) {
     VIMAT.CONTROLLER.punchOut(e);
 }
 
-
 // Notes
-
-
 function notesHeaderClicked() {
     VIMAT.CONTROLLER.notesHeaderClicked();
 }
-
 function newNoteButtonClicked(){
     VIMAT.CONTROLLER.newNoteButtonClicked();
 }
-
 function addNoteButtonClicked() {
     VIMAT.CONTROLLER.addNoteButtonClicked();
 }
 
-
 // Project List
-
 function projectListHeaderClicked() {
     VIMAT.CONTROLLER.projectListHeaderClicked();
 }
-
 function addProjectButtonClicked() {
     VIMAT.CONTROLLER.addProjectButtonClicked();
 }
-
 function newProjectButtonClicked(){
     VIMAT.CONTROLLER.newProjectButtonClicked();
 }
 
-
 // calendar
-
-
 function calendarHeaderClicked() {
     VIMAT.CONTROLLER.calendarHeaderClicked();
+}
+
+// List of Lists
+function listOfListsHeaderClicked() {
+    VIMAT.CONTROLLER.listOfListsHeaderClicked();
+}
+function listItemCheckBoxChanged(e) {
+    VIMAT.CONTROLLER.listItemCheckBoxChanged(e);
+}
+function newItemButtonClicked() {
+    VIMAT.CONTROLLER.newItemButtonClicked();
 }

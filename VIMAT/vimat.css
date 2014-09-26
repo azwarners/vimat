@@ -1,8 +1,51 @@
+html, body {
+    /*height:100%;*/
+    /*width:100%;*/
+    margin: 1px;
+    padding: 1px;
+    font-size: 6px;
+    color: #46220A;
+}
+
+button {
+    height: 19px;
+    font-size: 6px;
+    color: #46220A;
+    border-radius: 10px;
+    /*box-shadow: 4px 4px 5px Olive;*/
+}
+
+input {
+    height: 9px;
+    font-size: 7px;
+    color: #46220A;
+    border-radius: 10px;
+    /*box-shadow: 4px 4px 5px Olive;*/
+}
+
+select {
+    height: 11px;
+    font-size: 7px;
+    color: #46220A;
+    border-radius: 10px;
+    /*box-shadow: 4px 4px 5px Olive;*/
+}
+
 body {
-    background-color: #FFAD33;
-    width: 400px;
-    word-wrap: break-word; /*Still not quite happy about this
-        it doesn't seem to work in Chrome on my netbook,
-        although it works fine on my android phone and tablet (both galaxies)*/
-    /*word-break: break-all;*/ /*this was recommended by some, but didn't help */
+    background-color: SandyBrown;
+    word-wrap: break-word;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.tool {
+    width: 100%;
+    left: 0;
+    right: 0;
+    background-color: PaleGreen;
+    border-radius: 10px;
+    box-shadow: 4px 4px 5px Olive;
+}
+
+h1, h2 {
+    text-align: center;
 }
