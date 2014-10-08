@@ -19,7 +19,7 @@
 	******************************************************************
 */
 
-function loadData(){
+function loadData() {
     if(typeof(Storage) !== "undefined") {
         if (localStorage.tasksdb) {
             var t = JSON.parse(localStorage.tasksdb);
@@ -57,11 +57,11 @@ function loadData(){
     }
 }
 
-function saveTasks(){
+function saveTasks() {
     localStorage.tasksdb = JSON.stringify(tasks);
 }
 
-function saveProjects(){
+function saveProjects() {
     localStorage.projectsdb = JSON.stringify(projects);
 }
 
@@ -73,6 +73,6 @@ function saveTrackedTimes() {
     localStorage.trackedTimesdb = JSON.stringify(trackedTimes);
 }
 
-function saveSettings(){
+function saveSettings() {
     localStorage.settingsdb = JSON.stringify(settings);
 }

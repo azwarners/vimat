@@ -21,8 +21,9 @@
 
 var VIMAT = VIMAT || {};
 
+// List of Lists
 VIMAT.namespace("VIMAT.MODEL.LISTOFLISTS");
-VIMAT.MODEL.LISTOFLISTS.ListItem = (function (d) {
+VIMAT.MODEL.LISTOFLISTS.ListItem = function(d) {
     // *** Private Properties
     var description = d,
         checked = false;
@@ -45,14 +46,14 @@ VIMAT.MODEL.LISTOFLISTS.ListItem = (function (d) {
     }
     // *** Public API
     return {
-        checked:        checked,
+        getChecked:     getChecked,
         check:          check,
         unCheck:        unCheck,
         getDescription: getDescription,
         setDescription: setDescription
     };
-}());
-VIMAT.MODEL.LISTOFLISTS.List = (function (n) {
+};
+VIMAT.MODEL.LISTOFLISTS.List = function(n) {
     // *** Private Properties
     var arrayContent = [],
         name = n,
@@ -114,20 +115,23 @@ VIMAT.MODEL.LISTOFLISTS.List = (function (n) {
     function moveCheckedItemsToTrash() {
         
     }
+    function getLength() {
+        return arrayContent.length;
+    }
 
     // *** Public API
-    return this;
-    // return {
-    //     reusableList:       keepItemsAfterCheckedOff,
-    //     getName:            getName,
-    //     setName:            setName,
-    //     checkAll:           checkAll,
-    //     unCheckAll:         unCheckAll,
-    //     getListItemAt:      getListItemAt,
-    //     removeListItemAt:   removeListItemAt,
-    //     addListItem:        addListItem
-    // };
-}());
+    return {
+        reusableList:       keepItemsAfterCheckedOff,
+        getName:            getName,
+        setName:            setName,
+        checkAll:           checkAll,
+        unCheckAll:         unCheckAll,
+        getListItemAt:      getListItemAt,
+        removeListItemAt:   removeListItemAt,
+        addListItem:        addListItem,
+        getLength:          getLength
+    };
+};
 VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
     // *** Dependencies
 
@@ -139,7 +143,7 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
         arrayContent.push(vimatList);
     }
     function addItemToCurrentList(li) {
-        
+        arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].addListItem(li);
     }
     function getListAt(index) {
         return arrayContent[index];
@@ -173,23 +177,180 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
         }
         return list;
     }
+    function toggleCheckStateOfItemInCurrentListById(id) {
+        if (arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).getChecked()) {
+            arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).unCheck();
+        }
+        else {
+            arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).unCheck();
+        }
+    }
     
     // *** Initialization
-    // var l = new VIMAT.MODEL.LISTOFLISTS.List('Groceries');
-    // addList(l);
-    
+
     // *** Public API
     return {
-        addList:            addList,
-        getListAt:          getListAt,
-        removeListAt:       removeListAt,
-        getNumberOfLists:   getNumberOfLists,
-        getListOfListNames: getListOfListNames,
-        getListByListName:  getListByListName
+        addList:                                    addList,
+        addItemToCurrentList:                       addItemToCurrentList,
+        getListAt:                                  getListAt,
+        getListNameAt:                              getListNameAt,
+        removeListAt:                               removeListAt,
+        getNumberOfLists:                           getNumberOfLists,
+        getListOfListNames:                         getListOfListNames,
+        getListByListName:                          getListByListName,
+        toggleCheckStateOfItemInCurrentListById:    toggleCheckStateOfItemInCurrentListById
     };
 }());
 
-// tasks
+// Tasks
+VIMAT.namespace("VIMAT.MODEL.TASKLIST");
+VIMAT.MODEL.TASKLIST.Task = function(d) {
+    this.id = 0;
+    this.description = d;
+    this.finished = false;
+    this.context = '';
+    this.dueDate = '';
+    this.compass = '';
+    this.priority = '';
+    this.urgency = '';
+    this.repeats = false;
+    this.dueOrCompletion = '';
+    this.frequency = 0;
+    this.interval = '';
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getId = function () {
+    return this.id;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setId = function (i) {
+    this.id = i;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getDescription = function () {
+    return this.description;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setDescription = function (d) {
+    this.description = d;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getFinished = function () {
+    return this.finished;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setFinished = function (f) {
+    this.finished = f;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getContext = function () {
+    return this.context;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setContext = function (c) {
+    this.context = c;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getDueDate = function () {
+    return this.dueDate;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setDueDate = function (d) {
+    this.dueDate = d;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getCompass = function () {
+    return this.compass;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setCompass = function (c) {
+    this.compass = c;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getPriority = function () {
+    return this.priority;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setPriority = function (p) {
+    this.priority = p;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getUrgency = function () {
+    return this.urgency;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setUrgency = function (u) {
+    this.urgency = u;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getRepeats = function () {
+    return this.repeats;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setRepeats = function (r) {
+    this.repeats = r;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getDueOrCompletion = function () {
+    return this.dueOrCompletion;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setDueOrCompletion = function (doc) {
+    this.dueOrCompletion = doc;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getFrequency = function () {
+    return this.frequency;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setFrequency = function (f) {
+    this.frequency = f;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.getInterval = function () {
+    return this.interval;
+};
+VIMAT.MODEL.TASKLIST.Task.prototype.setInterval = function (i) {
+    this.interval = i;
+};
+VIMAT.MODEL.TASKLIST.taskList = (function () {
+    // *** Dependencies
+
+    // *** Private Properties
+    var arrayContent = [];
+
+    // *** Private methods
+    function addTask(t) {
+        arrayContent.push(t);
+    }
+    function getTaskByIndex(i) {
+        return arrayContent[i];
+    }
+    function removeTaskById(i) {
+        
+    }
+    function sortByContext() {
+        
+    }
+    function sortByCompass() {
+        
+    }
+    function sortByPriority() {
+        
+    }
+    function sortByUrgency() {
+        
+    }
+    function deleteOrRepeatCompleted() {
+        
+    }
+    function getTextForCompleted() {
+        var arrayOfSerializedTasks = [];
+        
+        return arrayOfSerializedTasks;
+    }
+    function moveCompletedToProject(projectId) {
+        
+    }
+    function getNumberOfTasks() {
+        return arrayContent.length;
+    }
+
+    // *** Initialization
+
+    // *** Public API
+    return {
+        addTask:                    addTask,
+        removeTaskById:             removeTaskById,
+        sortByContext:              sortByContext,
+        sortByCompass:              sortByCompass,
+        sortByPriority:             sortByPriority,
+        sortByUrgency:              sortByUrgency,
+        deleteOrRepeatCompleted:    deleteOrRepeatCompleted,
+        getTextForCompleted:        getTextForCompleted,
+        moveCompletedToProject:     moveCompletedToProject,
+        getNumberOfTasks:           getNumberOfTasks,
+        getTaskByIndex:             getTaskByIndex
+    };
+}());
+
 var tasks = [];
 function Task(description) {
     this.description = description;
@@ -265,19 +426,88 @@ function timeTrackerStatsForCompass() {
 }
 
 // projects
-var projects = [];
-function Project(description) {
-    this.description = description;
-    this.finished = false;
-    var projectTasks = [];
-}
+VIMAT.namespace("VIMAT.MODEL.PROJECTS");
+VIMAT.MODEL.PROJECTS.Project = function(n) {
+    // *** Private Properties
+    var name = n,
+        taskIds = [];
+    
+    // *** Private Methods
+    function getName() {
+        return name;
+    }
+    function setName(n) {
+        name = n;
+    }
+    function addTaskId(t) {
+        taskIds.push(t);
+    }
+    
+    // *** Public API
+    return {
+        getName:        getName,
+        setName:        setName,
+        addTaskId:      addTaskId
+    };
+};
+VIMAT.MODEL.PROJECTS.projectList = (function () {
+    // *** Private Properties
+    var arrayContent = [];
+    
+    // *** Private Methods
+    function addProject(p) {
+        arrayContent.push(p);
+    }
+    
+    // *** Public API
+    return {
+        addProject:         addProject
+    }
+}());
 
 // calendar
-var calendar = [];
-function Event(description) {
-    this.description = description;
-    this.date;
-}
+VIMAT.namespace("VIMAT.MODEL.CALENDAR");
+VIMAT.MODEL.CALENDAR.Event = function (d) {
+    // *** Private Properties
+    var description = d,
+        date = '';
+        
+    // *** Private Methods
+    function getDescription() {
+        return description;
+    }
+    function setDescription(d) {
+        description = d;
+    }
+    function getDate() {
+        return date;
+    }
+    function setDate (d) {
+        date = d;
+    }
+    
+    // *** Public API
+    return {
+        getDescription:     getDescription,
+        setDescription:     setDescription,
+        getDate:            getDate,
+        setDate:            setDate
+    };
+};
+VIMAT.MODEL.CALENDAR.calendar = (function () {
+    // *** Private Properties
+    var arrayContent = [];
+    
+    // *** Private Methods
+    function addEvent(e) {
+        arrayContent.push(e);
+    }
+    
+    // *** Public API
+    return {
+        addEvent:       addEvent
+    };
+}());
 
 // Notes
 function Note(description, content) {
@@ -288,7 +518,6 @@ function Note(description, content) {
 var notes = [];
 
 // settings
-
 function Settings() {
     
     // task list

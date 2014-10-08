@@ -10,9 +10,10 @@ html, body {
 button {
     height: 19px;
     font-size: 6px;
-    color: #46220A;
+    color: PaleGreen;
+    background: #46220A;
     border-radius: 10px;
-    /*box-shadow: 4px 4px 5px Olive;*/
+    box-shadow: 4px 4px 5px Olive;
 }
 
 input {
@@ -34,7 +35,6 @@ select {
 body {
     background-color: SandyBrown;
     word-wrap: break-word;
-    font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 .tool {
@@ -42,6 +42,18 @@ body {
     left: 0;
     right: 0;
     background-color: PaleGreen;
+    border-radius: 10px;
+    box-shadow: 4px 4px 5px Olive;
+}
+
+.compassDiv {
+    border-style: inset;
+    border-width: 3px;
+    border-color: SandyBrown;
+    border-radius: 10px;
+}
+
+.form {
     border-radius: 10px;
     box-shadow: 4px 4px 5px Olive;
 }

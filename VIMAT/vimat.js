@@ -69,6 +69,35 @@ function editTaskButtonClicked() {
     VIMAT.CONTROLLER.editTaskButtonClicked();
 }
 
+// Task List Module
+function taskListModuleHeaderClicked() {
+    VIMAT.CONTROLLER.taskListModuleHeaderClicked();
+}
+function textExportClicked() {
+    VIMAT.CONTROLLER.textExportClicked();
+}
+function newTaskClicked(){
+    VIMAT.CONTROLLER.newTaskClicked();
+}
+function clearCompletedClicked() {
+    VIMAT.CONTROLLER.clearCompletedClicked();
+}
+function moveToProjectClicked() {
+    VIMAT.CONTROLLER.moveToProjectClicked();
+}
+function addTaskClicked() {
+    VIMAT.CONTROLLER.addTaskClicked();
+}
+// function checkBoxChanged(e) {
+//     VIMAT.CONTROLLER.checkBoxChanged(e);
+// }
+// function taskClicked(e) {
+//     VIMAT.CONTROLLER.taskClicked(e);
+// }
+// function editTaskButtonClicked() {
+//     VIMAT.CONTROLLER.editTaskButtonClicked();
+// }
+
 // Tickler
 function ticklerHeaderClicked() {
     VIMAT.CONTROLLER.ticklerHeaderClicked();
@@ -121,6 +150,12 @@ function listOfListsHeaderClicked() {
 function listItemCheckBoxChanged(e) {
     VIMAT.CONTROLLER.listItemCheckBoxChanged(e);
 }
+function newListButtonClicked() {
+    VIMAT.CONTROLLER.newListButtonClicked();
+}
 function newItemButtonClicked() {
     VIMAT.CONTROLLER.newItemButtonClicked();
+}
+function currentListChanged() {
+    VIMAT.CONTROLLER.currentListChanged();
 }

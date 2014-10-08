@@ -22,7 +22,6 @@
 var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.VIEW.LISTOFLISTS");
-
 VIMAT.VIEW.LISTOFLISTS = (function () {
     // *** Private Methods
     function displayListOfListsTool() {
@@ -37,13 +36,12 @@ VIMAT.VIEW.LISTOFLISTS = (function () {
             l,
             h = '',
             i;
-        list = [].concat(list);
-        l = list.length;
+        l = list.getLength();
         if (l > 0) {
             for (i = 0; i < l; i++) {
-                h += VIMAT.UTILITIES.getCheckBoxMarkup("listItemCheckBoxChanged(event)",
-                        'lolcb' + i, list[i].getChecked());
-                h += list[i].getDescription() + '<br/>';
+                h += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup("listItemCheckBoxChanged(event)",
+                        ('lolcb' + i), list.getListItemAt(i).getChecked());
+                h += list.getListItemAt(i).getDescription() + '<br/>';
             }
             document.getElementById('listOfListsListDiv').innerHTML = h;
         }
@@ -57,12 +55,75 @@ VIMAT.VIEW.LISTOFLISTS = (function () {
     };
 }());
 
+VIMAT.namespace("VIMAT.VIEW.TASKLIST");
+VIMAT.VIEW.TASKLIST = (function () {
+    // *** Private Methods
+    function displayTaskListTool() {
+        document.getElementById('taskListModuleTool').innerHTML =
+                VIMAT.HTM.taskListTool();
+    }
+    function hideTaskListTool() {
+        document.getElementById('taskListModuleTool').innerHTML = '';
+    }
+    function displayNewTaskForm() {
+        document.getElementById('newTaskForm').innerHTML = VIMAT.HTM.newTaskForm();
+    }
+    function hideNewTaskForm() {
+        document.getElementById('newTaskForm').innerHTML = '';
+    }
+    function displayTaskList() {
+        var i,
+            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
+        document.getElementById('taskListDiv').innerHTML = '';
+        for (i = 0; i < l; i++) {
+            getMarkupForTask(VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i));
+        }
+        VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
+        // saveSettings();
+    }
+    function getMarkupForTask(t) {
+        var htm = '',
+            now = (new Date()).toJSON();
+        // checkbox
+        htm += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup(
+                "checkBoxChanged(event)", t.getId(), t.getFinished());
+        // description
+        htm += '<span onclick="taskClicked(event)" id="tid';
+        htm += t.getId() + '">';
+        htm += t.getDescription();
+        htm += '</span><br/>';
+        // // compass
+        // if (tasks[i].compass) {
+        //     htm += tasks[i].compass + '   ';
+        // }
+        // // due date
+        // if (typeof tasks[i].dueDate === 'string') {
+        //     htm += (new Date(tasks[i].dueDate)).toDateString() + '<br/>';
+        // }
+        // // container for an optional edit form
+        // htm += '<div id="ef' + i.toString() + '"></div><br/>';
+        // put the task on the page
+        if (!(t.getDueDate() > now)) {
+            document.getElementById('taskListDiv').innerHTML += htm;
+        }
+    }
+    // *** Public API
+    return {
+        displayTaskListTool:    displayTaskListTool,
+        hideTaskListTool:       hideTaskListTool,
+        displayNewTaskForm:     displayNewTaskForm,
+        hideNewTaskForm:        hideNewTaskForm,
+        getMarkupForTask:       getMarkupForTask,
+        displayTaskList:        displayTaskList
+    };
+}());
+
 // Initialize
 
 // Tasks
 function displayTaskListTool() {
     var htmlToAdd = '';
-    htmlToAdd += "<style>html, body {font-size: 5px;color: #46220A;}</style>";    
+    // htmlToAdd += "<style>html, body {font-size: 5px;color: #46220A;}</style>";    
     htmlToAdd += '<button onclick="newTaskButtonClicked()">New<br/>Task</button>';
     htmlToAdd += '<button onclick="clearCompletedButtonClicked()">Clear<br/>';
     htmlToAdd += 'completed</button>';
@@ -298,29 +359,29 @@ function displayCompassTool() {
     
     document.getElementById('compassTool').innerHTML = '';
     
-    h += '<h3 id="wellnessHeader"></h3><button onclick="punchIn(event)" id="piw">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="pow">Punch<br/>Out</button><div id="wellness"></div>';
+    h += '<div class="compassDiv"><h3 id="wellnessHeader"></h3><button onclick="punchIn(event)" id="piw">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pow">Punch<br/>Out</button><div id="wellness"></div></div>';
     
-    h += '<h3 id="educationHeader"></h3><button onclick="punchIn(event)" id="pie">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="poe">Punch<br/>Out</button><div id="education"></div>';
+    h += '<div class="compassDiv"><h3 id="educationHeader"></h3><button onclick="punchIn(event)" id="pie">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poe">Punch<br/>Out</button><div id="education"></div></div>';
     
-    h += '<h3 id="financeHeader"></h3><button onclick="punchIn(event)" id="pif">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="pof">Punch<br/>Out</button><div id="finance"></div>';
+    h += '<div class="compassDiv"><h3 id="financeHeader"></h3><button onclick="punchIn(event)" id="pif">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pof">Punch<br/>Out</button><div id="finance"></div></div>';
     
-    h += '<h3 id="artHeader"></h3><button onclick="punchIn(event)" id="pia">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="poa">Punch<br/>Out</button><div id="art"></div>';
+    h += '<div class="compassDiv"><h3 id="artHeader"></h3><button onclick="punchIn(event)" id="pia">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poa">Punch<br/>Out</button><div id="art"></div></div>';
     
-    h += '<h3 id="choresHeader"></h3><button onclick="punchIn(event)" id="pic">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="poc">Punch<br/>Out</button><div id="chores"></div>';
+    h += '<div class="compassDiv"><h3 id="choresHeader"></h3><button onclick="punchIn(event)" id="pic">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="poc">Punch<br/>Out</button><div id="chores"></div></div>';
     
-    h += '<h3 id="relationsHeader"></h3><button onclick="punchIn(event)" id="pir">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="por">Punch<br/>Out</button><div id="relations"></div>';
+    h += '<div class="compassDiv"><h3 id="relationsHeader"></h3><button onclick="punchIn(event)" id="pir">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="por">Punch<br/>Out</button><div id="relations"></div></div>';
     
-    h += '<h3 id="projectsHeader"></h3><button onclick="punchIn(event)" id="pip">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="pop">Punch<br/>Out</button><div id="projects"></div>';
+    h += '<div class="compassDiv"><h3 id="projectsHeader"></h3><button onclick="punchIn(event)" id="pip">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pop">Punch<br/>Out</button><div id="projects"></div></div>';
     
-    h += '<h3 id="toolsHeader"></h3><button onclick="punchIn(event)" id="pit">Punch<br/>In</button>';
-    h += '<button onclick="punchOut(event)" id="pot">Punch<br/>Out</button><div id="tools"></div>';
+    h += '<div class="compassDiv"><h3 id="toolsHeader"></h3><button onclick="punchIn(event)" id="pit">Punch<br/>In</button>';
+    h += '<button onclick="punchOut(event)" id="pot">Punch<br/>Out</button><div id="tools"></div></div>';
 
     document.getElementById('compassTool').innerHTML = h;
     

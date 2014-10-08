@@ -37,6 +37,20 @@ VIMAT.CONTROLLER = (function () {
         loadData();
         applySettings();
         
+        // create some lists
+        var gli1 = new VIMAT.MODEL.LISTOFLISTS.ListItem('bananas');
+        var grocList = new VIMAT.MODEL.LISTOFLISTS.List('Groceries');
+        grocList.addListItem(gli1);
+        var gli2 = new VIMAT.MODEL.LISTOFLISTS.ListItem('spinach');
+        grocList.addListItem(gli2);
+        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(grocList);
+        gli1 = new VIMAT.MODEL.LISTOFLISTS.ListItem('War and Peace');
+        gli2 = new VIMAT.MODEL.LISTOFLISTS.ListItem('Brave New World');
+        var bookList = new VIMAT.MODEL.LISTOFLISTS.List('Books');
+        bookList.addListItem(gli1);
+        bookList.addListItem(gli2);
+        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(bookList);
+
         // temporary code to update old tasks with repeat
         var i,
             l = tasks.length;
@@ -160,6 +174,121 @@ VIMAT.CONTROLLER = (function () {
         saveTasks();
         displayTaskList();
     }
+    
+    // Task List Module
+    function taskListModuleHeaderClicked() {
+        if (VIMAT.SETTINGS.TASKLIST.getDisplayed()) {
+            VIMAT.VIEW.TASKLIST.hideTaskListTool();
+            VIMAT.SETTINGS.TASKLIST.setDisplayed(false);
+        }
+        else {
+            VIMAT.VIEW.TASKLIST.displayTaskListTool();
+        //     displayTaskList();
+            VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
+        }
+    }
+    function textExportClicked() {
+    //     var t = JSON.stringify(tasks);
+    //     document.getElementById('divForStringify').innerHTML = '<textarea>' + t + '</textarea>';
+    }
+    function newTaskClicked(){
+        VIMAT.VIEW.TASKLIST.displayNewTaskForm();
+    }
+    function clearCompletedClicked() {
+        var i,
+            d;
+        for (i = 0; i < tasks.length; i++) {
+            if (tasks[i].finished) {
+                // check to see if the task repeats before deleting it
+                if (tasks[i].repeats) {
+                    // repeat the task
+                    // wrong implementation for test
+                    d = new Date(tasks[i].dueDate);
+                    d.setHours(0);
+                    d.setMinutes(0);
+                    d.setDate(d.getDate() + 1);
+                    tasks[i].dueDate = (d).toJSON();
+                    tasks[i].finished = false;
+                    
+                }
+                else {
+                    // else delete it
+                    tasks.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        saveTasks();
+        displayTaskList();
+    }
+    function moveToProjectClicked() {
+        var targetProject;
+        // find out what project the tasks are going into
+    
+        for (var i = 0; i < tasks.length; i++) {
+            if (tasks[i].finished) {
+                // add the task to the selected project's task list
+                
+                // remove the task from the task list
+                tasks.splice(i, 1);
+                
+                i--;
+            }
+        }
+        
+        saveTasks();
+        // saveProjects;
+        displayTaskList();
+    }
+    // function taskClicked(e) {
+    //     var et = e.currentTarget,
+    //         t = et.id;
+    //     // id of <span> containing task description that was clicked
+    //     if (t === currentTaskBeingEdited) {
+    //         hideEditTaskForm(t);
+    //         editTaskFormIsDisplayed = false;
+    //         currentTaskBeingEdited = -1;
+    //     }
+    //     else {
+    //         displayEditTaskForm(t);
+    //     }
+    // }
+    // function editTaskButtonClicked() {
+    //     // index of the current task in the array
+    //     var t = currentTaskBeingEdited.slice(2),
+    //         d;
+    //     tasks[t].description = document.getElementById("taskInput").value;
+    //     d = new Date(document.getElementById("dueDate").value);
+    //     d.setHours(0);
+    //     d.setMinutes(0);
+    //     d.setDate(d.getDate() + 1);
+    //     tasks[t].dueDate = (d).toJSON();
+    //     tasks[t].compass = document.getElementById("compass").value;
+    //     // add code to fetch information about repeating
+    //     tasks[t].repeats = document.getElementById("repeatCheckBox").checked;
+    //     // hideEditTaskForm(t);
+    //     editTaskFormIsDisplayed = false;
+    //     saveTasks();
+    //     displayTaskList();
+    // }
+    function addTaskClicked() {
+        var ti = document.getElementById("taskInput").value,
+            task = new VIMAT.MODEL.TASKLIST.Task(ti);
+        alert(task.getDescription());
+        VIMAT.VIEW.TASKLIST.hideNewTaskForm();
+        VIMAT.MODEL.TASKLIST.taskList.addTask(task);
+        // saveTasks();
+        VIMAT.VIEW.TASKLIST.displayTaskList();
+        // if (settings.ticklerToolIsDisplayed) {
+        //     displayTicklerTool();
+        // }
+    }
+    // function checkBoxChanged(e) {
+    //     var et = e.currentTarget,
+    //         t = et.id;
+    //     tasks[t].finished = document.getElementById(t).checked;
+    //     saveTasks();
+    // }
     
     // Tickler
     function ticklerHeaderClicked() {
@@ -322,35 +451,49 @@ VIMAT.CONTROLLER = (function () {
 
     // List Of Lists
     function listOfListsHeaderClicked() {
-        if (VIMAT.SETTINGS.LISTOFLISTS.displayed) {
-            VIMAT.VIEW.LISTOFLISTS.hideListOfListsTool();            
+        if (VIMAT.SETTINGS.LISTOFLISTS.getDisplayed()) {
+            VIMAT.VIEW.LISTOFLISTS.hideListOfListsTool();
+            VIMAT.SETTINGS.LISTOFLISTS.setDisplayed(false);
         }
         else {
             VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
             VIMAT.VIEW.LISTOFLISTS.displayListByListName(
                     VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
+            VIMAT.SETTINGS.LISTOFLISTS.setDisplayed(true);
         }
     }
     function listItemCheckBoxChanged(e) {
         var et = e.currentTarget,
             licbid = et.id,
-            liid = licbid.splice(0, 5);
+            liid = licbid.slice(5);
         // Code to change the checked value for the correct li    
         // tasks[t].finished = document.getElementById(t).checked;
-        if (document.getElementById(li).checked) {
-            
+        if (document.getElementById(licbid).checked) {
+            VIMAT.MODEL.LISTOFLISTS.listOfLists.toggleCheckStateOfItemInCurrentListById(liid);
         }
-
+    }
+    function newListButtonClicked() {
+        var n = document.getElementById('newListInput').value,
+            nl = new VIMAT.MODEL.LISTOFLISTS.List(n);
+        document.getElementById('newListInput').value = '';
+        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(nl);
+        VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
+        VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+                VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
     }
     function newItemButtonClicked() {
         var d = document.getElementById('newItemInput').value,
             li = new VIMAT.MODEL.LISTOFLISTS.ListItem(d);
-            VIMAT.MODEL.LISTOFLISTS.addItemToCurrentList(li);
+        document.getElementById('newItemInput').value = '';
+        VIMAT.MODEL.LISTOFLISTS.listOfLists.addItemToCurrentList(li);
+        VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+                VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
     }
     function currentListChanged() {
         var cl = document.getElementById('listSelect').value;
         VIMAT.SETTINGS.LISTOFLISTS.setCurrentListName(cl);
-        VIMAT.VIEW.displayListByListName(cl);
+        VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
+        VIMAT.VIEW.LISTOFLISTS.displayListByListName(cl);
     }
 
     // Project List
@@ -400,11 +543,16 @@ VIMAT.CONTROLLER = (function () {
         initialize:                     initialize,
         taskListHeaderClicked:          taskListHeaderClicked,
         stringifyTasks:                 stringifyTasks,
+        textExportClicked:              textExportClicked,
         addTaskButtonClicked:           addTaskButtonClicked,
+        addTaskClicked:                 addTaskClicked,
         checkBoxChanged:                checkBoxChanged,
         newTaskButtonClicked:           newTaskButtonClicked,
+        newTaskClicked:                 newTaskClicked,
         clearCompletedButtonClicked:    clearCompletedButtonClicked,
+        clearCompletedClicked:          clearCompletedClicked,
         moveToProjectButtonClicked:     moveToProjectButtonClicked,
+        moveToProjectClicked:           moveToProjectClicked,
         taskClicked:                    taskClicked,
         editTaskButtonClicked:          editTaskButtonClicked,
         ticklerHeaderClicked:           ticklerHeaderClicked,
@@ -420,6 +568,8 @@ VIMAT.CONTROLLER = (function () {
         listOfListsHeaderClicked:       listOfListsHeaderClicked,
         listItemCheckBoxChanged:        listItemCheckBoxChanged,
         newItemButtonClicked:           newItemButtonClicked,
-        currentListChanged:             currentListChanged
+        currentListChanged:             currentListChanged,
+        newListButtonClicked:           newListButtonClicked,
+        taskListModuleHeaderClicked:    taskListModuleHeaderClicked
     };
 }());

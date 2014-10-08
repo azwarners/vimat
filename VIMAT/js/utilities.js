@@ -55,7 +55,7 @@ function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
     var h = '<input type="checkbox" ';
     h += 'onchange="' + onChange + '" ';
     h += 'id="' + checkBoxId + '"';
-    if (checked){
+    if (checked) {
         h += ' checked';
     }
     h += '>';
@@ -66,25 +66,36 @@ VIMAT.UTILITIES.VIEW = (function () {
     // *** Private method
     function buildSelectTagFromList(list, selected, id, onchange) {
         var l,
-            h = '<select id="' + id + '" onchange="' + onchange + '"><option value="',
+            h = '<select id="' + id + '" onchange="' + onchange + '">',
             i;
         if (typeof list === 'object') {
             l = list.length;
             for (i = 0; i < l; i++) {
-                h += list[i] + '"';
+                h += '<option value="' + list[i] + '"';
                 if (list[i] === selected) {
                     h += ' selected';
                 }
-                h += '>' + list[i] + '</option><option value="';
+                h += '>' + list[i] + '</option>';
             }
         }
         h += '</select>';
         return h;
     }
+    function getCheckBoxMarkup(onChange, checkBoxId, checked) {
+        var h = '<input type="checkbox" ';
+        h += 'onchange="' + onChange + '" ';
+        h += 'id="' + checkBoxId + '"';
+        if (checked) {
+            h += ' checked';
+        }
+        h += '>';
+        return h;
+    }
     
     // *** Public API
     return {
-        buildSelectTagFromList: buildSelectTagFromList
+        buildSelectTagFromList: buildSelectTagFromList,
+        getCheckBoxMarkup:      getCheckBoxMarkup
     };
 }());
 VIMAT.UTILITIES.buildSelectTagFromList = (function (list, selected, id, onchange) {
@@ -105,15 +116,5 @@ VIMAT.UTILITIES.buildSelectTagFromList = (function (list, selected, id, onchange
     return h;
 }());
 VIMAT.UTILITIES.createHTMLChecklistFromVimatList = (function (list) {
-VIMAT.UTILITIES.getCheckBoxMarkup = (function (onChange, checkBoxId, checked) {
-    var h = '<input type="checkbox" ';
-    h += 'onchange="' + onChange + '" ';
-    h += 'id="' + checkBoxId + '"';
-    if (checked){
-        h += ' checked';
-    }
-    h += '>';
-    return (h);
-}());
 
 }());

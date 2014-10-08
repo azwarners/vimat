@@ -22,11 +22,11 @@
 var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.SETTINGS.LISTOFLISTS");
-
 VIMAT.SETTINGS.LISTOFLISTS = (function () {
     // *** Private Properties
-    var currentListName = '',
-        currentListIndex = 0;
+    var currentListName = 'Groceries',
+        currentListIndex = 0,
+        displayed = false;
     
     // *** Private Methods
     function getCurrentListName() {
@@ -36,20 +36,48 @@ VIMAT.SETTINGS.LISTOFLISTS = (function () {
         return currentListIndex;
     }
     function setCurrentListName(ln) {
-        var l = VIMAT.MODEL.LISTOFLISTS.getNumberOfLists(),
+        var l = VIMAT.MODEL.LISTOFLISTS.listOfLists.getNumberOfLists(),
             i;
         currentListName = ln;
         for (i = 0; i < l; i++) {
-            if (VIMAT.MODEL.LISTOFLISTS.getListNameAt(i) === ln) {
+            if (VIMAT.MODEL.LISTOFLISTS.listOfLists.getListNameAt(i) === ln) {
                 currentListIndex = i;
             }
         }
+    }
+    function getDisplayed() {
+        return displayed;
+    }
+    function setDisplayed(b) {
+        displayed = b;
     }
     
     // *** Public API
     return {
         getCurrentListName:     getCurrentListName,
         setCurrentListName:     setCurrentListName,
-        getCurrentListIndex:    getCurrentListIndex
+        getCurrentListIndex:    getCurrentListIndex,
+        getDisplayed:           getDisplayed,
+        setDisplayed:           setDisplayed
+    };
+}());
+
+VIMAT.namespace("VIMAT.SETTINGS.TASKLIST");
+VIMAT.SETTINGS.TASKLIST = (function () {
+    // *** Private Properties
+    var displayed = false;
+    
+    // *** Private Methods
+    function getDisplayed() {
+        return displayed;
+    }
+    function setDisplayed(b) {
+        displayed = b;
+    }
+    
+    // *** Public API
+    return {
+        getDisplayed:           getDisplayed,
+        setDisplayed:           setDisplayed
     };
 }());
