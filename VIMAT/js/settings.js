@@ -66,6 +66,7 @@ VIMAT.namespace("VIMAT.SETTINGS.TASKLIST");
 VIMAT.SETTINGS.TASKLIST = (function () {
     // *** Private Properties
     var displayed = false;
+    var nextIdSuffix = 0;
     
     // *** Private Methods
     function getDisplayed() {
@@ -74,10 +75,16 @@ VIMAT.SETTINGS.TASKLIST = (function () {
     function setDisplayed(b) {
         displayed = b;
     }
+    function getNextId() {
+        var nid = 't' + nextIdSuffix;
+        nextIdSuffix++;
+        return nid;
+    }
     
     // *** Public API
     return {
         getDisplayed:           getDisplayed,
-        setDisplayed:           setDisplayed
+        setDisplayed:           setDisplayed,
+        getNextId:              getNextId
     };
 }());

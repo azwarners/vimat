@@ -34,34 +34,10 @@ VIMAT.CONTROLLER = (function () {
     
     // *** Private methods
     function initialize(){
+        // All of this code is executed after the page has loaded
         loadData();
+        VIMAT.DB.loadTaskList();
         applySettings();
-        
-        // create some lists
-        var gli1 = new VIMAT.MODEL.LISTOFLISTS.ListItem('bananas');
-        var grocList = new VIMAT.MODEL.LISTOFLISTS.List('Groceries');
-        grocList.addListItem(gli1);
-        var gli2 = new VIMAT.MODEL.LISTOFLISTS.ListItem('spinach');
-        grocList.addListItem(gli2);
-        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(grocList);
-        gli1 = new VIMAT.MODEL.LISTOFLISTS.ListItem('War and Peace');
-        gli2 = new VIMAT.MODEL.LISTOFLISTS.ListItem('Brave New World');
-        var bookList = new VIMAT.MODEL.LISTOFLISTS.List('Books');
-        bookList.addListItem(gli1);
-        bookList.addListItem(gli2);
-        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(bookList);
-
-        // temporary code to update old tasks with repeat
-        var i,
-            l = tasks.length;
-        for (i = 0; i < l; i++) {
-            if (!(typeof tasks[i].repeats === 'boolean')) {
-                tasks[i].repeats = false;
-                tasks[i].dueOrCompletion = ""; // 'due' or 'completion' to tell from when it repeats
-                tasks[i].frequency = 0;
-                tasks[i].interval = ""; // 'day', 'week', 'month', or 'year'
-            }
-        }
     }
     
     // Task List
@@ -183,7 +159,6 @@ VIMAT.CONTROLLER = (function () {
         }
         else {
             VIMAT.VIEW.TASKLIST.displayTaskListTool();
-        //     displayTaskList();
             VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
         }
     }
@@ -195,31 +170,9 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.VIEW.TASKLIST.displayNewTaskForm();
     }
     function clearCompletedClicked() {
-        var i,
-            d;
-        for (i = 0; i < tasks.length; i++) {
-            if (tasks[i].finished) {
-                // check to see if the task repeats before deleting it
-                if (tasks[i].repeats) {
-                    // repeat the task
-                    // wrong implementation for test
-                    d = new Date(tasks[i].dueDate);
-                    d.setHours(0);
-                    d.setMinutes(0);
-                    d.setDate(d.getDate() + 1);
-                    tasks[i].dueDate = (d).toJSON();
-                    tasks[i].finished = false;
-                    
-                }
-                else {
-                    // else delete it
-                    tasks.splice(i, 1);
-                    i--;
-                }
-            }
-        }
-        saveTasks();
-        displayTaskList();
+        VIMAT.MODEL.TASKLIST.taskList.deleteOrRepeatCompleted();
+        // saveTasks();
+        VIMAT.VIEW.TASKLIST.displayTaskList();
     }
     function moveToProjectClicked() {
         var targetProject;
@@ -274,21 +227,24 @@ VIMAT.CONTROLLER = (function () {
     function addTaskClicked() {
         var ti = document.getElementById("taskInput").value,
             task = new VIMAT.MODEL.TASKLIST.Task(ti);
-        alert(task.getDescription());
+        alert('were in addTaskClicked');
         VIMAT.VIEW.TASKLIST.hideNewTaskForm();
         VIMAT.MODEL.TASKLIST.taskList.addTask(task);
-        // saveTasks();
+        VIMAT.DB.saveTaskList();
+        alert(VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks());
         VIMAT.VIEW.TASKLIST.displayTaskList();
         // if (settings.ticklerToolIsDisplayed) {
         //     displayTicklerTool();
         // }
     }
-    // function checkBoxChanged(e) {
-    //     var et = e.currentTarget,
-    //         t = et.id;
-    //     tasks[t].finished = document.getElementById(t).checked;
-    //     saveTasks();
-    // }
+    function checkBoxChanged(e) {
+        var et = e.currentTarget,
+            t = et.id,
+            i = VIMAT.MODEL.TASKLIST.taskList.getTaskIndexById(t);
+        
+        // tasks[t].finished = document.getElementById(t).checked;
+        // saveTasks();
+    }
     
     // Tickler
     function ticklerHeaderClicked() {

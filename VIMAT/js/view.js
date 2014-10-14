@@ -61,6 +61,7 @@ VIMAT.VIEW.TASKLIST = (function () {
     function displayTaskListTool() {
         document.getElementById('taskListModuleTool').innerHTML =
                 VIMAT.HTM.taskListTool();
+        displayTaskList();
     }
     function hideTaskListTool() {
         document.getElementById('taskListModuleTool').innerHTML = '';
@@ -72,11 +73,14 @@ VIMAT.VIEW.TASKLIST = (function () {
         document.getElementById('newTaskForm').innerHTML = '';
     }
     function displayTaskList() {
-        var i,
+        var i, t,
             l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
         document.getElementById('taskListDiv').innerHTML = '';
         for (i = 0; i < l; i++) {
-            getMarkupForTask(VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i));
+            t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
+        // alert('task ' + i + ' = ' + t);
+        // alert('task instanceof VIMAT.MODEL.TASKLIST.Task = ' + (t instanceof VIMAT.MODEL.TASKLIST.Task));
+            getMarkupForTask(t);
         }
         VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
         // saveSettings();
@@ -88,7 +92,7 @@ VIMAT.VIEW.TASKLIST = (function () {
         htm += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup(
                 "checkBoxChanged(event)", t.getId(), t.getFinished());
         // description
-        htm += '<span onclick="taskClicked(event)" id="tid';
+        htm += '<span onclick="taskClicked(event)" id="';
         htm += t.getId() + '">';
         htm += t.getDescription();
         htm += '</span><br/>';

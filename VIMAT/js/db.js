@@ -19,6 +19,110 @@
 	******************************************************************
 */
 
+var VIMAT = VIMAT || {};
+
+/*
+    The VIMAT.DB serves as a facade. The save/load functions point to
+    whatever sub-module (or sub-namespace) the user has selected for data persistence.
+    For now the only option is HTML5 LocalStorage.
+*/
+
+VIMAT.namespace("VIMAT.DB");
+VIMAT.DB = (function () {
+    // *** Dependencies
+
+    // *** Private Properties
+    // dbType is an integer representing the type of data storage in use
+    //      0   --  HTML5 LocalStorage
+    var dbType = 0;
+
+    // *** Private methods
+    function saveTaskList() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveTaskList();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadTaskList() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadTaskList();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function getDbType() {
+        return dbType;
+    }
+    function setDbType(dbt) {
+        dbType = dbt;
+    }
+
+    // *** Initialization
+
+    // *** Public API
+    return {
+        saveTaskList:   saveTaskList,
+        loadTaskList:   loadTaskList,
+        getDbType:      getDbType,
+        setDbType:      setDbType
+    };
+}());
+
+VIMAT.namespace("VIMAT.DB.LOCALSTORAGE");
+VIMAT.DB.LOCALSTORAGE = (function () {
+    // *** Dependencies
+
+    // *** Private Properties
+
+    // *** Private methods
+    function saveTaskList() {
+        var taskArray = [],
+            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks(),
+            i,
+            t = new VIMAT.MODEL.TASKLIST.Task();
+        for (i = 0; i < l; i++) {
+            t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
+            taskArray[i] = t;
+        }    
+        localStorage.taskListDb = JSON.stringify(taskArray);
+    }
+    function loadTaskList() {
+        var taskArray = [],
+            i, l, t;
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.taskListDb) {
+                taskArray = JSON.parse(localStorage.taskListDb);
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
+        l = taskArray.length;
+        for (i = 0; i < l; i++) {
+            t = new VIMAT.MODEL.TASKLIST.Task();
+            t.setId(taskArray[i].id);
+            t.setDescription(taskArray[i].description);
+            VIMAT.MODEL.TASKLIST.taskList.addTask(t);
+        }
+    }
+
+    // *** Initialization
+
+    // *** Public API
+    return {
+        saveTaskList:   saveTaskList,
+        loadTaskList:   loadTaskList
+    };
+}());
+
 function loadData() {
     if(typeof(Storage) !== "undefined") {
         if (localStorage.tasksdb) {
