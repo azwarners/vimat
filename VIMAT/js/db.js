@@ -57,6 +57,46 @@ VIMAT.DB = (function () {
                 // code
         }
     }
+    function saveListOfLists() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveListOfLists();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadListOfLists() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadListOfLists();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function saveSettings() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveSettings();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadSettings() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadSettings();
+                break;
+            
+            default:
+                // code
+        }
+    }
     function getDbType() {
         return dbType;
     }
@@ -68,10 +108,14 @@ VIMAT.DB = (function () {
 
     // *** Public API
     return {
-        saveTaskList:   saveTaskList,
-        loadTaskList:   loadTaskList,
-        getDbType:      getDbType,
-        setDbType:      setDbType
+        saveTaskList:       saveTaskList,
+        loadTaskList:       loadTaskList,
+        saveListOfLists:    saveListOfLists,
+        loadListOfLists:    loadListOfLists,
+        saveSettings:       saveSettings,
+        loadSettings:       loadSettings,
+        getDbType:          getDbType,
+        setDbType:          setDbType
     };
 }());
 
@@ -83,34 +127,85 @@ VIMAT.DB.LOCALSTORAGE = (function () {
 
     // *** Private methods
     function saveTaskList() {
-        var taskArray = [],
+        var taskStringArray = [],
             l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks(),
-            i,
-            t = new VIMAT.MODEL.TASKLIST.Task();
+            i, t;
         for (i = 0; i < l; i++) {
             t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
-            taskArray[i] = t;
+            taskStringArray[i] = t.toString();
         }    
-        localStorage.taskListDb = JSON.stringify(taskArray);
+        localStorage.taskListDb = JSON.stringify(taskStringArray);
     }
     function loadTaskList() {
-        var taskArray = [],
-            i, l, t;
+        var taskStringArray = [],
+            t, i, l;
         if(typeof(localStorage) !== "undefined") {
             if (localStorage.taskListDb) {
-                taskArray = JSON.parse(localStorage.taskListDb);
+                taskStringArray = JSON.parse(localStorage.taskListDb);
             }
         }
         else {
             alert('Sorry, no local storage on this browser.');
             return;
         }
-        l = taskArray.length;
+        l = taskStringArray.length;
         for (i = 0; i < l; i++) {
             t = new VIMAT.MODEL.TASKLIST.Task();
-            t.setId(taskArray[i].id);
-            t.setDescription(taskArray[i].description);
+            t.fromString(taskStringArray[i]);
             VIMAT.MODEL.TASKLIST.taskList.addTask(t);
+        }
+    }
+    function saveListOfLists() {
+        var listArray = [],
+            l = VIMAT.MODEL.LISTOFLISTS.listOfLists.getNumberOfLists(),
+            i, list;
+        for (i = 0; i < l; i++) {
+            list = VIMAT.MODEL.LISTOFLISTS.listOfLists.getListAt(i);
+            listArray[i] = list;
+        }    
+        localStorage.listOfListsDb = JSON.stringify(listArray);
+    }
+    function loadListOfLists() {
+        var listArray = [],
+            i, l, list;
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.listOfListsDb) {
+                listArray = JSON.parse(localStorage.listOfListsDb);
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
+        l = listArray.length;
+        for (i = 0; i < l; i++) {
+            list = new VIMAT.MODEL.LISTOFLISTS.List();
+            list.setName(listArray[i].name);
+            list.arrayContent = listArray[i].arrayContent;
+            VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(list);
+        }
+    }
+    function saveSettings() {
+        localStorage.listOfListsSettingsDb = JSON.stringify(VIMAT.SETTINGS.listOfLists);
+        localStorage.taskListSettingsDb = JSON.stringify(VIMAT.SETTINGS.taskList);
+    }
+    function loadSettings() {
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.settingsDb) {
+                VIMAT.SETTINGS.listOfLists = JSON.parse(localStorage.listOfListsSettingsDb);
+                VIMAT.SETTINGS.taskList = JSON.parse(localStorage.taskListSettingsDb);
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
+        l = listArray.length;
+        for (i = 0; i < l; i++) {
+            list = new VIMAT.MODEL.LISTOFLISTS.List();
+            list.setName(listArray[i].name);
+            list.arrayContent = listArray[i].arrayContent;
+            VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(list);
         }
     }
 
@@ -118,8 +213,12 @@ VIMAT.DB.LOCALSTORAGE = (function () {
 
     // *** Public API
     return {
-        saveTaskList:   saveTaskList,
-        loadTaskList:   loadTaskList
+        saveTaskList:       saveTaskList,
+        loadTaskList:       loadTaskList,
+        saveListOfLists:    saveListOfLists,
+        loadListOfLists:    loadListOfLists,
+        saveSettings:       saveSettings,
+        loadSettings:       loadSettings
     };
 }());
 

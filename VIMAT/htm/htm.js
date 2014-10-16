@@ -29,30 +29,53 @@ VIMAT.HTM.listOfListsTool = (function () {
     h += '<h3>Choose a list to view: ';
     h += VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
             VIMAT.MODEL.LISTOFLISTS.listOfLists.getListOfListNames(),
-            VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName(), "listSelect",
+            VIMAT.SETTINGS.listOfLists.getCurrentListName(), "listSelect",
             "currentListChanged()") + '<br/>';
     h += '<input id="newItemInput" type="text" placeholder="New item for: ';
-    h += VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName() + '">';
+    h += VIMAT.SETTINGS.listOfLists.getCurrentListName() + '">';
     h += '<button onclick="newItemButtonClicked()">Add<br/>Item</button>';
     h += '<br/><div id="listOfListsListDiv"></div>';
     return h;
 });
 VIMAT.HTM.taskListTool = (function () {
-    var h = '';
-    h += '<button onclick="newTaskClicked()">New<br/>Task</button>';
-    h += '<button onclick="clearCompletedClicked()">Clear<br/>';
-    h += 'completed</button>';
-    h += '<button onclick="moveToProjectClicked()">Move to<br/>';
-    h += 'project</button>';
-    h += '<button onclick="textExportClicked()">Text for<br/>Export</button>';
-    h += '<div id="divForStringify"></div>';
-    h += '<div id="newTaskForm"></div>';
-    h += '<div id="taskListDiv"></div>';
+    var h = '<button onclick="newTaskClicked()">New<br/>Task</button>' +
+        '<button onclick="clearCompletedClicked()">Clear<br/>completed</button>' +
+        '<button onclick="moveToProjectClicked()">Move to<br/>project</button>' +
+        '<button onclick="textExportClicked()">Text for<br/>Export</button>' +
+        '<div id="divForStringify"></div><div id="newTaskForm"></div><div id="taskListDiv"></div>';
     return h;
 });
-VIMAT.HTM.newTaskForm = (function () {
-    var h = '';
-    h += 'Enter a task:<br/><input type="text" id="taskInput"/><br/>';
-    h += '<button onclick="addTaskClicked()">Add Task</button>';
+VIMAT.HTM.taskForm = (function (t) {
+    var h,
+        d = new Date(); // for setting the default to today's date
+    
+    // description text box
+    h = '<section class="form">Description: <input type="text" id="taskInput"';
+    if (t.getDescription()) {
+        h += ' value="' + t.getDescription() + '"';
+    }
+    h += '/><br/>';
+
+    // compass drop down
+    h += 'Compass: ' + VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
+            VIMAT.MODEL.MISC.getCompassCategories(), t.getCompass(), 'compass',
+            false) + '<br/>';
+    
+    // date picker
+    h += 'Date: <input type="date" id="dueDate" value="';
+    h += (t.getDueDate()).slice(0, 10) + '"><br/>';
+    
+    // repeat
+    h += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"><br/>';
+    h += 'Repeat from: <input type="radio" name="repeatFrom" value="due">Due Date ';
+    h += '<input type="radio" name="repeatFrom" value="completion" checked="true">Completion Date<br/>';
+    h += 'Every <input type="number" id="frequency" min="1"> ';
+    h += '<select id="interval"><option value="day">day</option>';
+    h += '<option value="week">week</option><option value="month">month</option>';
+    h += '<option value="year">year</option></select><br/>';
+
+    // save button
+    h += '<button onclick="addTaskClicked()">Add Task</button></section>';
+
     return h;
 });

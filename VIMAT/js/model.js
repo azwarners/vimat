@@ -24,34 +24,23 @@ var VIMAT = VIMAT || {};
 // List of Lists
 VIMAT.namespace("VIMAT.MODEL.LISTOFLISTS");
 VIMAT.MODEL.LISTOFLISTS.ListItem = function(d) {
-    // *** Private Properties
-    var description = d,
-        checked = false;
-    
-    // *** Private Methods
-    function getChecked() {
-        return checked;
-    }
-    function check() {
-        checked = true;
-    }
-    function unCheck() {
-        checked = false;
-    }
-    function getDescription() {
-        return description;
-    }
-    function setDescription(d) {
-        description = d;
-    }
-    // *** Public API
-    return {
-        getChecked:     getChecked,
-        check:          check,
-        unCheck:        unCheck,
-        getDescription: getDescription,
-        setDescription: setDescription
-    };
+    this.description = d,
+    this.checked = false;
+};   
+VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.getChecked = function () {
+    return this.checked;
+};
+VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.check = function () {
+    this.checked = true;
+};
+VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.unCheck = function () {
+    this.checked = false;
+};
+VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.getDescription = function () {
+    return this.description;
+};
+VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.setDescription = function (d) {
+    this.description = d;
 };
 VIMAT.MODEL.LISTOFLISTS.List = function(n) {
     // *** Private Properties
@@ -143,7 +132,7 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
         arrayContent.push(vimatList);
     }
     function addItemToCurrentList(li) {
-        arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].addListItem(li);
+        arrayContent[VIMAT.SETTINGS.listOfLists.getCurrentListIndex()].addListItem(li);
     }
     function getListAt(index) {
         return arrayContent[index];
@@ -178,11 +167,11 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
         return list;
     }
     function toggleCheckStateOfItemInCurrentListById(id) {
-        if (arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).getChecked()) {
-            arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).unCheck();
+        if (arrayContent[VIMAT.SETTINGS.listOfLists.getCurrentListIndex()].getListItemAt(id).getChecked()) {
+            arrayContent[VIMAT.SETTINGS.listOfLists.getCurrentListIndex()].getListItemAt(id).unCheck();
         }
         else {
-            arrayContent[VIMAT.SETTINGS.LISTOFLISTS.getCurrentListIndex()].getListItemAt(id).unCheck();
+            arrayContent[VIMAT.SETTINGS.listOfLists.getCurrentListIndex()].getListItemAt(id).unCheck();
         }
     }
     
@@ -205,7 +194,7 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
 // Tasks
 VIMAT.namespace("VIMAT.MODEL.TASKLIST");
 VIMAT.MODEL.TASKLIST.Task = function(d) {
-    this.id = VIMAT.SETTINGS.TASKLIST.getNextId();
+    this.id = VIMAT.SETTINGS.taskList.getNextId();
     this.description = d;
     this.finished = false;
     this.context = '';
@@ -310,13 +299,13 @@ VIMAT.MODEL.TASKLIST.Task.prototype.fromString = function (s) {
     taskProperties = s.split('|');
     this.id = taskProperties[0];
     this.description = taskProperties[1];
-    this.finished = taskProperties[2];
+    this.finished = (taskProperties[2] === 'true');
     this.context = taskProperties[3];
     this.dueDate = taskProperties[4];
     this.compass = taskProperties[5];
     this.priority = taskProperties[6];
     this.urgency = taskProperties[7];
-    this.repeats = taskProperties[8];
+    this.repeats = (taskProperties[8] === 'true');
     this.dueOrCompletion = taskProperties[9];
     this.frequency = taskProperties[10];
     this.interval = taskProperties[11];
@@ -332,7 +321,9 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
         arrayContent.push(t);
     }
     function addTaskFromString(s) {
-        
+        var task = new VIMAT.MODEL.TASKLIST.Task();
+        task.fromString(s);
+        addTask(task);
     }
     function getTaskByIndex(i) {
         return arrayContent[i];
@@ -355,8 +346,9 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
             }
         }
     }
-    function removeTaskById(i) {
-        
+    function removeTaskById(id) {
+        var i = getTaskIndexById(id);
+        arrayContent.splice(i, 1);
     }
     function sortByContext() {
         
@@ -372,8 +364,7 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
     }
     function deleteOrRepeatCompleted() {
         var l = getNumberOfTasks(),
-            i,
-            t;
+            i, t;
         for (i = 0; i < l; i++) {
             t = getTaskByIndex(i);
             if (t.getFinished()) {
@@ -389,9 +380,18 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
         }
     }
     function getTextForCompleted() {
-        var arrayOfSerializedTasks = [];
+        var arrayOfTaskStrings = [],
+            l = getNumberOfTasks(),
+            i, t;
+        for (i = 0; i < l; i++) {
+            t = getTaskById(i);
+            if (t.getFinished()) {
+                arrayOfTaskStrings.push(t.toString());
+                // set the original task back to not finished
+            }
+        }
         
-        return arrayOfSerializedTasks;
+        return arrayOfTaskStrings;
     }
     function moveCompletedToProject(projectId) {
         
@@ -405,6 +405,7 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
     // *** Public API
     return {
         addTask:                    addTask,
+        addTaskFromString:          addTaskFromString,
         removeTaskById:             removeTaskById,
         sortByContext:              sortByContext,
         sortByCompass:              sortByCompass,
@@ -610,6 +611,28 @@ function Settings() {
 var settings = new Settings();
 
 // Misc Data
+VIMAT.namespace("VIMAT.MODEL.MISC");
+VIMAT.MODEL.MISC = (function () {
+    // *** Private Properties
+    var compassCategories = [   "Wellness",
+                                "Education",
+                                "Finance",
+                                "Art",
+                                "Chores",
+                                "Relations",
+                                "Projects",
+                                "Tools" ];
+
+    // *** Private Methods
+    function getCompassCategories() {
+        return compassCategories;
+    }
+    
+    // *** Public API
+    return {
+        getCompassCategories:   getCompassCategories
+    };
+}());
 var compassCategories = [   "Wellness",
                             "Education",
                             "Finance",

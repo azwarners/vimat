@@ -54,6 +54,13 @@ body {
 }
 
 .form {
+    color: Black;
+    background-color: SandyBrown;
+    width: 90%;
+    height: 90%;
+    margin: auto;
+    border-style: inset;
+    border-width: 3px;
     border-radius: 10px;
     box-shadow: 4px 4px 5px Olive;
 }

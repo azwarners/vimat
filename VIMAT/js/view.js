@@ -36,14 +36,16 @@ VIMAT.VIEW.LISTOFLISTS = (function () {
             l,
             h = '',
             i;
-        l = list.getLength();
-        if (l > 0) {
-            for (i = 0; i < l; i++) {
-                h += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup("listItemCheckBoxChanged(event)",
-                        ('lolcb' + i), list.getListItemAt(i).getChecked());
-                h += list.getListItemAt(i).getDescription() + '<br/>';
+        if (list) {
+            l = list.getLength();
+            if (l > 0) {
+                for (i = 0; i < l; i++) {
+                    h += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup("listItemCheckBoxChanged(event)",
+                            ('lolcb' + i), list.getListItemAt(i).getChecked());
+                    h += list.getListItemAt(i).getDescription() + '<br/>';
+                }
+                document.getElementById('listOfListsListDiv').innerHTML = h;
             }
-            document.getElementById('listOfListsListDiv').innerHTML = h;
         }
     }
     
@@ -67,22 +69,22 @@ VIMAT.VIEW.TASKLIST = (function () {
         document.getElementById('taskListModuleTool').innerHTML = '';
     }
     function displayNewTaskForm() {
-        document.getElementById('newTaskForm').innerHTML = VIMAT.HTM.newTaskForm();
+        var t = new VIMAT.MODEL.TASKLIST.Task();
+        document.getElementById('newTaskForm').innerHTML = VIMAT.HTM.taskForm(t);
     }
     function hideNewTaskForm() {
         document.getElementById('newTaskForm').innerHTML = '';
     }
     function displayTaskList() {
-        var i, t,
+        var i, t, h = '',
             l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
-        document.getElementById('taskListDiv').innerHTML = '';
         for (i = 0; i < l; i++) {
             t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
-        // alert('task ' + i + ' = ' + t);
-        // alert('task instanceof VIMAT.MODEL.TASKLIST.Task = ' + (t instanceof VIMAT.MODEL.TASKLIST.Task));
-            getMarkupForTask(t);
+            // alert('were in displayTaskList');
+            h += getMarkupForTask(t);
         }
-        VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
+        document.getElementById('taskListDiv').innerHTML = h;
+        VIMAT.SETTINGS.taskList.setDisplayed(true);
         // saveSettings();
     }
     function getMarkupForTask(t) {
@@ -96,19 +98,30 @@ VIMAT.VIEW.TASKLIST = (function () {
         htm += t.getId() + '">';
         htm += t.getDescription();
         htm += '</span><br/>';
-        // // compass
-        // if (tasks[i].compass) {
-        //     htm += tasks[i].compass + '   ';
-        // }
-        // // due date
-        // if (typeof tasks[i].dueDate === 'string') {
-        //     htm += (new Date(tasks[i].dueDate)).toDateString() + '<br/>';
-        // }
-        // // container for an optional edit form
-        // htm += '<div id="ef' + i.toString() + '"></div><br/>';
+        
+        // compass
+        if (t.getCompass()) {
+            htm += t.getCompass + '   ';
+        }
+        
+        // repeats
+        if (t.getRepeats()) {
+            htm += 'R   ';
+        }
+        
+        // due date
+        if (t.getDueDate()) {
+            htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
+        }
+        // container for an optional edit form
+        htm += '<div id="ef' + t.getId() + '"></div><br/>';
+        
         // put the task on the page
         if (!(t.getDueDate() > now)) {
-            document.getElementById('taskListDiv').innerHTML += htm;
+            return htm;
+        }
+        else {
+            return '';
         }
     }
     // *** Public API

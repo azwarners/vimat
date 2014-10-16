@@ -21,8 +21,8 @@
 
 var VIMAT = VIMAT || {};
 
-VIMAT.namespace("VIMAT.SETTINGS.LISTOFLISTS");
-VIMAT.SETTINGS.LISTOFLISTS = (function () {
+VIMAT.namespace("VIMAT.SETTINGS");
+VIMAT.SETTINGS.listOfLists = (function () {
     // *** Private Properties
     var currentListName = 'Groceries',
         currentListIndex = 0,
@@ -61,9 +61,7 @@ VIMAT.SETTINGS.LISTOFLISTS = (function () {
         setDisplayed:           setDisplayed
     };
 }());
-
-VIMAT.namespace("VIMAT.SETTINGS.TASKLIST");
-VIMAT.SETTINGS.TASKLIST = (function () {
+VIMAT.SETTINGS.taskList = (function () {
     // *** Private Properties
     var displayed = false;
     var nextIdSuffix = 0;

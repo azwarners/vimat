@@ -65,9 +65,15 @@ VIMAT.namespace('VIMAT.UTILITIES.VIEW');
 VIMAT.UTILITIES.VIEW = (function () {
     // *** Private method
     function buildSelectTagFromList(list, selected, id, onchange) {
-        var l,
-            h = '<select id="' + id + '" onchange="' + onchange + '">',
-            i;
+        var l, h, i;
+        
+        h = '<select id="' + id + '"';
+        if (onchange) {
+            h += ' onchange="' + onchange + '">';
+        }
+        else {
+            h += '>';
+        }
         if (typeof list === 'object') {
             l = list.length;
             for (i = 0; i < l; i++) {
@@ -79,6 +85,7 @@ VIMAT.UTILITIES.VIEW = (function () {
             }
         }
         h += '</select>';
+        
         return h;
     }
     function getCheckBoxMarkup(onChange, checkBoxId, checked) {

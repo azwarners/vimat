@@ -37,7 +37,10 @@ VIMAT.CONTROLLER = (function () {
         // All of this code is executed after the page has loaded
         loadData();
         VIMAT.DB.loadTaskList();
+        VIMAT.DB.loadListOfLists();
         applySettings();
+        
+        alert(VIMAT.SETTINGS.taskList + VIMAT.SETTINGS.listOfLists);
     }
     
     // Task List
@@ -153,13 +156,15 @@ VIMAT.CONTROLLER = (function () {
     
     // Task List Module
     function taskListModuleHeaderClicked() {
-        if (VIMAT.SETTINGS.TASKLIST.getDisplayed()) {
+        if (VIMAT.SETTINGS.taskList.getDisplayed()) {
             VIMAT.VIEW.TASKLIST.hideTaskListTool();
-            VIMAT.SETTINGS.TASKLIST.setDisplayed(false);
+            VIMAT.SETTINGS.taskList.setDisplayed(false);
+            VIMAT.DB.saveSettings();
         }
         else {
             VIMAT.VIEW.TASKLIST.displayTaskListTool();
-            VIMAT.SETTINGS.TASKLIST.setDisplayed(true);
+            VIMAT.SETTINGS.taskList.setDisplayed(true);
+            VIMAT.DB.saveSettings();
         }
     }
     function textExportClicked() {
@@ -175,11 +180,12 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.VIEW.TASKLIST.displayTaskList();
     }
     function moveToProjectClicked() {
-        var targetProject;
+        var targetProject, i,
+            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
         // find out what project the tasks are going into
     
-        for (var i = 0; i < tasks.length; i++) {
-            if (tasks[i].finished) {
+        for (i = 0; i < l; i++) {
+            if ((VIMAT.MODEL.TASKLIST.taskList.getTaskById(i)).getFinished) {
                 // add the task to the selected project's task list
                 
                 // remove the task from the task list
@@ -227,11 +233,9 @@ VIMAT.CONTROLLER = (function () {
     function addTaskClicked() {
         var ti = document.getElementById("taskInput").value,
             task = new VIMAT.MODEL.TASKLIST.Task(ti);
-        alert('were in addTaskClicked');
         VIMAT.VIEW.TASKLIST.hideNewTaskForm();
         VIMAT.MODEL.TASKLIST.taskList.addTask(task);
         VIMAT.DB.saveTaskList();
-        alert(VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks());
         VIMAT.VIEW.TASKLIST.displayTaskList();
         // if (settings.ticklerToolIsDisplayed) {
         //     displayTicklerTool();
@@ -407,15 +411,17 @@ VIMAT.CONTROLLER = (function () {
 
     // List Of Lists
     function listOfListsHeaderClicked() {
-        if (VIMAT.SETTINGS.LISTOFLISTS.getDisplayed()) {
+        if (VIMAT.SETTINGS.listOfLists.getDisplayed()) {
             VIMAT.VIEW.LISTOFLISTS.hideListOfListsTool();
-            VIMAT.SETTINGS.LISTOFLISTS.setDisplayed(false);
+            VIMAT.SETTINGS.listOfLists.setDisplayed(false);
+            VIMAT.DB.saveSettings();
         }
         else {
             VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
             VIMAT.VIEW.LISTOFLISTS.displayListByListName(
-                    VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
-            VIMAT.SETTINGS.LISTOFLISTS.setDisplayed(true);
+                    VIMAT.SETTINGS.listOfLists.getCurrentListName());
+            VIMAT.SETTINGS.listOfLists.setDisplayed(true);
+            VIMAT.DB.saveSettings();
         }
     }
     function listItemCheckBoxChanged(e) {
@@ -433,21 +439,23 @@ VIMAT.CONTROLLER = (function () {
             nl = new VIMAT.MODEL.LISTOFLISTS.List(n);
         document.getElementById('newListInput').value = '';
         VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(nl);
+        VIMAT.DB.saveListOfLists();
         VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
         VIMAT.VIEW.LISTOFLISTS.displayListByListName(
-                VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
+                VIMAT.SETTINGS.listOfLists.getCurrentListName());
     }
     function newItemButtonClicked() {
         var d = document.getElementById('newItemInput').value,
             li = new VIMAT.MODEL.LISTOFLISTS.ListItem(d);
         document.getElementById('newItemInput').value = '';
         VIMAT.MODEL.LISTOFLISTS.listOfLists.addItemToCurrentList(li);
+        VIMAT.DB.saveListOfLists();
         VIMAT.VIEW.LISTOFLISTS.displayListByListName(
-                VIMAT.SETTINGS.LISTOFLISTS.getCurrentListName());
+                VIMAT.SETTINGS.listOfLists.getCurrentListName());
     }
     function currentListChanged() {
         var cl = document.getElementById('listSelect').value;
-        VIMAT.SETTINGS.LISTOFLISTS.setCurrentListName(cl);
+        VIMAT.SETTINGS.listOfLists.setCurrentListName(cl);
         VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
         VIMAT.VIEW.LISTOFLISTS.displayListByListName(cl);
     }
