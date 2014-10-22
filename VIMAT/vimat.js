@@ -40,7 +40,7 @@ function initialize(){
     VIMAT.CONTROLLER.initialize();
 }
 
-// Task List
+// Task List Old
 function taskListHeaderClicked() {
     VIMAT.CONTROLLER.taskListHeaderClicked();
 }
@@ -69,7 +69,7 @@ function editTaskButtonClicked() {
     VIMAT.CONTROLLER.editTaskButtonClicked();
 }
 
-// Task List Module
+// Task List Module New
 function taskListModuleHeaderClicked() {
     VIMAT.CONTROLLER.taskListModuleHeaderClicked();
 }
@@ -128,8 +128,8 @@ function addNoteButtonClicked() {
 }
 
 // Project List
-function projectListHeaderClicked() {
-    VIMAT.CONTROLLER.projectListHeaderClicked();
+function projectsHeaderClicked() {
+    VIMAT.CONTROLLER.projectsHeaderClicked();
 }
 function addProjectButtonClicked() {
     VIMAT.CONTROLLER.addProjectButtonClicked();

@@ -24,7 +24,7 @@ var VIMAT = VIMAT || {};
 VIMAT.namespace("VIMAT.SETTINGS");
 VIMAT.SETTINGS.listOfLists = (function () {
     // *** Private Properties
-    var currentListName = 'Groceries',
+    var currentListName = '',
         currentListIndex = 0,
         displayed = false;
     
@@ -36,11 +36,11 @@ VIMAT.SETTINGS.listOfLists = (function () {
         return currentListIndex;
     }
     function setCurrentListName(ln) {
-        var l = VIMAT.MODEL.LISTOFLISTS.listOfLists.getNumberOfLists(),
+        var l = VIMAT.MODEL.LISTS.listOfLists.getNumberOfLists(),
             i;
         currentListName = ln;
         for (i = 0; i < l; i++) {
-            if (VIMAT.MODEL.LISTOFLISTS.listOfLists.getListNameAt(i) === ln) {
+            if (VIMAT.MODEL.LISTS.listOfLists.getListNameAt(i) === ln) {
                 currentListIndex = i;
             }
         }
@@ -62,6 +62,44 @@ VIMAT.SETTINGS.listOfLists = (function () {
     };
 }());
 VIMAT.SETTINGS.taskList = (function () {
+    // *** Private Properties
+    var displayed = false;
+    var nextIdSuffix = 0;
+    
+    // *** Private Methods
+    function getStateString() {
+        var s = displayed + '|';
+        s += nextIdSuffix;
+        return s;
+    }
+    function setStateFromString(s) {
+        var settingsProperties = [];
+        settingsProperties = s.split('|');
+        displayed = (settingsProperties[0] === 'true');
+        nextIdSuffix = settingsProperties[1];
+    }
+    function getDisplayed() {
+        return displayed;
+    }
+    function setDisplayed(b) {
+        displayed = b;
+    }
+    function getNextId() {
+        var nid = 't' + nextIdSuffix;
+        nextIdSuffix++;
+        return nid;
+    }
+    
+    // *** Public API
+    return {
+        getStateString:         getStateString,
+        setStateFromString:     setStateFromString,
+        getDisplayed:           getDisplayed,
+        setDisplayed:           setDisplayed,
+        getNextId:              getNextId
+    };
+}());
+VIMAT.SETTINGS.projects = (function () {
     // *** Private Properties
     var displayed = false;
     var nextIdSuffix = 0;

@@ -26,15 +26,17 @@ VIMAT.namespace("VIMAT.HTM");
 VIMAT.HTM.listOfListsTool = (function () {
     var h = '<input id="newListInput" type="text" placeholder="Name of new list">';
     h += '<button onclick="newListButtonClicked()">Add<br/>List</button>';
-    h += '<h3>Choose a list to view: ';
-    h += VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
-            VIMAT.MODEL.LISTOFLISTS.listOfLists.getListOfListNames(),
-            VIMAT.SETTINGS.listOfLists.getCurrentListName(), "listSelect",
-            "currentListChanged()") + '<br/>';
-    h += '<input id="newItemInput" type="text" placeholder="New item for: ';
-    h += VIMAT.SETTINGS.listOfLists.getCurrentListName() + '">';
-    h += '<button onclick="newItemButtonClicked()">Add<br/>Item</button>';
-    h += '<br/><div id="listOfListsListDiv"></div>';
+    if (VIMAT.SETTINGS.listOfLists.getCurrentListName()) {
+        h += '<h3>Choose a list to view: ';
+        h += VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
+                VIMAT.MODEL.LISTS.listOfLists.getListOfListNames(),
+                VIMAT.SETTINGS.listOfLists.getCurrentListName(), "listSelect",
+                "currentListChanged()") + '<br/>';
+        h += '<input id="newItemInput" type="text" placeholder="New item for: ';
+        h += VIMAT.SETTINGS.listOfLists.getCurrentListName() + '">';
+        h += '<button onclick="newItemButtonClicked()">Add<br/>Item</button><br/>';
+    }
+    h += '<div id="listOfListsListDiv"></div>';
     return h;
 });
 VIMAT.HTM.taskListTool = (function () {
@@ -58,11 +60,11 @@ VIMAT.HTM.taskForm = (function (t) {
 
     // compass drop down
     h += 'Compass: ' + VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
-            VIMAT.MODEL.MISC.getCompassCategories(), t.getCompass(), 'compass',
+            VIMAT.MODEL.MISC.getCompassCategories(), t.getCompass(), 'compassInput',
             false) + '<br/>';
     
     // date picker
-    h += 'Date: <input type="date" id="dueDate" value="';
+    h += 'Date: <input type="date" id="dueDateInput" value="';
     h += (t.getDueDate()).slice(0, 10) + '"><br/>';
     
     // repeat

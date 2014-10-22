@@ -21,8 +21,8 @@
 
 var VIMAT = VIMAT || {};
 
-VIMAT.namespace("VIMAT.VIEW.LISTOFLISTS");
-VIMAT.VIEW.LISTOFLISTS = (function () {
+VIMAT.namespace("VIMAT.VIEW.LISTS");
+VIMAT.VIEW.LISTS = (function () {
     // *** Private Methods
     function displayListOfListsTool() {
         document.getElementById('listOfListsTool').innerHTML =
@@ -32,7 +32,7 @@ VIMAT.VIEW.LISTOFLISTS = (function () {
         document.getElementById('listOfListsTool').innerHTML = '';
     }
     function displayListByListName(ln) {
-        var list = VIMAT.MODEL.LISTOFLISTS.listOfLists.getListByListName(ln),
+        var list = VIMAT.MODEL.LISTS.listOfLists.getListByListName(ln),
             l,
             h = '',
             i;
@@ -57,8 +57,8 @@ VIMAT.VIEW.LISTOFLISTS = (function () {
     };
 }());
 
-VIMAT.namespace("VIMAT.VIEW.TASKLIST");
-VIMAT.VIEW.TASKLIST = (function () {
+VIMAT.namespace("VIMAT.VIEW.TASKS");
+VIMAT.VIEW.TASKS = (function () {
     // *** Private Methods
     function displayTaskListTool() {
         document.getElementById('taskListModuleTool').innerHTML =
@@ -69,7 +69,7 @@ VIMAT.VIEW.TASKLIST = (function () {
         document.getElementById('taskListModuleTool').innerHTML = '';
     }
     function displayNewTaskForm() {
-        var t = new VIMAT.MODEL.TASKLIST.Task();
+        var t = new VIMAT.MODEL.TASKS.Task();
         document.getElementById('newTaskForm').innerHTML = VIMAT.HTM.taskForm(t);
     }
     function hideNewTaskForm() {
@@ -77,10 +77,9 @@ VIMAT.VIEW.TASKLIST = (function () {
     }
     function displayTaskList() {
         var i, t, h = '',
-            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
+            l = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks();
         for (i = 0; i < l; i++) {
-            t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
-            // alert('were in displayTaskList');
+            t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(i);
             h += getMarkupForTask(t);
         }
         document.getElementById('taskListDiv').innerHTML = h;
@@ -101,7 +100,7 @@ VIMAT.VIEW.TASKLIST = (function () {
         
         // compass
         if (t.getCompass()) {
-            htm += t.getCompass + '   ';
+            htm += t.getCompass() + '   ';
         }
         
         // repeats
@@ -117,12 +116,13 @@ VIMAT.VIEW.TASKLIST = (function () {
         htm += '<div id="ef' + t.getId() + '"></div><br/>';
         
         // put the task on the page
-        if (!(t.getDueDate() > now)) {
-            return htm;
-        }
-        else {
-            return '';
-        }
+        // if (!(t.getDueDate() > now)) {
+        //     return htm;
+        // }
+        // else {
+        //     return '';
+        // }
+        return htm;
     }
     // *** Public API
     return {
@@ -133,6 +133,160 @@ VIMAT.VIEW.TASKLIST = (function () {
         getMarkupForTask:       getMarkupForTask,
         displayTaskList:        displayTaskList
     };
+}());
+
+VIMAT.namespace("VIMAT.VIEW.PROJECTS");
+VIMAT.VIEW.PROJECTS = (function () {
+    // *** Private Methods
+    function displayProjectsTool() {
+        var htmlToAdd = '';
+    
+        htmlToAdd += '<button onclick="newProjectButtonClicked()">New Project</button>';
+        htmlToAdd += '<div id="newProjectForm"></div>';
+        htmlToAdd += '<div id="projectListDiv"></div>';
+    
+        document.getElementById('projectsTool').innerHTML = htmlToAdd;    
+    }
+    function hideProjectsTool() {
+        document.getElementById('projectsTool').innerHTML = '';
+    }
+    function projectListToolIsDisplayed() {
+        if (document.getElementById('projectListTool').innerHTML) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    function displayProjectList() {
+        var p, i, l = VIMAT.MODEL.PROJECTS.projectList.getNumberOfProjects(),
+            htmlToAdd = '';
+        for (i = 0; i < l; i++) {
+            p = VIMAT.MODEL.PROJECTS.projectList.getProjectAtIndex(i);
+            htmlToAdd += p.getName();
+            htmlToAdd += '<br/><div id="pt' + i +  '"></div>';
+        }
+        document.getElementById('projectListDiv').innerHTML = htmlToAdd;
+    }
+    function displayNewProjectForm() {
+        var htmlToAdd = '';
+        
+        htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
+        htmlToAdd += '<button onclick="addProjectButtonClicked()">Add Project</button>';
+    
+        document.getElementById('newProjectForm').innerHTML = htmlToAdd;
+    }
+    function hideNewProjectForm() {
+        document.getElementById('newProjectForm').innerHTML = '';
+    }
+    
+    // *** Public API
+    return {
+        displayProjectsTool:        displayProjectsTool,
+        hideProjectsTool:           hideProjectsTool,
+        projectListToolIsDisplayed: projectListToolIsDisplayed,
+        displayProjectList:         displayProjectList,
+        displayNewProjectForm:      displayNewProjectForm,
+        hideNewProjectForm:         hideNewProjectForm
+    };
+}());
+
+VIMAT.namespace("VIMAT.VIEW.COMPASS");
+VIMAT.VIEW.COMPASS = (function () {
+    // *** Private Methods
+    function displayCompassTool() {
+        var h = '';
+        
+        // hideTaskListTool();
+        
+        h += '<div class="compassDiv"><h3 id="wellnessHeader">Wellness</h3><div id="wellness"></div></div>';
+        h += '<div class="compassDiv"><h3 id="educationHeader">Education</h3><div id="education"></div></div>';
+        h += '<div class="compassDiv"><h3 id="financeHeader">Finance</h3><div id="finance"></div></div>';
+        h += '<div class="compassDiv"><h3 id="artHeader">Art</h3><div id="art"></div></div>';
+        h += '<div class="compassDiv"><h3 id="choresHeader">Chores</h3><div id="chores"></div></div>';
+        h += '<div class="compassDiv"><h3 id="relationsHeader">Relations</h3><div id="relations"></div></div>';
+        h += '<div class="compassDiv"><h3 id="projectsHeader">Projects</h3><div id="projects"></div></div>';
+        h += '<div class="compassDiv"><h3 id="toolsHeader">Tools</h3><div id="tools"></div></div>';
+    
+        document.getElementById('compassTool').innerHTML = h;
+        
+        VIMAT.VIEW.COMPASS.displayCompass();
+        
+        // displayTimeTrackerStatsForCompass();
+        
+        // settings.compassToolIsDisplayed = true;
+    }
+    function hideCompassTool() {
+        document.getElementById('compassTool').innerHTML = '';
+        // if (ttVarForCompass) {
+        //     window.clearInterval(ttVarForCompass);
+        // }
+        settings.compassToolIsDisplayed = false;
+    }
+    function displayCompass() {
+        // creating a string to store the html for the task list item
+        var htm = '', t, i, l = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks();
+    
+        // creating a variable with the current time/date stamp for comparing
+        var now = (new Date()).toJSON();
+    
+        // cycle through tasks adding each task to the right category
+        for (i = 0; i < l; i++) {
+            t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(i);
+        
+            // checkbox
+            htm = VIMAT.UTILITIES.VIEW.getCheckBoxMarkup('checkBoxChanged(event)', i, t.getFinished());
+        
+            // description
+            htm += '<span onclick="taskClicked(event)" id="td';
+            htm += i + '">';
+            htm += t.getDescription();
+            htm += '</span><br/>';
+            
+            // due date
+            if (typeof t.getDueDate === 'string') {
+                htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
+            }
+            
+            // container for an optional edit form
+            htm += '<div id="ef' + i.toString() + '"></div><br/>';
+    
+            // put the task on the page
+            if (!(t.getDueDate() > now)) {
+                if (t.getCompass() === 'Wellness') {
+                    document.getElementById('wellness').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Education') {
+                    document.getElementById('education').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Finance') {
+                    document.getElementById('finance').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Art') {
+                    document.getElementById('art').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Chores') {
+                    document.getElementById('chores').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Relations') {
+                    document.getElementById('relations').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Projects') {
+                    document.getElementById('projects').innerHTML += htm;
+                }
+                if (t.getCompass() === 'Tools') {
+                    document.getElementById('tools').innerHTML += htm;
+                }
+            }
+        }
+    }
+   
+   // *** Public API
+   return {
+       displayCompassTool:      displayCompassTool,
+       hideCompassTool:         hideCompassTool,
+       displayCompass:          displayCompass
+   };
 }());
 
 // Initialize
@@ -573,53 +727,6 @@ function displayNewNoteForm() {
 }
 function hideNewNoteForm() {
     document.getElementById('newNoteForm').innerHTML = '';
-}
-
-// Projects
-
-function displayProjectListTool() {
-    var htmlToAdd = '';
-
-    htmlToAdd += '<button onclick="newProjectButtonClicked()">New Project</button>';
-    htmlToAdd += '<div id="newProjectForm"></div>';
-    htmlToAdd += '<div id="projectListDiv"></div>';
-
-    document.getElementById('projectListTool').innerHTML = htmlToAdd;    
-}
-function hideProjectListTool() {
-    document.getElementById('projectListTool').innerHTML = '';
-}
-function projectListToolIsDisplayed() {
-    if (document.getElementById('projectListTool').innerHTML) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-function displayProjectList() {
-    var htmlToAdd = '';
-    
-    document.getElementById('projectListDiv').innerHTML = '';
-    
-    for (var i in projects) {
-        htmlToAdd = (projects[i].description).toString();
-        
-        htmlToAdd += '<br/><div id="pt' + i +  '"></div>';
-        
-        document.getElementById('projectListDiv').innerHTML += htmlToAdd;
-    }
-}
-function displayNewProjectForm() {
-    var htmlToAdd = '';
-    
-    htmlToAdd += 'Enter a project: <input type="text" id="projectInput"/>';
-    htmlToAdd += '<button onclick="addProjectButtonClicked()">Add Project</button>';
-
-    document.getElementById('newProjectForm').innerHTML = htmlToAdd;
-}
-function hideNewProjectForm() {
-    document.getElementById('newProjectForm').innerHTML = '';
 }
 
 // Calendar

@@ -57,6 +57,26 @@ VIMAT.DB = (function () {
                 // code
         }
     }
+    function saveProjectList() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveProjectList();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadProjectList() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadProjectList();
+                break;
+            
+            default:
+                // code
+        }
+    }
     function saveListOfLists() {
         switch (dbType) {
             case 0:
@@ -110,6 +130,8 @@ VIMAT.DB = (function () {
     return {
         saveTaskList:       saveTaskList,
         loadTaskList:       loadTaskList,
+        saveProjectList:    saveProjectList,
+        loadProjectList:    loadProjectList,
         saveListOfLists:    saveListOfLists,
         loadListOfLists:    loadListOfLists,
         saveSettings:       saveSettings,
@@ -127,18 +149,11 @@ VIMAT.DB.LOCALSTORAGE = (function () {
 
     // *** Private methods
     function saveTaskList() {
-        var taskStringArray = [],
-            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks(),
-            i, t;
-        for (i = 0; i < l; i++) {
-            t = VIMAT.MODEL.TASKLIST.taskList.getTaskByIndex(i);
-            taskStringArray[i] = t.toString();
-        }    
+        var taskStringArray = VIMAT.MODEL.TASKS.taskList.getAllTasksToStrings();
         localStorage.taskListDb = JSON.stringify(taskStringArray);
     }
     function loadTaskList() {
-        var taskStringArray = [],
-            t, i, l;
+        var taskStringArray = [];
         if(typeof(localStorage) !== "undefined") {
             if (localStorage.taskListDb) {
                 taskStringArray = JSON.parse(localStorage.taskListDb);
@@ -148,19 +163,42 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             alert('Sorry, no local storage on this browser.');
             return;
         }
-        l = taskStringArray.length;
+        VIMAT.MODEL.TASKS.taskList.addTasksFromStrings(taskStringArray);
+    }
+    function saveProjectList() {
+        var projectArray = [],
+            l = VIMAT.MODEL.PROJECTS.projectList.getNumberOfProjects(),
+            i, p;
         for (i = 0; i < l; i++) {
-            t = new VIMAT.MODEL.TASKLIST.Task();
-            t.fromString(taskStringArray[i]);
-            VIMAT.MODEL.TASKLIST.taskList.addTask(t);
+            p = VIMAT.MODEL.PROJECTS.projectList.getProjectAtIndex(i);
+            projectArray[i] = p;
+        }    
+        localStorage.projectListDb = JSON.stringify(projectArray);
+    }
+    function loadProjectList() {
+        var projectArray = [],
+            p, i, l;
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.taskListDb) {
+                projectArray = JSON.parse(localStorage.projectListDb);
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
+        l = projectArray.length;
+        for (i = 0; i < l; i++) {
+            p = projectArray[i];
+            VIMAT.MODEL.PROJECTS.projectList.addTask(p);
         }
     }
     function saveListOfLists() {
         var listArray = [],
-            l = VIMAT.MODEL.LISTOFLISTS.listOfLists.getNumberOfLists(),
+            l = VIMAT.MODEL.LISTS.listOfLists.getNumberOfLists(),
             i, list;
         for (i = 0; i < l; i++) {
-            list = VIMAT.MODEL.LISTOFLISTS.listOfLists.getListAt(i);
+            list = VIMAT.MODEL.LISTS.listOfLists.getListAt(i);
             listArray[i] = list;
         }    
         localStorage.listOfListsDb = JSON.stringify(listArray);
@@ -179,33 +217,32 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         }
         l = listArray.length;
         for (i = 0; i < l; i++) {
-            list = new VIMAT.MODEL.LISTOFLISTS.List();
+            list = new VIMAT.MODEL.LISTS.List();
             list.setName(listArray[i].name);
             list.arrayContent = listArray[i].arrayContent;
-            VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(list);
+            VIMAT.MODEL.LISTS.listOfLists.addList(list);
         }
     }
     function saveSettings() {
-        localStorage.listOfListsSettingsDb = JSON.stringify(VIMAT.SETTINGS.listOfLists);
-        localStorage.taskListSettingsDb = JSON.stringify(VIMAT.SETTINGS.taskList);
+        var s;
+        localStorage.listOfListsSettingsDb = JSON.stringify(VIMAT.SETTINGS.listOfLists.getCurrentListName());
+        s = VIMAT.SETTINGS.taskList.getStateString();
+        localStorage.taskListSettingsDb = JSON.stringify(s);
     }
     function loadSettings() {
+        var s;
         if(typeof(localStorage) !== "undefined") {
-            if (localStorage.settingsDb) {
-                VIMAT.SETTINGS.listOfLists = JSON.parse(localStorage.listOfListsSettingsDb);
-                VIMAT.SETTINGS.taskList = JSON.parse(localStorage.taskListSettingsDb);
+            if (localStorage.listOfListsSettingsDb) {
+                VIMAT.SETTINGS.listOfLists.setCurrentListName(JSON.parse(localStorage.listOfListsSettingsDb));
+            }
+            if (localStorage.taskListSettingsDb) {
+                s = JSON.parse(localStorage.taskListSettingsDb);
+                VIMAT.SETTINGS.taskList.setStateFromString(s);
             }
         }
         else {
             alert('Sorry, no local storage on this browser.');
             return;
-        }
-        l = listArray.length;
-        for (i = 0; i < l; i++) {
-            list = new VIMAT.MODEL.LISTOFLISTS.List();
-            list.setName(listArray[i].name);
-            list.arrayContent = listArray[i].arrayContent;
-            VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(list);
         }
     }
 
@@ -215,6 +252,8 @@ VIMAT.DB.LOCALSTORAGE = (function () {
     return {
         saveTaskList:       saveTaskList,
         loadTaskList:       loadTaskList,
+        saveProjectList:    saveProjectList,
+        loadProjectList:    loadProjectList,
         saveListOfLists:    saveListOfLists,
         loadListOfLists:    loadListOfLists,
         saveSettings:       saveSettings,
@@ -259,23 +298,18 @@ function loadData() {
         alert('Sorry, no local storage on this browser.');
     }
 }
-
 function saveTasks() {
     localStorage.tasksdb = JSON.stringify(tasks);
 }
-
 function saveProjects() {
     localStorage.projectsdb = JSON.stringify(projects);
 }
-
 function saveNotes() {
     localStorage.notesdb = JSON.stringify(notes);
 }
-
 function saveTrackedTimes() {
     localStorage.trackedTimesdb = JSON.stringify(trackedTimes);
 }
-
 function saveSettings() {
     localStorage.settingsdb = JSON.stringify(settings);
 }

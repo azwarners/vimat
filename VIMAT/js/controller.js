@@ -38,9 +38,8 @@ VIMAT.CONTROLLER = (function () {
         loadData();
         VIMAT.DB.loadTaskList();
         VIMAT.DB.loadListOfLists();
+        VIMAT.DB.loadSettings();
         applySettings();
-        
-        alert(VIMAT.SETTINGS.taskList + VIMAT.SETTINGS.listOfLists);
     }
     
     // Task List
@@ -154,15 +153,15 @@ VIMAT.CONTROLLER = (function () {
         displayTaskList();
     }
     
-    // Task List Module
+    // Task List Module (new and improved tasks)
     function taskListModuleHeaderClicked() {
         if (VIMAT.SETTINGS.taskList.getDisplayed()) {
-            VIMAT.VIEW.TASKLIST.hideTaskListTool();
+            VIMAT.VIEW.TASKS.hideTaskListTool();
             VIMAT.SETTINGS.taskList.setDisplayed(false);
             VIMAT.DB.saveSettings();
         }
         else {
-            VIMAT.VIEW.TASKLIST.displayTaskListTool();
+            VIMAT.VIEW.TASKS.displayTaskListTool();
             VIMAT.SETTINGS.taskList.setDisplayed(true);
             VIMAT.DB.saveSettings();
         }
@@ -172,20 +171,20 @@ VIMAT.CONTROLLER = (function () {
     //     document.getElementById('divForStringify').innerHTML = '<textarea>' + t + '</textarea>';
     }
     function newTaskClicked(){
-        VIMAT.VIEW.TASKLIST.displayNewTaskForm();
+        VIMAT.VIEW.TASKS.displayNewTaskForm();
     }
     function clearCompletedClicked() {
-        VIMAT.MODEL.TASKLIST.taskList.deleteOrRepeatCompleted();
+        VIMAT.MODEL.TASKS.taskList.deleteOrRepeatCompleted();
         // saveTasks();
-        VIMAT.VIEW.TASKLIST.displayTaskList();
+        VIMAT.VIEW.TASKS.displayTaskList();
     }
     function moveToProjectClicked() {
         var targetProject, i,
-            l = VIMAT.MODEL.TASKLIST.taskList.getNumberOfTasks();
+            l = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks();
         // find out what project the tasks are going into
     
         for (i = 0; i < l; i++) {
-            if ((VIMAT.MODEL.TASKLIST.taskList.getTaskById(i)).getFinished) {
+            if ((VIMAT.MODEL.TASKS.taskList.getTaskById(i)).getFinished) {
                 // add the task to the selected project's task list
                 
                 // remove the task from the task list
@@ -232,21 +231,29 @@ VIMAT.CONTROLLER = (function () {
     // }
     function addTaskClicked() {
         var ti = document.getElementById("taskInput").value,
-            task = new VIMAT.MODEL.TASKLIST.Task(ti);
-        VIMAT.VIEW.TASKLIST.hideNewTaskForm();
-        VIMAT.MODEL.TASKLIST.taskList.addTask(task);
+            ci = document.getElementById("compassInput").value,
+            di = document.getElementById("dueDateInput").value,
+            task = new VIMAT.MODEL.TASKS.Task(ti),
+            d;
+        task.setCompass(ci);
+        d = new Date(di);
+        d.setHours(0);
+        d.setMinutes(0);
+        d.setDate(d.getDate() + 1);
+        task.setDueDate(d.toJSON());
+        VIMAT.VIEW.TASKS.hideNewTaskForm();
+        VIMAT.MODEL.TASKS.taskList.addTask(task);
         VIMAT.DB.saveTaskList();
-        VIMAT.VIEW.TASKLIST.displayTaskList();
-        // if (settings.ticklerToolIsDisplayed) {
-        //     displayTicklerTool();
-        // }
+        VIMAT.DB.saveSettings();
+        VIMAT.VIEW.TASKS.displayTaskList();
     }
     function checkBoxChanged(e) {
         var et = e.currentTarget,
-            t = et.id,
-            i = VIMAT.MODEL.TASKLIST.taskList.getTaskIndexById(t);
-        
-        // tasks[t].finished = document.getElementById(t).checked;
+            tid = et.id,
+            t = VIMAT.MODEL.TASKS.taskList.getTaskById(tid);
+        t.setFinished(document.getElementById(tid).checked);
+        VIMAT.MODEL.TASKS.removeTaskById(tid);
+        VIMAT.MODEL.TASKS.addTask(t);
         // saveTasks();
     }
     
@@ -262,13 +269,13 @@ VIMAT.CONTROLLER = (function () {
     
     // Compass
     function compassHeaderClicked() {
-        if (settings.compassToolIsDisplayed) {
-            hideCompassTool();
+        if (document.getElementById('compassTool').innerHTML) {
+            VIMAT.VIEW.COMPASS.hideCompassTool();
         }
         else {
-            displayCompassTool();
+            VIMAT.VIEW.COMPASS.displayCompassTool();
         }
-        saveSettings();
+        // saveSettings();
     }
     
     // Time Tracker
@@ -412,13 +419,13 @@ VIMAT.CONTROLLER = (function () {
     // List Of Lists
     function listOfListsHeaderClicked() {
         if (VIMAT.SETTINGS.listOfLists.getDisplayed()) {
-            VIMAT.VIEW.LISTOFLISTS.hideListOfListsTool();
+            VIMAT.VIEW.LISTS.hideListOfListsTool();
             VIMAT.SETTINGS.listOfLists.setDisplayed(false);
             VIMAT.DB.saveSettings();
         }
         else {
-            VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
-            VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+            VIMAT.VIEW.LISTS.displayListOfListsTool();
+            VIMAT.VIEW.LISTS.displayListByListName(
                     VIMAT.SETTINGS.listOfLists.getCurrentListName());
             VIMAT.SETTINGS.listOfLists.setDisplayed(true);
             VIMAT.DB.saveSettings();
@@ -431,54 +438,59 @@ VIMAT.CONTROLLER = (function () {
         // Code to change the checked value for the correct li    
         // tasks[t].finished = document.getElementById(t).checked;
         if (document.getElementById(licbid).checked) {
-            VIMAT.MODEL.LISTOFLISTS.listOfLists.toggleCheckStateOfItemInCurrentListById(liid);
+            VIMAT.MODEL.LISTS.listOfLists.toggleCheckStateOfItemInCurrentListById(liid);
         }
     }
     function newListButtonClicked() {
         var n = document.getElementById('newListInput').value,
-            nl = new VIMAT.MODEL.LISTOFLISTS.List(n);
+            nl = new VIMAT.MODEL.LISTS.List(n);
         document.getElementById('newListInput').value = '';
-        VIMAT.MODEL.LISTOFLISTS.listOfLists.addList(nl);
+        VIMAT.MODEL.LISTS.listOfLists.addList(nl);
+        VIMAT.SETTINGS.listOfLists.setCurrentListName(n);
+        VIMAT.DB.saveSettings();
         VIMAT.DB.saveListOfLists();
-        VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
-        VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+        VIMAT.VIEW.LISTS.displayListOfListsTool();
+        VIMAT.VIEW.LISTS.displayListByListName(
                 VIMAT.SETTINGS.listOfLists.getCurrentListName());
     }
     function newItemButtonClicked() {
         var d = document.getElementById('newItemInput').value,
-            li = new VIMAT.MODEL.LISTOFLISTS.ListItem(d);
+            li = new VIMAT.MODEL.LISTS.ListItem(d);
         document.getElementById('newItemInput').value = '';
-        VIMAT.MODEL.LISTOFLISTS.listOfLists.addItemToCurrentList(li);
+        VIMAT.MODEL.LISTS.listOfLists.addItemToCurrentList(li);
         VIMAT.DB.saveListOfLists();
-        VIMAT.VIEW.LISTOFLISTS.displayListByListName(
+        VIMAT.VIEW.LISTS.displayListByListName(
                 VIMAT.SETTINGS.listOfLists.getCurrentListName());
     }
     function currentListChanged() {
         var cl = document.getElementById('listSelect').value;
         VIMAT.SETTINGS.listOfLists.setCurrentListName(cl);
-        VIMAT.VIEW.LISTOFLISTS.displayListOfListsTool();
-        VIMAT.VIEW.LISTOFLISTS.displayListByListName(cl);
+        VIMAT.VIEW.LISTS.displayListOfListsTool();
+        VIMAT.VIEW.LISTS.displayListByListName(cl);
     }
 
     // Project List
-    function projectListHeaderClicked() {
-        if (projectListToolIsDisplayed()) {
-            hideProjectListTool();
+    function projectsHeaderClicked() {
+        if (VIMAT.SETTINGS.projects.getDisplayed()) {
+            VIMAT.VIEW.PROJECTS.hideProjectsTool();
+            VIMAT.SETTINGS.projects.setDisplayed(false);
         }
         else {
-            displayProjectListTool();
-            displayProjectList();
+            VIMAT.VIEW.PROJECTS.displayProjectsTool();
+            VIMAT.VIEW.PROJECTS.displayProjectList();
+            VIMAT.SETTINGS.projects.setDisplayed(true);
         }
     }
     function addProjectButtonClicked() {
-        var project = new Project(document.getElementById("projectInput").value);
-        hideNewProjectForm();
-        projects.push(project);
-        saveProjects();
-        displayProjectList();
+        var pn = document.getElementById("projectInput").value,
+            p = new VIMAT.MODEL.PROJECTS.Project(pn);
+        VIMAT.VIEW.PROJECTS.hideNewProjectForm();
+        VIMAT.MODEL.PROJECTS.projectList.addProject(p);
+        VIMAT.DB.saveProjectList();
+        VIMAT.VIEW.PROJECTS.displayProjectList();
     }
     function newProjectButtonClicked(){
-        displayNewProjectForm();
+        VIMAT.VIEW.PROJECTS.displayNewProjectForm();
     }
     
     // calendar
@@ -525,7 +537,7 @@ VIMAT.CONTROLLER = (function () {
         punchOut:                       punchOut,
         notesHeaderClicked:             notesHeaderClicked,
         newNoteButtonClicked:           newNoteButtonClicked,
-        projectListHeaderClicked:       projectListHeaderClicked,
+        projectsHeaderClicked:          projectsHeaderClicked,
         addProjectButtonClicked:        addProjectButtonClicked,
         newProjectButtonClicked:        newProjectButtonClicked,
         calendarHeaderClicked:          calendarHeaderClicked,

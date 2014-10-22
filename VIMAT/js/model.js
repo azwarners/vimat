@@ -22,106 +22,81 @@
 var VIMAT = VIMAT || {};
 
 // List of Lists
-VIMAT.namespace("VIMAT.MODEL.LISTOFLISTS");
-VIMAT.MODEL.LISTOFLISTS.ListItem = function(d) {
+VIMAT.namespace("VIMAT.MODEL.LISTS");
+VIMAT.MODEL.LISTS.ListItem = function(d) {
     this.description = d,
     this.checked = false;
 };   
-VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.getChecked = function () {
+VIMAT.MODEL.LISTS.ListItem.prototype.getChecked = function () {
     return this.checked;
 };
-VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.check = function () {
-    this.checked = true;
+VIMAT.MODEL.LISTS.ListItem.prototype.setChecked = function (b) {
+    this.checked = b;
 };
-VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.unCheck = function () {
-    this.checked = false;
-};
-VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.getDescription = function () {
+VIMAT.MODEL.LISTS.ListItem.prototype.getDescription = function () {
     return this.description;
 };
-VIMAT.MODEL.LISTOFLISTS.ListItem.prototype.setDescription = function (d) {
+VIMAT.MODEL.LISTS.ListItem.prototype.setDescription = function (d) {
     this.description = d;
 };
-VIMAT.MODEL.LISTOFLISTS.List = function(n) {
-    // *** Private Properties
-    var arrayContent = [],
-        name = n,
-        keepItemsAfterCheckedOff = true,
-        trashCan = [];
-
-    // *** Private Methods
-    function getName() {
-        return name;
-    }
-    function setName(n) {
-        name = n;
-    }
-    function checkAll() {
-        var i,
-            l = arrayContent.length;
-            
-        for (i = 0; i < l; i++) {
-            arrayContent[i].check();
-        }
-    }
-    function unCheckAll() {
-        var i,
-            l = arrayContent.length;
-            
-        for (i = 0; i < l; i++) {
-            arrayContent[i].unCheck();
-        }
-    }
-    function getListItemAt(index) {
-        return arrayContent[index];
-    }
-    function removeListItemAt(index) {
-        var toTrash = arrayContent[index];
-        trashCan.push(toTrash);
-        arrayContent.splice(index, 1);
-        
-    }
-    function addListItem(li) {
-        arrayContent.push(li);
-    }
-    function restoreTrash() {
-        var l = trashCan.length,
-            i,
-            toList;
-        for (i = 0; i < l; i++) {
-            toList = trashCan[i];
-            arrayContent.push(toList);
-            trashCan.splice(i, 1);
-        }
-    }
-    function deleteTrash() {
-        var l = trashCan.length,
-            i;
-        for (i = 0; i < l; i++) {
-            trashCan.splice(i, 1);
-        }
-    }
-    function moveCheckedItemsToTrash() {
-        
-    }
-    function getLength() {
-        return arrayContent.length;
-    }
-
-    // *** Public API
-    return {
-        reusableList:       keepItemsAfterCheckedOff,
-        getName:            getName,
-        setName:            setName,
-        checkAll:           checkAll,
-        unCheckAll:         unCheckAll,
-        getListItemAt:      getListItemAt,
-        removeListItemAt:   removeListItemAt,
-        addListItem:        addListItem,
-        getLength:          getLength
-    };
+VIMAT.MODEL.LISTS.List = function(n) {
+    this.arrayContent = [];
+    this.name = n;
+    this.keepItemsAfterCheckedOff = true;
+    this.trashCan = [];
 };
-VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
+VIMAT.MODEL.LISTS.List.prototype.getName = function () {
+    return this.name;
+};
+VIMAT.MODEL.LISTS.List.prototype.setName = function (n) {
+    this.name = n;
+};
+VIMAT.MODEL.LISTS.List.prototype.getKeepItemsAfterCheckedOff = function () {
+    return this.keepItemsAfterCheckedOff;
+};
+VIMAT.MODEL.LISTS.List.prototype.setKeepItemsAfterCheckedOff = function (b) {
+    this.keepItemsAfterCheckedOff = b;
+};
+VIMAT.MODEL.LISTS.List.prototype.setCheckedAll = function (b) {
+    var i, l = this.arrayContent.length;
+    for (i = 0; i < l; i++) {
+        this.arrayContent[i].setChecked(b);
+    }
+};
+VIMAT.MODEL.LISTS.List.prototype.getListItemAt = function (index) {
+    return this.arrayContent[index];
+};
+VIMAT.MODEL.LISTS.List.prototype.removeListItemAt = function (index) {
+    this.trashCan.push(this.arrayContent[index]);
+    this.arrayContent.splice(index, 1);
+};
+VIMAT.MODEL.LISTS.List.prototype.addListItem = function (li) {
+    this.arrayContent.push(li);
+};
+VIMAT.MODEL.LISTS.List.prototype.deleteOrRestoreTrash = function () {
+    var i, l = this.trashCan.length;
+    for (i = 0; i < l; i++) {
+        if (this.keepItemsAfterCheckedOff) {
+            this.arrayContent.push(this.trashCan[i]);
+            this.trashCan.splice(i, 1);
+        }
+        else {
+            this.trashCan.splice(i, 1);
+        }
+    }
+};
+VIMAT.MODEL.LISTS.List.prototype.moveCheckedItemsToTrash = function () {
+    var i, l = this.arrayContent.length;
+    for (i = 0; i < l; i++) {
+        if (this.arrayContent[i].getChecked()) {
+            this.removeListItemAt(i);
+        }
+    }
+};
+VIMAT.MODEL.LISTS.List.prototype.getLength = function () {
+    return this.arrayContent.length;
+};
+VIMAT.MODEL.LISTS.listOfLists = (function () {
     // *** Dependencies
 
     // *** Private Properties
@@ -192,9 +167,9 @@ VIMAT.MODEL.LISTOFLISTS.listOfLists = (function () {
 }());
 
 // Tasks
-VIMAT.namespace("VIMAT.MODEL.TASKLIST");
-VIMAT.MODEL.TASKLIST.Task = function(d) {
-    this.id = VIMAT.SETTINGS.taskList.getNextId();
+VIMAT.namespace("VIMAT.MODEL.TASKS");
+VIMAT.MODEL.TASKS.Task = function(d) {
+    this.id = '';
     this.description = d;
     this.finished = false;
     this.context = '';
@@ -207,79 +182,79 @@ VIMAT.MODEL.TASKLIST.Task = function(d) {
     this.frequency = 0;
     this.interval = '';
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getId = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getId = function () {
     return this.id;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setId = function (i) {
+VIMAT.MODEL.TASKS.Task.prototype.setId = function (i) {
     this.id = i;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getDescription = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getDescription = function () {
     return this.description;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setDescription = function (d) {
+VIMAT.MODEL.TASKS.Task.prototype.setDescription = function (d) {
     this.description = d;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getFinished = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getFinished = function () {
     return this.finished;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setFinished = function (f) {
+VIMAT.MODEL.TASKS.Task.prototype.setFinished = function (f) {
     this.finished = f;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getContext = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getContext = function () {
     return this.context;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setContext = function (c) {
+VIMAT.MODEL.TASKS.Task.prototype.setContext = function (c) {
     this.context = c;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getDueDate = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getDueDate = function () {
     return this.dueDate;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setDueDate = function (d) {
+VIMAT.MODEL.TASKS.Task.prototype.setDueDate = function (d) {
     this.dueDate = d;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getCompass = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getCompass = function () {
     return this.compass;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setCompass = function (c) {
+VIMAT.MODEL.TASKS.Task.prototype.setCompass = function (c) {
     this.compass = c;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getPriority = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getPriority = function () {
     return this.priority;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setPriority = function (p) {
+VIMAT.MODEL.TASKS.Task.prototype.setPriority = function (p) {
     this.priority = p;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getUrgency = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getUrgency = function () {
     return this.urgency;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setUrgency = function (u) {
+VIMAT.MODEL.TASKS.Task.prototype.setUrgency = function (u) {
     this.urgency = u;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getRepeats = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getRepeats = function () {
     return this.repeats;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setRepeats = function (r) {
+VIMAT.MODEL.TASKS.Task.prototype.setRepeats = function (r) {
     this.repeats = r;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getDueOrCompletion = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getDueOrCompletion = function () {
     return this.dueOrCompletion;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setDueOrCompletion = function (doc) {
+VIMAT.MODEL.TASKS.Task.prototype.setDueOrCompletion = function (doc) {
     this.dueOrCompletion = doc;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getFrequency = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getFrequency = function () {
     return this.frequency;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setFrequency = function (f) {
+VIMAT.MODEL.TASKS.Task.prototype.setFrequency = function (f) {
     this.frequency = f;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.getInterval = function () {
+VIMAT.MODEL.TASKS.Task.prototype.getInterval = function () {
     return this.interval;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.setInterval = function (i) {
+VIMAT.MODEL.TASKS.Task.prototype.setInterval = function (i) {
     this.interval = i;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.toString = function () {
+VIMAT.MODEL.TASKS.Task.prototype.toString = function () {
     var str = this.id;
     str += '|' + this.description;
     str += '|' + this.finished;
@@ -294,9 +269,11 @@ VIMAT.MODEL.TASKLIST.Task.prototype.toString = function () {
     str += '|' + this.interval;
     return str;
 };
-VIMAT.MODEL.TASKLIST.Task.prototype.fromString = function (s) {
+VIMAT.MODEL.TASKS.Task.prototype.fromString = function (s) {
     var taskProperties = [];
     taskProperties = s.split('|');
+    // 'finished' and 'repeats' are boolean and the expressions
+    // that follow were used to store boolean values rather than strings
     this.id = taskProperties[0];
     this.description = taskProperties[1];
     this.finished = (taskProperties[2] === 'true');
@@ -310,20 +287,62 @@ VIMAT.MODEL.TASKLIST.Task.prototype.fromString = function (s) {
     this.frequency = taskProperties[10];
     this.interval = taskProperties[11];
 };
-VIMAT.MODEL.TASKLIST.taskList = (function () {
+VIMAT.MODEL.TASKS.Task.prototype.repeat = function () {
+    var d;
+    if (this.dueOrCompletion === 'd') {
+        d = Date.parse(this.dueDate);
+    }
+    else {
+        d = Date.parse(new Date());
+    }
+    if (this.interval === 'd') {
+        d += this.frequency * VIMAT.MODEL.MISC.getMsInDay();
+    }
+    if (this.interval === 'w') {
+        d += this.frequency * VIMAT.MODEL.MISC.getMsInWeek();
+    }
+    if (this.interval === 'm') {
+        d += this.frequency * VIMAT.MODEL.MISC.getMsInWeek();
+    }
+    if (this.interval === 'y') {
+        d += this.frequency * VIMAT.MODEL.MISC.getMsInYear();
+    }
+    this.dueDate = (new Date(d)).toJSON();
+};
+VIMAT.MODEL.TASKS.taskList = (function () {
     // *** Dependencies
 
     // *** Private Properties
-    var arrayContent = [];
-
+    var arrayContent = [],
+        nextId = 0;
     // *** Private methods
     function addTask(t) {
+        // Any new task created for the task list must go through this function
+        // in order to get the proper ID
+        t.setId(VIMAT.SETTINGS.taskList.getNextId()); // ***** Prefix ID with userID);
         arrayContent.push(t);
     }
     function addTaskFromString(s) {
-        var task = new VIMAT.MODEL.TASKLIST.Task();
-        task.fromString(s);
-        addTask(task);
+        // This function will not create a new ID
+        // This is for tasks that have already been created and
+        // assigned a unique ID
+        var t = new VIMAT.MODEL.TASKS.Task();
+        t.fromString(s);
+        arrayContent.push(t);
+    }
+    function addTasksFromStrings(ss) {
+        // array version of 'addTaskFromString'
+        var i, l = ss.length;
+        for (i = 0; i < l; i++) {
+            addTaskFromString(ss[i]);
+        }
+    }
+    function getAllTasksToStrings() {
+        var i, ts = [];
+        for (i = 0; i < getNumberOfTasks(); i++)  {
+            ts[i] = arrayContent[i].toString();
+        }
+        return ts;
     }
     function getTaskByIndex(i) {
         return arrayContent[i];
@@ -362,17 +381,30 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
     function sortByUrgency() {
         
     }
+    function sortByDate() {
+        arrayContent.sort(function (a, b) {
+          if (a.getDueDate() > b.getDueDate()) {
+            return 1;
+          }
+          if (a.getDueDate() < b.getDueDate()) {
+            return -1;
+          }
+          return 0;
+        });
+    }
     function deleteOrRepeatCompleted() {
         var l = getNumberOfTasks(),
             i, t;
         for (i = 0; i < l; i++) {
             t = getTaskByIndex(i);
             if (t.getFinished()) {
-                if (t.getRepeats) {
-                    // repeat the task
+                if (t.getRepeats()) {
+                    t.repeat();
+                    arrayContent.splice(i, 1);
+                    i--;
+                    arrayContent.push(t);
                 }
                 else {
-                    // throw it away
                     arrayContent.splice(i, 1);
                     i--;
                 }
@@ -387,10 +419,12 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
             t = getTaskById(i);
             if (t.getFinished()) {
                 arrayOfTaskStrings.push(t.toString());
-                // set the original task back to not finished
+                arrayContent.splice(i, 1);
+                i--;
+                t.setFinished(false);
+                arrayContent.push(t);
             }
         }
-        
         return arrayOfTaskStrings;
     }
     function moveCompletedToProject(projectId) {
@@ -406,18 +440,21 @@ VIMAT.MODEL.TASKLIST.taskList = (function () {
     return {
         addTask:                    addTask,
         addTaskFromString:          addTaskFromString,
+        addTasksFromStrings:        addTasksFromStrings,
         removeTaskById:             removeTaskById,
         sortByContext:              sortByContext,
         sortByCompass:              sortByCompass,
         sortByPriority:             sortByPriority,
         sortByUrgency:              sortByUrgency,
+        sortByDate:                 sortByDate,
         deleteOrRepeatCompleted:    deleteOrRepeatCompleted,
         getTextForCompleted:        getTextForCompleted,
         moveCompletedToProject:     moveCompletedToProject,
         getNumberOfTasks:           getNumberOfTasks,
         getTaskByIndex:             getTaskByIndex,
         getTaskById:                getTaskById,
-        getTaskIndexById:           getTaskIndexById
+        getTaskIndexById:           getTaskIndexById,
+        getAllTasksToStrings:       getAllTasksToStrings
     };
 }());
 
@@ -497,29 +534,126 @@ function timeTrackerStatsForCompass() {
 
 // projects
 VIMAT.namespace("VIMAT.MODEL.PROJECTS");
-VIMAT.MODEL.PROJECTS.Project = function(n) {
-    // *** Private Properties
-    var name = n,
-        taskIds = [];
-    
-    // *** Private Methods
-    function getName() {
-        return name;
-    }
-    function setName(n) {
-        name = n;
-    }
-    function addTaskId(t) {
-        taskIds.push(t);
-    }
-    
-    // *** Public API
-    return {
-        getName:        getName,
-        setName:        setName,
-        addTaskId:      addTaskId
-    };
+VIMAT.MODEL.PROJECTS.ProjectTask = function(taskId) {
+    this.id = 'p' + taskId;
+    this.requiresProjectTaskIds = [];
 };
+VIMAT.MODEL.PROJECTS.Project = function(n) {
+    this.name = n;
+    this.projectTaskIds = [];
+    this.dueDate = '';
+    this.compass = '';
+    this.priority  = '';
+    this.urgency = '';
+    this.repeats = false;
+    this.dueOrCompletion = '';
+    this.frequency = 0;
+    this.interval = '';
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getName = function () {
+    return this.name;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setName = function (n) {
+    this.name = n;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.addTaskId = function (id) {
+    this.taskIds.push(id);
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.removeTaskId = function (id) {
+    var i, l = this.taskIds.length;
+    for (i = 0; i < l; i++) {
+        if (this.taskIds[i] === id) {
+            this.taskIds.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getContext = function () {
+    return this.context;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setContext = function (c) {
+    this.context = c;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getDueDate = function () {
+    return this.dueDate;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setDueDate = function (d) {
+    this.dueDate = d;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getCompass = function () {
+    return this.compass;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setCompass = function (c) {
+    this.compass = c;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getPriority = function () {
+    return this.priority;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setPriority = function (p) {
+    this.priority = p;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getUrgency = function () {
+    return this.urgency;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setUrgency = function (u) {
+    this.urgency = u;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getRepeats = function () {
+    return this.repeats;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setRepeats = function (r) {
+    this.repeats = r;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getDueOrCompletion = function () {
+    return this.dueOrCompletion;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setDueOrCompletion = function (doc) {
+    this.dueOrCompletion = doc;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getFrequency = function () {
+    return this.frequency;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setFrequency = function (f) {
+    this.frequency = f;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getInterval = function () {
+    return this.interval;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setInterval = function (i) {
+    this.interval = i;
+};
+// VIMAT.MODEL.PROJECTS.Project.prototype.toString = function () {
+//     var str = this.id;
+//     str += '|' + this.description;
+//     str += '|' + this.finished;
+//     str += '|' + this.context;
+//     str += '|' + this.dueDate;
+//     str += '|' + this.compass;
+//     str += '|' + this.priority;
+//     str += '|' + this.urgency;
+//     str += '|' + this.repeats;
+//     str += '|' + this.dueOrCompletion;
+//     str += '|' + this.frequency;
+//     str += '|' + this.interval;
+//     return str;
+// };
+// VIMAT.MODEL.PROJECTS.Project.prototype.fromString = function (s) {
+//     var taskProperties = [];
+//     taskProperties = s.split('|');
+//     this.id = taskProperties[0];
+//     this.description = taskProperties[1];
+//     this.finished = (taskProperties[2] === 'true');
+//     this.context = taskProperties[3];
+//     this.dueDate = taskProperties[4];
+//     this.compass = taskProperties[5];
+//     this.priority = taskProperties[6];
+//     this.urgency = taskProperties[7];
+//     this.repeats = (taskProperties[8] === 'true');
+//     this.dueOrCompletion = taskProperties[9];
+//     this.frequency = taskProperties[10];
+//     this.interval = taskProperties[11];
+// };
 VIMAT.MODEL.PROJECTS.projectList = (function () {
     // *** Private Properties
     var arrayContent = [];
@@ -528,11 +662,19 @@ VIMAT.MODEL.PROJECTS.projectList = (function () {
     function addProject(p) {
         arrayContent.push(p);
     }
+    function getNumberOfProjects() {
+        return arrayContent.length;
+    }
+    function getProjectAtIndex(i) {
+        return arrayContent[i];
+    }
     
     // *** Public API
     return {
-        addProject:         addProject
-    }
+        addProject:             addProject,
+        getNumberOfProjects:    getNumberOfProjects,
+        getProjectAtIndex:      getProjectAtIndex
+    };
 }());
 
 // calendar
@@ -622,15 +764,35 @@ VIMAT.MODEL.MISC = (function () {
                                 "Relations",
                                 "Projects",
                                 "Tools" ];
+    var msInDay = 1000 * 60 * 60 * 24;
+    var msInWeek = msInDay * 7;
+    var msInYear = msInDay * 365;
+    var msInMonth = msInYear / 12;
 
     // *** Private Methods
     function getCompassCategories() {
         return compassCategories;
     }
+    function getMsInDay() {
+        return msInDay;
+    }
+    function getMsInWeek() {
+        return msInWeek;
+    }
+    function getMsInMonth() {
+        return msInMonth;
+    }
+    function getMsInYear() {
+        return msInYear;
+    }
     
     // *** Public API
     return {
-        getCompassCategories:   getCompassCategories
+        getCompassCategories:   getCompassCategories,
+        getMsInDay:             getMsInDay,
+        getMsInWeek:            getMsInWeek,
+        getMsInMonth:           getMsInMonth,
+        getMsInYear:            getMsInYear
     };
 }());
 var compassCategories = [   "Wellness",
