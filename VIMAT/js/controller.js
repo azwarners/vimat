@@ -251,10 +251,12 @@ VIMAT.CONTROLLER = (function () {
         var et = e.currentTarget,
             tid = et.id,
             t = VIMAT.MODEL.TASKS.taskList.getTaskById(tid);
+        alert('tid = ' + tid);
         t.setFinished(document.getElementById(tid).checked);
-        VIMAT.MODEL.TASKS.removeTaskById(tid);
-        VIMAT.MODEL.TASKS.addTask(t);
-        // saveTasks();
+        alert(t.getFinished());
+        VIMAT.MODEL.TASKS.taskList.removeTaskById(tid);
+        VIMAT.MODEL.TASKS.taskList.addTaskFromString(t.toString());
+        VIMAT.DB.saveTaskList();
     }
     
     // Tickler

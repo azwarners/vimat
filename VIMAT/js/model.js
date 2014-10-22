@@ -313,8 +313,8 @@ VIMAT.MODEL.TASKS.taskList = (function () {
     // *** Dependencies
 
     // *** Private Properties
-    var arrayContent = [],
-        nextId = 0;
+    var arrayContent = [];
+    
     // *** Private methods
     function addTask(t) {
         // Any new task created for the task list must go through this function
