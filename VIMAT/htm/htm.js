@@ -42,12 +42,17 @@ VIMAT.HTM.listOfListsTool = (function () {
 VIMAT.HTM.taskListTool = (function () {
     var h = '<button onclick="newTaskClicked()">New<br/>Task</button>' +
         '<button onclick="clearCompletedClicked()">Clear<br/>completed</button>' +
-        '<button onclick="moveToProjectClicked()">Move to<br/>project</button>' +
+        // '<button onclick="moveToProjectClicked()">Move to<br/>project</button>' +
         '<button onclick="textExportClicked()">Text for<br/>Export</button>' +
+        '<button onclick="textImportClicked()">Import<br/>Tasks</button>' +
         '<div id="divForStringify"></div><div id="newTaskForm"></div><div id="taskListDiv"></div>';
     return h;
 });
-VIMAT.HTM.taskForm = (function (t) {
+VIMAT.HTM.ticklerTool = (function () {
+    var h = '<div id="ticklerTaskListDiv"></div>';
+    return h;
+});
+VIMAT.HTM.taskForm = (function (t, n) {
     var h,
         d = new Date(); // for setting the default to today's date
     
@@ -55,6 +60,13 @@ VIMAT.HTM.taskForm = (function (t) {
     h = '<section class="form">Description: <input type="text" id="taskInput"';
     if (t.getDescription()) {
         h += ' value="' + t.getDescription() + '"';
+    }
+    h += '/><br/>';
+
+    // folder text box
+    h += 'Folder: <input type="text" id="folderInput"';
+    if (t.getFolder()) {
+        h += ' value="' + t.getFolder() + '"';
     }
     h += '/><br/>';
 
@@ -68,16 +80,65 @@ VIMAT.HTM.taskForm = (function (t) {
     h += (t.getDueDate()).slice(0, 10) + '"><br/>';
     
     // repeat
-    h += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"><br/>';
-    h += 'Repeat from: <input type="radio" name="repeatFrom" value="due">Due Date ';
-    h += '<input type="radio" name="repeatFrom" value="completion" checked="true">Completion Date<br/>';
+    h += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"';
+    if (t.getRepeats()) {
+        h += ' checked';
+    }
+    h += '><br/>';
+    h += 'Repeat from: <input type="radio" name="repeatFrom" value="due"';
+    if (t.getDueOrCompletion() === 'd') {
+        h += ' checked="true"';
+    }
+    h += '>Due Date ';
+    h += '<input type="radio" name="repeatFrom" value="completion"';
+    if (t.getDueOrCompletion() === 'c') {
+        h += ' checked="true"';
+    }
+    h += '>Completion Date<br/>';
     h += 'Every <input type="number" id="frequency" min="1"> ';
-    h += '<select id="interval"><option value="day">day</option>';
-    h += '<option value="week">week</option><option value="month">month</option>';
-    h += '<option value="year">year</option></select><br/>';
+    h += '<select id="interval"><option value="d">day</option>';
+    h += '<option value="w">week</option><option value="m">month</option>';
+    h += '<option value="y">year</option></select><br/>';
 
     // save button
-    h += '<button onclick="addTaskClicked()">Add Task</button></section>';
+    h += '<button onclick="';
+    if (n === 'E') {
+        h += 'editTaskClicked()';
+    }
+    else {
+        h += 'addTaskClicked()';
+    }
+    h += '">Save Task</button></section>';
 
     return h;
+});
+VIMAT.HTM.getMarkupForTask = (function (t, condition) {
+    var htm = '';
+    // checkbox
+    htm += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup(
+            "checkBoxChanged(event)", t.getId(), t.getFinished());
+    htm += '<span class="task">';
+    // description
+    htm += '<span onclick="taskClicked(event)" id="';
+    htm += t.getId() + '">';
+    htm += t.getDescription();
+    htm += '</span><br/>';
+    // compass
+    if (!(condition === 'noCompass')) {
+        if (t.getCompass()) {
+            htm += t.getCompass() + '   ';
+        }
+    }
+    // repeats
+    if (t.getRepeats()) {
+        htm += 'R   ';
+    }
+    // due date
+    if (t.getDueDate()) {
+        htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
+    }
+    // container for an optional edit form
+    htm += '<div id="ef' + t.getId() + '"></div>';
+    htm += '</span>';
+    return htm;
 });

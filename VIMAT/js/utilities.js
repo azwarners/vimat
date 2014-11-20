@@ -50,17 +50,52 @@ VIMAT.UTILITIES.isArray = (function (myArray) {
     // return myArray.constructor.toString().indexOf("Array") > -1;
 }());
 
-// View
-function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
-    var h = '<input type="checkbox" ';
-    h += 'onchange="' + onChange + '" ';
-    h += 'id="' + checkBoxId + '"';
-    if (checked) {
-        h += ' checked';
+VIMAT.namespace('VIMAT.UTILITIES.MISC');
+VIMAT.UTILITIES.MISC = (function () {
+    // *** Private method
+    function isNotInArray(o, a) {
+        var l, i;
+        if (a) {
+            l = a.length;
+        }
+        for (i = 0; i < l; i++) {
+            if (a[i] === o) {
+                return false;
+            }
+        }
+        return true;
     }
-    h += '>';
-    return (h);
-}
+    function isInArray(o, a) {
+        var l, i;
+        if (a) {
+            l = a.length;
+        }
+        for (i = 0; i < l; i++) {
+            if (a[i] === o) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // *** Public API
+    return {
+        isNotInArray:           isNotInArray,
+        isInArray:              isInArray
+    };
+}());
+
+// View
+// function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
+//     var h = '<input type="checkbox" ';
+//     h += 'onchange="' + onChange + '" ';
+//     h += 'id="' + checkBoxId + '"';
+//     if (checked) {
+//         h += ' checked';
+//     }
+//     h += '>';
+//     return (h);
+// }
 VIMAT.namespace('VIMAT.UTILITIES.VIEW');
 VIMAT.UTILITIES.VIEW = (function () {
     // *** Private method

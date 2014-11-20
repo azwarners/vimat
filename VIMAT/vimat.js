@@ -76,6 +76,12 @@ function taskListModuleHeaderClicked() {
 function textExportClicked() {
     VIMAT.CONTROLLER.textExportClicked();
 }
+function textImportClicked() {
+    VIMAT.CONTROLLER.textImportClicked();
+}
+function importClicked() {
+    VIMAT.CONTROLLER.importClicked();
+}
 function newTaskClicked(){
     VIMAT.CONTROLLER.newTaskClicked();
 }
@@ -94,9 +100,9 @@ function addTaskClicked() {
 // function taskClicked(e) {
 //     VIMAT.CONTROLLER.taskClicked(e);
 // }
-// function editTaskButtonClicked() {
-//     VIMAT.CONTROLLER.editTaskButtonClicked();
-// }
+function editTaskClicked() {
+    VIMAT.CONTROLLER.editTaskClicked();
+}
 
 // Tickler
 function ticklerHeaderClicked() {

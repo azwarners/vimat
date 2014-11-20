@@ -42,7 +42,7 @@ VIMAT.CONTROLLER = (function () {
         applySettings();
     }
     
-    // Task List
+    // Task List (old)
     function taskListHeaderClicked() {
         if (settings.taskListToolIsDisplayed) {
             hideTaskListTool();
@@ -121,19 +121,19 @@ VIMAT.CONTROLLER = (function () {
         // saveProjects;
         displayTaskList();
     }
-    function taskClicked(e) {
-        var et = e.currentTarget,
-            t = et.id;
-        // id of <span> containing task description that was clicked
-        if (t === currentTaskBeingEdited) {
-            hideEditTaskForm(t);
-            editTaskFormIsDisplayed = false;
-            currentTaskBeingEdited = -1;
-        }
-        else {
-            displayEditTaskForm(t);
-        }
-    }
+    // function taskClicked(e) {
+    //     var et = e.currentTarget,
+    //         t = et.id;
+    //     // id of <span> containing task description that was clicked
+    //     if (t === currentTaskBeingEdited) {
+    //         hideEditTaskForm(t);
+    //         editTaskFormIsDisplayed = false;
+    //         currentTaskBeingEdited = -1;
+    //     }
+    //     else {
+    //         displayEditTaskForm(t);
+    //     }
+    // }
     function editTaskButtonClicked() {
         // index of the current task in the array
         var t = currentTaskBeingEdited.slice(2),
@@ -167,15 +167,29 @@ VIMAT.CONTROLLER = (function () {
         }
     }
     function textExportClicked() {
-    //     var t = JSON.stringify(tasks);
-    //     document.getElementById('divForStringify').innerHTML = '<textarea>' + t + '</textarea>';
+        var t = VIMAT.MODEL.TASKS.taskList.getAllTasksToString();
+        document.getElementById('divForStringify').innerHTML = '<textarea>' + t + '</textarea>';
+    }
+    function textImportClicked() {
+        var s, h;
+        h = '<textarea id="importTextArea"></textarea><button onclick="importClicked()">Import</button>';
+        document.getElementById('divForStringify').innerHTML = h;
+    }
+    function importClicked() {
+        var s;
+        s = document.getElementById('importTextArea').value;
+        VIMAT.MODEL.TASKS.taskList.addTasksFromString(s);
+        VIMAT.DB.saveTaskList();
+        VIMAT.DB.saveSettings();
+        VIMAT.VIEW.TASKS.displayTaskListTool();
     }
     function newTaskClicked(){
         VIMAT.VIEW.TASKS.displayNewTaskForm();
     }
     function clearCompletedClicked() {
         VIMAT.MODEL.TASKS.taskList.deleteOrRepeatCompleted();
-        // saveTasks();
+        VIMAT.DB.saveTaskList();
+        VIMAT.DB.saveSettings();
         VIMAT.VIEW.TASKS.displayTaskList();
     }
     function moveToProjectClicked() {
@@ -198,19 +212,26 @@ VIMAT.CONTROLLER = (function () {
         // saveProjects;
         displayTaskList();
     }
-    // function taskClicked(e) {
-    //     var et = e.currentTarget,
-    //         t = et.id;
-    //     // id of <span> containing task description that was clicked
-    //     if (t === currentTaskBeingEdited) {
-    //         hideEditTaskForm(t);
-    //         editTaskFormIsDisplayed = false;
-    //         currentTaskBeingEdited = -1;
-    //     }
-    //     else {
-    //         displayEditTaskForm(t);
-    //     }
-    // }
+    function taskClicked(e) {
+        var et = e.currentTarget,
+            t = et.id, tid, task, taskFormHTM;
+            
+        // id of <span> containing task description that was clicked
+        if (t === VIMAT.MODEL.TASKS.taskList.getEditTaskId()) {
+            VIMAT.hideEditTaskForm(t);
+            editTaskFormIsDisplayed = false;
+            VIMAT.MODEL.TASKS.taskList.setEditTaskId(-1);
+        }
+        else {
+            // tid = parseInt(t.slice(2), 10);
+            tid = 'ef' + t;
+            VIMAT.MODEL.TASKS.taskList.setEditTaskId(t);
+            task = VIMAT.MODEL.TASKS.taskList.getTaskById(t);
+            taskFormHTM = VIMAT.HTM.taskForm(task, 'E');
+            document.getElementById(tid).innerHTML = taskFormHTM;
+
+        }
+    }
     // function editTaskButtonClicked() {
     //     // index of the current task in the array
     //     var t = currentTaskBeingEdited.slice(2),
@@ -231,18 +252,72 @@ VIMAT.CONTROLLER = (function () {
     // }
     function addTaskClicked() {
         var ti = document.getElementById("taskInput").value,
+            fi = document.getElementById("folderInput").value,
             ci = document.getElementById("compassInput").value,
             di = document.getElementById("dueDateInput").value,
+            r = document.getElementById("repeatCheckBox").checked,
+            rfRadios = document.getElementsByName("repeatFrom"),
+            rf, f = document.getElementById("frequency").value,
+            interv = document.getElementById("interval").value,
             task = new VIMAT.MODEL.TASKS.Task(ti),
             d;
         task.setCompass(ci);
+        task.setFolder(fi);
         d = new Date(di);
         d.setHours(0);
         d.setMinutes(0);
         d.setDate(d.getDate() + 1);
         task.setDueDate(d.toJSON());
+        task.setRepeats(r);
+        if (rfRadios[0].checked) {
+            rf = 'd';
+        }
+        else {
+            rf = 'c';
+        }
+        task.setDueOrCompletion(rf);
+        task.setFrequency(f);
+        task.setInterval(interv);
         VIMAT.VIEW.TASKS.hideNewTaskForm();
         VIMAT.MODEL.TASKS.taskList.addTask(task);
+        VIMAT.DB.saveTaskList();
+        VIMAT.DB.saveSettings();
+        VIMAT.VIEW.TASKS.displayTaskList();
+    }
+    function editTaskClicked() {
+        var ti = document.getElementById("taskInput").value,
+            fi = document.getElementById("folderInput").value,
+            ci = document.getElementById("compassInput").value,
+            di = document.getElementById("dueDateInput").value,
+            r = document.getElementById("repeatCheckBox").checked,
+            rfRadios = document.getElementsByName("repeatFrom"),
+            rf, f = document.getElementById("frequency").value,
+            interv = document.getElementById("interval").value,
+            task = new VIMAT.MODEL.TASKS.Task(ti), ts,
+            d;
+        task.setCompass(ci);
+        task.setFolder(fi);
+        d = new Date(di);
+        d.setHours(0);
+        d.setMinutes(0);
+        d.setDate(d.getDate() + 1);
+        task.setDueDate(d.toJSON());
+        task.setRepeats(r);
+        if (rfRadios[0].checked) {
+            rf = 'd';
+        }
+        else {
+            rf = 'c';
+        }
+        task.setDueOrCompletion(rf);
+        task.setFrequency(f);
+        task.setInterval(interv);
+        task.setId(VIMAT.MODEL.TASKS.taskList.getEditTaskId());
+        ts = task.toString();
+        VIMAT.MODEL.TASKS.taskList.removeTaskById(VIMAT.MODEL.TASKS.taskList.getEditTaskId());
+        VIMAT.VIEW.TASKS.hideNewTaskForm();
+        VIMAT.MODEL.TASKS.taskList.setEditTaskId(false);
+        VIMAT.MODEL.TASKS.taskList.addTaskFromString(ts);
         VIMAT.DB.saveTaskList();
         VIMAT.DB.saveSettings();
         VIMAT.VIEW.TASKS.displayTaskList();
@@ -251,9 +326,7 @@ VIMAT.CONTROLLER = (function () {
         var et = e.currentTarget,
             tid = et.id,
             t = VIMAT.MODEL.TASKS.taskList.getTaskById(tid);
-        alert('tid = ' + tid);
         t.setFinished(document.getElementById(tid).checked);
-        alert(t.getFinished());
         VIMAT.MODEL.TASKS.taskList.removeTaskById(tid);
         VIMAT.MODEL.TASKS.taskList.addTaskFromString(t.toString());
         VIMAT.DB.saveTaskList();
@@ -261,11 +334,12 @@ VIMAT.CONTROLLER = (function () {
     
     // Tickler
     function ticklerHeaderClicked() {
-        if (settings.ticklerToolIsDisplayed) {
-            hideTicklerTool();
+        var ttdiv = document.getElementById('ticklerTool').innerHTML;
+        if (ttdiv) {
+            VIMAT.VIEW.TICKLER.hideTicklerTool();
         }
         else {
-            displayTicklerTool();   
+            VIMAT.VIEW.TICKLER.displayTicklerTool();   
         }
     }
     
@@ -522,8 +596,11 @@ VIMAT.CONTROLLER = (function () {
         taskListHeaderClicked:          taskListHeaderClicked,
         stringifyTasks:                 stringifyTasks,
         textExportClicked:              textExportClicked,
+        textImportClicked:              textImportClicked,
+        importClicked:                  importClicked,
         addTaskButtonClicked:           addTaskButtonClicked,
         addTaskClicked:                 addTaskClicked,
+        editTaskClicked:                editTaskClicked,
         checkBoxChanged:                checkBoxChanged,
         newTaskButtonClicked:           newTaskButtonClicked,
         newTaskClicked:                 newTaskClicked,

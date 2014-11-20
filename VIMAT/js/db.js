@@ -166,32 +166,21 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         VIMAT.MODEL.TASKS.taskList.addTasksFromStrings(taskStringArray);
     }
     function saveProjectList() {
-        var projectArray = [],
-            l = VIMAT.MODEL.PROJECTS.projectList.getNumberOfProjects(),
-            i, p;
-        for (i = 0; i < l; i++) {
-            p = VIMAT.MODEL.PROJECTS.projectList.getProjectAtIndex(i);
-            projectArray[i] = p;
-        }    
-        localStorage.projectListDb = JSON.stringify(projectArray);
+        var projectStringArray = VIMAT.MODEL.PROJECTS.projectList.getAllProjectsToStrings();
+        localStorage.projectListDb = JSON.stringify(projectStringArray);
     }
     function loadProjectList() {
-        var projectArray = [],
-            p, i, l;
+        var projectStringArray = [];
         if(typeof(localStorage) !== "undefined") {
-            if (localStorage.taskListDb) {
-                projectArray = JSON.parse(localStorage.projectListDb);
+            if (localStorage.projectListDb) {
+                projectStringArray = JSON.parse(localStorage.projectListDb);
             }
         }
         else {
             alert('Sorry, no local storage on this browser.');
             return;
         }
-        l = projectArray.length;
-        for (i = 0; i < l; i++) {
-            p = projectArray[i];
-            VIMAT.MODEL.PROJECTS.projectList.addTask(p);
-        }
+        VIMAT.MODEL.PROJECTS.projectList.addTasksFromStrings(projectStringArray);
     }
     function saveListOfLists() {
         var listArray = [],

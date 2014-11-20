@@ -171,6 +171,7 @@ VIMAT.namespace("VIMAT.MODEL.TASKS");
 VIMAT.MODEL.TASKS.Task = function(d) {
     this.id = '';
     this.description = d;
+    this.folder = '';
     this.finished = false;
     this.context = '';
     this.dueDate = '';
@@ -193,6 +194,12 @@ VIMAT.MODEL.TASKS.Task.prototype.getDescription = function () {
 };
 VIMAT.MODEL.TASKS.Task.prototype.setDescription = function (d) {
     this.description = d;
+};
+VIMAT.MODEL.TASKS.Task.prototype.getFolder = function () {
+    return this.folder;
+};
+VIMAT.MODEL.TASKS.Task.prototype.setFolder = function (f) {
+    this.folder = f;
 };
 VIMAT.MODEL.TASKS.Task.prototype.getFinished = function () {
     return this.finished;
@@ -257,6 +264,7 @@ VIMAT.MODEL.TASKS.Task.prototype.setInterval = function (i) {
 VIMAT.MODEL.TASKS.Task.prototype.toString = function () {
     var str = this.id;
     str += '|' + this.description;
+    str += '|' + this.folder;
     str += '|' + this.finished;
     str += '|' + this.context;
     str += '|' + this.dueDate;
@@ -276,16 +284,20 @@ VIMAT.MODEL.TASKS.Task.prototype.fromString = function (s) {
     // that follow were used to store boolean values rather than strings
     this.id = taskProperties[0];
     this.description = taskProperties[1];
-    this.finished = (taskProperties[2] === 'true');
-    this.context = taskProperties[3];
-    this.dueDate = taskProperties[4];
-    this.compass = taskProperties[5];
-    this.priority = taskProperties[6];
-    this.urgency = taskProperties[7];
-    this.repeats = (taskProperties[8] === 'true');
-    this.dueOrCompletion = taskProperties[9];
-    this.frequency = taskProperties[10];
-    this.interval = taskProperties[11];
+    this.folder = taskProperties[2];
+    this.finished = (taskProperties[3] === 'true');
+    this.context = taskProperties[4];
+    this.dueDate = taskProperties[5];
+    this.compass = taskProperties[6];
+    this.priority = taskProperties[7];
+    this.urgency = taskProperties[8];
+    this.repeats = (taskProperties[9] === 'true');
+    this.dueOrCompletion = taskProperties[10];
+    this.frequency = taskProperties[11];
+    this.interval = taskProperties[12];
+    if (taskProperties[13]) {
+        // add new attributes in this manner to avoid breaking old tasks
+    }
 };
 VIMAT.MODEL.TASKS.Task.prototype.repeat = function () {
     var d;
@@ -313,9 +325,19 @@ VIMAT.MODEL.TASKS.taskList = (function () {
     // *** Dependencies
 
     // *** Private Properties
-    var arrayContent = [];
+    var arrayContent = [],
+        editTaskId = false;
     
     // *** Private methods
+    function idExists(id) {
+        var i, l = getNumberOfTasks();
+        for (i = 0; i < l; i++) {
+            if (arrayContent[i].getId() === id) {
+                return true;
+            }
+        }
+        return false;
+    }
     function addTask(t) {
         // Any new task created for the task list must go through this function
         // in order to get the proper ID
@@ -337,10 +359,31 @@ VIMAT.MODEL.TASKS.taskList = (function () {
             addTaskFromString(ss[i]);
         }
     }
+    function addTasksFromString(s) {
+        // importing multiple tasks from a single string
+        var i, l, tl = [];
+        tl = s.split('/|');
+        l = tl.length;
+        for (i = 0; i < l; i++) {
+            addTaskFromString(tl[i]);
+        }
+    }
     function getAllTasksToStrings() {
         var i, ts = [];
         for (i = 0; i < getNumberOfTasks(); i++)  {
             ts[i] = arrayContent[i].toString();
+        }
+        return ts;
+    }
+    function getAllTasksToString() {
+        var i, l = getNumberOfTasks(), ts = '';
+        for (i = 0; i < l; i++)  {
+            if (i === l) {
+                ts += arrayContent[i].toString();
+            }
+            else {
+                ts += arrayContent[i].toString() + '/|';
+            }
         }
         return ts;
     }
@@ -400,6 +443,7 @@ VIMAT.MODEL.TASKS.taskList = (function () {
             if (t.getFinished()) {
                 if (t.getRepeats()) {
                     t.repeat();
+                    t.setFinished(false);
                     arrayContent.splice(i, 1);
                     i--;
                     arrayContent.push(t);
@@ -407,6 +451,7 @@ VIMAT.MODEL.TASKS.taskList = (function () {
                 else {
                     arrayContent.splice(i, 1);
                     i--;
+                    l--;
                 }
             }
         }
@@ -416,7 +461,7 @@ VIMAT.MODEL.TASKS.taskList = (function () {
             l = getNumberOfTasks(),
             i, t;
         for (i = 0; i < l; i++) {
-            t = getTaskById(i);
+            t = getTaskByIndex(i);
             if (t.getFinished()) {
                 arrayOfTaskStrings.push(t.toString());
                 arrayContent.splice(i, 1);
@@ -433,14 +478,47 @@ VIMAT.MODEL.TASKS.taskList = (function () {
     function getNumberOfTasks() {
         return arrayContent.length;
     }
+    function getEditTaskId() {
+        return editTaskId;
+    }
+    function setEditTaskId(id) {
+        editTaskId = id;
+    }
+    function getUniqueFolders() {
+        var l = getNumberOfTasks(),
+            i, t, tf, folders = [], nia, ia = false;
+        for (i = 0; i < l; i++) {
+            t = arrayContent[i];
+            tf = t.getFolder();
+            if (tf === '') {
+                ia = true;
+            }
+            nia = VIMAT.UTILITIES.MISC.isNotInArray(tf, folders);
+            if (nia) {
+                folders.push(tf);
+            }
+        }
+        if (ia) {
+            l = folders.length;
+            for (i = 0; i < l; i++) {
+                if (folders[i] === '') {
+                    folders.splice(i, 1);
+                }
+            }
+            folders.unshift('');
+        }
+        return folders;
+    }
 
     // *** Initialization
 
     // *** Public API
     return {
+        idExists:                   idExists,
         addTask:                    addTask,
         addTaskFromString:          addTaskFromString,
         addTasksFromStrings:        addTasksFromStrings,
+        addTasksFromString:         addTasksFromString,
         removeTaskById:             removeTaskById,
         sortByContext:              sortByContext,
         sortByCompass:              sortByCompass,
@@ -454,7 +532,11 @@ VIMAT.MODEL.TASKS.taskList = (function () {
         getTaskByIndex:             getTaskByIndex,
         getTaskById:                getTaskById,
         getTaskIndexById:           getTaskIndexById,
-        getAllTasksToStrings:       getAllTasksToStrings
+        getAllTasksToString:        getAllTasksToString,
+        getAllTasksToStrings:       getAllTasksToStrings,
+        getEditTaskId:              getEditTaskId,
+        setEditTaskId:              setEditTaskId,
+        getUniqueFolders:           getUniqueFolders
     };
 }());
 
@@ -534,11 +616,85 @@ function timeTrackerStatsForCompass() {
 
 // projects
 VIMAT.namespace("VIMAT.MODEL.PROJECTS");
-VIMAT.MODEL.PROJECTS.ProjectTask = function(taskId) {
-    this.id = 'p' + taskId;
-    this.requiresProjectTaskIds = [];
+VIMAT.MODEL.PROJECTS.ProjectTaskAssociation = function(tid, pid) {
+    this.taskId = tid;
+    this.projectId = pid;
 };
+VIMAT.MODEL.PROJECTS.TaskDependency = function(tid, rtid) {
+    this.taskId = tid;
+    this.requiredTaskId = rtid;
+};
+VIMAT.MODEL.PROJECTS.TaskDependency.getTaskId = function () {
+    return this.taskId;
+};
+VIMAT.MODEL.PROJECTS.TaskDependency.setTaskId = function (tid) {
+    this.taskId = tid;
+};
+VIMAT.MODEL.PROJECTS.TaskDependency.getRequiredTaskId = function () {
+    return this.requiredProjectTaskId;
+};
+VIMAT.MODEL.PROJECTS.TaskDependency.setRequiredTaskId = function (rtid) {
+    this.requiredTaskId = rtid;
+};
+VIMAT.MODEL.PROJECTS.taskDependencyList = (function () {
+    // *** Private Properties
+    var taskDependencyArray = [];
+
+    // *** Private Methods
+    function addTaskDependency(td) {
+        taskDependencyArray.push(td);
+    }
+    function getTaskDependencyByIndex(i) {
+        return taskDependencyArray[i];
+    }
+    function getTaskDependencyByTaskId(tid) {
+        var l = getNumberOfTaskDependencies(),
+            i;
+        for (i = 0; i < l; i++) {
+            if (taskDependencyArray[i].getTaskId() === tid) {
+                return taskDependencyArray[i];
+            }
+        }
+    }
+    function getTaskDependencyByRequiredTaskId(rtid) {
+        var l = getNumberOfTaskDependencies(),
+            i;
+        for (i = 0; i < l; i++) {
+            if (taskDependencyArray[i].getRequiredTaskId() === rtid) {
+                return taskDependencyArray[i];
+            }
+        }
+    }
+    function getTaskDependencyArrayIndexByTaskId(tid) {
+        var l = getNumberOfTaskDependencies(),
+            i;
+        for (i = 0; i < l; i++) {
+            if (taskDependencyArray[i].getTaskId() === tid) {
+                return i;
+            }
+        }
+    }
+    function removeTaskDependencyByTaskId(tid) {
+        var i = getTaskDependencyArrayIndexByTaskId(tid);
+        taskDependencyArray.splice(i, 1);
+    }
+    function getNumberOfTaskDependencies() {
+        return taskDependencyArray.length;
+    }
+
+    // *** Public API
+    return {
+        addTaskDependency:                      addTaskDependency,
+        getTaskDependencyByIndex:               getTaskDependencyByIndex,
+        getTaskDependencyByTaskId:              getTaskDependencyByTaskId,
+        getTaskDependencyByRequiredTaskId:      getTaskDependencyByRequiredTaskId,
+        getTaskDependencyArrayIndexByTaskId:    getTaskDependencyArrayIndexByTaskId,
+        removeTaskDependencyByTaskId:           removeTaskDependencyByTaskId,
+        getNumberOfTaskDependencies:            getNumberOfTaskDependencies
+    };
+}());
 VIMAT.MODEL.PROJECTS.Project = function(n) {
+    this.id = '';
     this.name = n;
     this.projectTaskIds = [];
     this.dueDate = '';
@@ -546,9 +702,16 @@ VIMAT.MODEL.PROJECTS.Project = function(n) {
     this.priority  = '';
     this.urgency = '';
     this.repeats = false;
+    this.repeatTasksIndividually = true;
     this.dueOrCompletion = '';
     this.frequency = 0;
     this.interval = '';
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.getId = function () {
+    return this.id;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setId = function (i) {
+    this.id = i;
 };
 VIMAT.MODEL.PROJECTS.Project.prototype.getName = function () {
     return this.name;
@@ -568,12 +731,6 @@ VIMAT.MODEL.PROJECTS.Project.prototype.removeTaskId = function (id) {
         }
     }
     return false;
-};
-VIMAT.MODEL.PROJECTS.Project.prototype.getContext = function () {
-    return this.context;
-};
-VIMAT.MODEL.PROJECTS.Project.prototype.setContext = function (c) {
-    this.context = c;
 };
 VIMAT.MODEL.PROJECTS.Project.prototype.getDueDate = function () {
     return this.dueDate;
@@ -605,6 +762,12 @@ VIMAT.MODEL.PROJECTS.Project.prototype.getRepeats = function () {
 VIMAT.MODEL.PROJECTS.Project.prototype.setRepeats = function (r) {
     this.repeats = r;
 };
+VIMAT.MODEL.PROJECTS.Project.prototype.getRepeatTasksIndividually = function () {
+    return this.repeatTasksIndividually;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.setRepeatTasksIndividually = function (b) {
+    this.repeatTasksIndividually = b;
+};
 VIMAT.MODEL.PROJECTS.Project.prototype.getDueOrCompletion = function () {
     return this.dueOrCompletion;
 };
@@ -623,57 +786,127 @@ VIMAT.MODEL.PROJECTS.Project.prototype.getInterval = function () {
 VIMAT.MODEL.PROJECTS.Project.prototype.setInterval = function (i) {
     this.interval = i;
 };
-// VIMAT.MODEL.PROJECTS.Project.prototype.toString = function () {
-//     var str = this.id;
-//     str += '|' + this.description;
-//     str += '|' + this.finished;
-//     str += '|' + this.context;
-//     str += '|' + this.dueDate;
-//     str += '|' + this.compass;
-//     str += '|' + this.priority;
-//     str += '|' + this.urgency;
-//     str += '|' + this.repeats;
-//     str += '|' + this.dueOrCompletion;
-//     str += '|' + this.frequency;
-//     str += '|' + this.interval;
-//     return str;
-// };
-// VIMAT.MODEL.PROJECTS.Project.prototype.fromString = function (s) {
-//     var taskProperties = [];
-//     taskProperties = s.split('|');
-//     this.id = taskProperties[0];
-//     this.description = taskProperties[1];
-//     this.finished = (taskProperties[2] === 'true');
-//     this.context = taskProperties[3];
-//     this.dueDate = taskProperties[4];
-//     this.compass = taskProperties[5];
-//     this.priority = taskProperties[6];
-//     this.urgency = taskProperties[7];
-//     this.repeats = (taskProperties[8] === 'true');
-//     this.dueOrCompletion = taskProperties[9];
-//     this.frequency = taskProperties[10];
-//     this.interval = taskProperties[11];
-// };
+VIMAT.MODEL.PROJECTS.Project.prototype.toString = function () {
+    var str = this.id;
+    str += '|' + this.name;
+    str += '|' + this.dueDate;
+    str += '|' + this.compass;
+    str += '|' + this.priority;
+    str += '|' + this.urgency;
+    str += '|' + this.repeats;
+    str += '|' + this.repeatTasksIndividually;
+    str += '|' + this.dueOrCompletion;
+    str += '|' + this.frequency;
+    str += '|' + this.interval;
+    return str;
+};
+VIMAT.MODEL.PROJECTS.Project.prototype.fromString = function (s) {
+    var taskProperties = [];
+    taskProperties = s.split('|');
+    this.id = taskProperties[0];
+    this.name = taskProperties[1];
+    this.dueDate = taskProperties[2];
+    this.compass = taskProperties[3];
+    this.priority = taskProperties[4];
+    this.urgency = taskProperties[5];
+    this.repeats = (taskProperties[6] === 'true');
+    this.repeatTasksIndividually = (taskProperties[7] === 'true');
+    this.dueOrCompletion = taskProperties[8];
+    this.frequency = taskProperties[9];
+    this.interval = taskProperties[10];
+};
 VIMAT.MODEL.PROJECTS.projectList = (function () {
     // *** Private Properties
-    var arrayContent = [];
-    
+    var projectArray = [];
+
     // *** Private Methods
     function addProject(p) {
-        arrayContent.push(p);
+        // Any new project created for the project list must go through this function
+        // in order to get the proper ID
+        p.setId(VIMAT.SETTINGS.taskList.getNextId()); // ***** Prefix ID with userID);
+        projectArray.push(p);
+    }
+    function addProjectFromString(s) {
+        // This function will not create a new ID
+        // This is for tasks that have already been created and
+        // assigned a unique ID
+        var p = new VIMAT.MODEL.PROJECTS.Project();
+        p.fromString(s);
+        projectArray.push(p);
+    }
+    function addProjectsFromStrings(ss) {
+        // array version of 'addProjectFromString'
+        var i, l = ss.length;
+        for (i = 0; i < l; i++) {
+            addProjectFromString(ss[i]);
+        }
+    }
+    function getAllProjectsToStrings() {
+        var i, ts = [];
+        for (i = 0; i < getNumberOfProjects(); i++)  {
+            ts[i] = projectArray[i].toString();
+        }
+        return ts;
+    }
+    function getProjectByIndex(i) {
+        return projectArray[i];
+    }
+    function getProjectById(id) {
+        var i = getProjectIndexById(id);
+        return projectArray[i];
+    }
+    function getProjectIndexById(id) {
+        var l = getNumberOfProjects(),
+            i;
+        for (i = 0; i < l; i++) {
+            if (projectArray[i].getId() === id) {
+                return i;
+            }
+        }
+    }
+    function removeProjectById(id) {
+        var i = getProjectIndexById(id);
+        projectArray.splice(i, 1);
+    }
+    function sortByCompass() {
+        
+    }
+    function sortByPriority() {
+        
+    }
+    function sortByUrgency() {
+        
+    }
+    function sortByDate() {
+        projectArray.sort(function (a, b) {
+          if (a.getDueDate() > b.getDueDate()) {
+            return 1;
+          }
+          if (a.getDueDate() < b.getDueDate()) {
+            return -1;
+          }
+          return 0;
+        });
     }
     function getNumberOfProjects() {
-        return arrayContent.length;
+        return projectArray.length;
     }
-    function getProjectAtIndex(i) {
-        return arrayContent[i];
-    }
-    
+
     // *** Public API
     return {
-        addProject:             addProject,
-        getNumberOfProjects:    getNumberOfProjects,
-        getProjectAtIndex:      getProjectAtIndex
+        addProject:                 addProject,
+        addProjectFromString:       addProjectFromString,
+        addProjectsFromStrings:     addProjectsFromStrings,
+        getAllProjectsToStrings:    getAllProjectsToStrings,
+        getProjectByIndex:          getProjectByIndex,
+        getProjectById:             getProjectById,
+        getProjectIndexById:        getProjectIndexById,
+        removeProjectById:          removeProjectById,
+        sortByCompass:              sortByCompass,
+        sortByPriority:             sortByPriority,
+        sortByUrgency:              sortByUrgency,
+        sortByDate:                 sortByDate,
+        getNumberOfProjects:        getNumberOfProjects
     };
 }());
 

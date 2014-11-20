@@ -27,6 +27,14 @@ input {
     /*box-shadow: 4px 4px 5px Olive;*/
 }
 
+textarea {
+    max-width: 88%;
+    height: auto;
+    font-size: 7px;
+    color: #46220A;
+    border-radius: 10px;
+}
+
 select {
     height: 11px;
     font-size: 7px;
@@ -49,7 +57,7 @@ body {
     box-shadow: 4px 4px 5px Olive;
 }
 
-.compassDiv {
+.toolChildDiv {
     border-style: inset;
     border-width: 3px;
     border-color: SandyBrown;
@@ -70,4 +78,38 @@ body {
 
 h1, h2 {
     text-align: center;
+}
+
+.task {
+    display: inline-block;
+    vertical-align: top;
+}
+
+ol {
+    list-style-position: inside; padding-left: 0;
+}
+
+/* Minimal css for clickable pure CSS collapsible tree menu */
+/* As specific as possible to prevent interference with other code */
+/* from http://jsfiddle.net/Friar_Broccoli/6LKc6/
+    originally from http://www.thecssninja.com/css/css-tree-menu */
+.menutree {
+    padding-left: 7px;
+    list-style: none;          /* all list item li dots invisible */
+}
+li .menu_label + input[type=checkbox] {
+    padding-left: 7px;
+    opacity: 0;             /* checkboxes invisible and use no space */
+}                        /* display: none; is better but fails in ie8 */
+li .menu_label {
+    padding-left: 7px;
+    cursor: pointer;        /* cursor changes when you mouse over this class */
+}                         /* could add the many user-select: none; commands here */
+li .menu_label + input[type=checkbox] + ol > li {
+    padding-left: 7px;
+    display: none;         /* prevents sublists below unchecked labels from displaying */
+}
+li .menu_label + input[type=checkbox]:checked + ol > li {
+    padding-left: 7px;
+    display: block;         /* display submenu on click */
 }

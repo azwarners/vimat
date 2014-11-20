@@ -85,7 +85,7 @@ VIMAT.SETTINGS.taskList = (function () {
         displayed = b;
     }
     function getNextId() {
-        var nid = 't' + nextIdSuffix;
+        var nid = 't' + nextIdSuffix; // add userID prefix
         nextIdSuffix++;
         return nid;
     }
@@ -105,6 +105,17 @@ VIMAT.SETTINGS.projects = (function () {
     var nextIdSuffix = 0;
     
     // *** Private Methods
+    function getStateString() {
+        var s = displayed + '|';
+        s += nextIdSuffix;
+        return s;
+    }
+    function setStateFromString(s) {
+        var settingsProperties = [];
+        settingsProperties = s.split('|');
+        displayed = (settingsProperties[0] === 'true');
+        nextIdSuffix = settingsProperties[1];
+    }
     function getDisplayed() {
         return displayed;
     }
@@ -112,13 +123,15 @@ VIMAT.SETTINGS.projects = (function () {
         displayed = b;
     }
     function getNextId() {
-        var nid = 't' + nextIdSuffix;
+        var nid = 'p' + nextIdSuffix; // add userID prefix
         nextIdSuffix++;
         return nid;
     }
     
     // *** Public API
     return {
+        getStateString:         getStateString,
+        setStateFromString:     setStateFromString,
         getDisplayed:           getDisplayed,
         setDisplayed:           setDisplayed,
         getNextId:              getNextId

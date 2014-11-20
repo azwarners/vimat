@@ -76,19 +76,69 @@ VIMAT.VIEW.TASKS = (function () {
         document.getElementById('newTaskForm').innerHTML = '';
     }
     function displayTaskList() {
-        var i, t, h = '',
-            l = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks();
-        for (i = 0; i < l; i++) {
-            t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(i);
-            h += getMarkupForTask(t);
+        var it, t, h = '', now = (new Date()).toJSON(),
+            lt = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks(),
+            folders = VIMAT.MODEL.TASKS.taskList.getUniqueFolders(),
+            ifolders, lfolders = folders.length, olnc = false;
+        h = '<ol class="menutree">';
+        for (ifolders = 0; ifolders < lfolders; ifolders++) {
+            if (folders[ifolders]) {
+                h += '<li><label class="menu_label" for="' + folders[ifolders] + '">';
+                h += '+ ' + folders[ifolders] + '</label><input type="checkbox" id="' + folders[ifolders];
+                h += '"/><ol>';
+                olnc = true;
+            }
+            for (it = 0; it < lt; it++) {
+                t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(it);
+                if (t.getFolder() === folders[ifolders]) {
+                    if (!(t.getDueDate() > now)) {
+                        h += '<li>' + VIMAT.HTM.getMarkupForTask(t) + '</li>';
+                    }
+                }
+            }
+            if (olnc) {
+                h += '</ol>';
+                olnc = false;
+            }
         }
         document.getElementById('taskListDiv').innerHTML = h;
         VIMAT.SETTINGS.taskList.setDisplayed(true);
         // saveSettings();
     }
+    // *** Public API
+    return {
+        displayTaskListTool:    displayTaskListTool,
+        hideTaskListTool:       hideTaskListTool,
+        displayNewTaskForm:     displayNewTaskForm,
+        hideNewTaskForm:        hideNewTaskForm,
+        displayTaskList:        displayTaskList
+    };
+}());
+
+VIMAT.namespace("VIMAT.VIEW.TICKLER");
+VIMAT.VIEW.TICKLER = (function () {
+    // *** Private Methods
+    function displayTicklerTool() {
+        document.getElementById('ticklerTool').innerHTML =
+                VIMAT.HTM.ticklerTool();
+        displayTickler();
+    }
+    function hideTicklerTool() {
+        document.getElementById('ticklerTool').innerHTML = '';
+    }
+    function displayTickler() {
+        var i, t, h = '', now = (new Date()).toJSON(),
+            l = VIMAT.MODEL.TASKS.taskList.getNumberOfTasks();
+        for (i = 0; i < l; i++) {
+            t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(i);
+            if (t.getDueDate() > now) {
+                h += VIMAT.HTM.getMarkupForTask(t) + '<br/>';
+            }
+        }
+        document.getElementById('ticklerTaskListDiv').innerHTML = h;
+    }
     function getMarkupForTask(t) {
-        var htm = '',
-            now = (new Date()).toJSON();
+        var htm = '';
         // checkbox
         htm += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup(
                 "checkBoxChanged(event)", t.getId(), t.getFinished());
@@ -97,41 +147,26 @@ VIMAT.VIEW.TASKS = (function () {
         htm += t.getId() + '">';
         htm += t.getDescription();
         htm += '</span><br/>';
-        
         // compass
         if (t.getCompass()) {
             htm += t.getCompass() + '   ';
         }
-        
         // repeats
         if (t.getRepeats()) {
             htm += 'R   ';
         }
-        
         // due date
         if (t.getDueDate()) {
             htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
         }
-        // container for an optional edit form
-        htm += '<div id="ef' + t.getId() + '"></div><br/>';
-        
-        // put the task on the page
-        // if (!(t.getDueDate() > now)) {
-        //     return htm;
-        // }
-        // else {
-        //     return '';
-        // }
         return htm;
     }
     // *** Public API
     return {
-        displayTaskListTool:    displayTaskListTool,
-        hideTaskListTool:       hideTaskListTool,
-        displayNewTaskForm:     displayNewTaskForm,
-        hideNewTaskForm:        hideNewTaskForm,
+        displayTicklerTool:     displayTicklerTool,
+        hideTicklerTool:        hideTicklerTool,
         getMarkupForTask:       getMarkupForTask,
-        displayTaskList:        displayTaskList
+        displayTickler:         displayTickler
     };
 }());
 
@@ -221,7 +256,7 @@ VIMAT.VIEW.COMPASS = (function () {
         // if (ttVarForCompass) {
         //     window.clearInterval(ttVarForCompass);
         // }
-        settings.compassToolIsDisplayed = false;
+        // settings.compassToolIsDisplayed = false;
     }
     function displayCompass() {
         // creating a string to store the html for the task list item
@@ -231,26 +266,13 @@ VIMAT.VIEW.COMPASS = (function () {
         var now = (new Date()).toJSON();
     
         // cycle through tasks adding each task to the right category
+        // unfortunately this also accesses the DOM repeatedly
+        // and will therefore require optimization
         for (i = 0; i < l; i++) {
             t = VIMAT.MODEL.TASKS.taskList.getTaskByIndex(i);
-        
-            // checkbox
-            htm = VIMAT.UTILITIES.VIEW.getCheckBoxMarkup('checkBoxChanged(event)', i, t.getFinished());
-        
-            // description
-            htm += '<span onclick="taskClicked(event)" id="td';
-            htm += i + '">';
-            htm += t.getDescription();
-            htm += '</span><br/>';
             
-            // due date
-            if (typeof t.getDueDate === 'string') {
-                htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
-            }
-            
-            // container for an optional edit form
-            htm += '<div id="ef' + i.toString() + '"></div><br/>';
-    
+            htm = VIMAT.HTM.getMarkupForTask(t, 'noCompass') + '<br/>';
+        
             // put the task on the page
             if (!(t.getDueDate() > now)) {
                 if (t.getCompass() === 'Wellness') {
@@ -326,41 +348,41 @@ function displayTaskList() {
     saveSettings();
 
 }
-function displayTaskListItemById(i) {
-    // creating a string to store the html for the task list item
-    var htm = '';
+// function displayTaskListItemById(i) {
+//     // creating a string to store the html for the task list item
+//     var htm = '';
 
-    // creating a variable with the current time/date stamp for comparing
-    var now = (new Date()).toJSON();
+//     // creating a variable with the current time/date stamp for comparing
+//     var now = (new Date()).toJSON();
 
-    // checkbox
-    htm += returnCheckBoxMarkup("checkBoxChanged(event)", i, tasks[i].finished);
+//     // checkbox
+//     htm += returnCheckBoxMarkup("checkBoxChanged(event)", i, tasks[i].finished);
 
-    // description
-    htm += '<span onclick="taskClicked(event)" id="td';
-    htm += i + '">';
-    htm += (tasks[i].description).toString();
-    htm += '</span><br/>';
+//     // description
+//     htm += '<span onclick="taskClicked(event)" id="td';
+//     htm += i + '">';
+//     htm += (tasks[i].description).toString();
+//     htm += '</span><br/>';
     
-    // compass
-    if (tasks[i].compass) {
-        htm += tasks[i].compass + '   ';
-    }
+//     // compass
+//     if (tasks[i].compass) {
+//         htm += tasks[i].compass + '   ';
+//     }
     
-    // due date
-    if (typeof tasks[i].dueDate === 'string') {
-        htm += (new Date(tasks[i].dueDate)).toDateString() + '<br/>';
-    }
+//     // due date
+//     if (typeof tasks[i].dueDate === 'string') {
+//         htm += (new Date(tasks[i].dueDate)).toDateString() + '<br/>';
+//     }
     
-    // container for an optional edit form
-    htm += '<div id="ef' + i.toString() + '"></div><br/>';
+//     // container for an optional edit form
+//     htm += '<div id="ef' + i.toString() + '"></div><br/>';
     
-    // put the task on the page
-    if (!(tasks[i].dueDate > now)) {
-        document.getElementById('taskListDiv').innerHTML += htm;
-    }
+//     // put the task on the page
+//     if (!(tasks[i].dueDate > now)) {
+//         document.getElementById('taskListDiv').innerHTML += htm;
+//     }
     
-}
+// }
 function displayNewTaskForm() {
     var htmlToAdd = '';
     
@@ -374,87 +396,87 @@ function hideNewTaskForm() {
 }
 var editTaskFormIsDisplayed = false; // id of task description <span> of task being edited
 var currentTaskBeingEdited;
-function displayEditTaskForm(t) {
-    hideNewTaskForm();
-    if (editTaskFormIsDisplayed) {
-        hideEditTaskForm(currentTaskBeingEdited);
-    }
+// function displayEditTaskForm(t) {
+//     hideNewTaskForm();
+//     if (editTaskFormIsDisplayed) {
+//         hideEditTaskForm(currentTaskBeingEdited);
+//     }
 
-    // tasks[] index of the task being edited    
-    var i = parseInt(t.slice(2), 10);
+//     // tasks[] index of the task being edited    
+//     var i = parseInt(t.slice(2), 10);
     
-    var htmlToAdd = '';
+//     var htmlToAdd = '';
     
-    // description text box
-    htmlToAdd += 'Description: <input type="text" id="taskInput"';
-    htmlToAdd += ' value="' + tasks[i].description + '"/><br/>';
+//     // description text box
+//     htmlToAdd += 'Description: <input type="text" id="taskInput"';
+//     htmlToAdd += ' value="' + tasks[i].description + '"/><br/>';
     
-    // compass drop down
-    if (tasks[i].compass === 'Wellness') {
-        htmlToAdd += 'Compass: <select id="compass"><option value="Wellness" selected>Wellness</option>';
-    } else {
-        htmlToAdd += 'Compass: <select id="compass"><option value="Wellness">Wellness</option>';
-    }
-    if (tasks[i].compass === 'Education') {
-        htmlToAdd += '<option value="Education" selected>Education</option>';
-    } else {
-        htmlToAdd += '<option value="Education">Education</option>';
-    }
-    if (tasks[i].compass === 'Finance') {
-        htmlToAdd += '<option value="Finance" selected>Finance</option>';
-    } else {
-        htmlToAdd += '<option value="Finance">Finance</option>';
-    }
-    if (tasks[i].compass === 'Art') {
-        htmlToAdd += '<option value="Art" selected>Art</option>';
-    } else {
-        htmlToAdd += '<option value="Art">Art</option>';
-    }
-    if (tasks[i].compass === 'Chores') {
-        htmlToAdd += '<option value="Chores" selected>Chores</option>';
-    } else {
-        htmlToAdd += '<option value="Chores">Chores</option>';
-    }
-    if (tasks[i].compass === 'Relations') {
-        htmlToAdd += '<option value="Relations" selected>Relations</option>';
-    } else {
-        htmlToAdd += '<option value="Relations">Relations</option>';
-    }
-    if (tasks[i].compass === 'Projects') {
-        htmlToAdd += '<option value="Projects" selected>Projects</option>';
-    } else {
-        htmlToAdd += '<option value="Projects">Projects</option>';
-    }
-    if (tasks[i].compass === 'Tools') {
-        htmlToAdd += '<option value="Tools" selected>Tools</option>';
-    } else {
-        htmlToAdd += '<option value="Tools">Tools</option>';
-    }
-    htmlToAdd += '</select><br/>';
+//     // compass drop down
+//     if (tasks[i].compass === 'Wellness') {
+//         htmlToAdd += 'Compass: <select id="compass"><option value="Wellness" selected>Wellness</option>';
+//     } else {
+//         htmlToAdd += 'Compass: <select id="compass"><option value="Wellness">Wellness</option>';
+//     }
+//     if (tasks[i].compass === 'Education') {
+//         htmlToAdd += '<option value="Education" selected>Education</option>';
+//     } else {
+//         htmlToAdd += '<option value="Education">Education</option>';
+//     }
+//     if (tasks[i].compass === 'Finance') {
+//         htmlToAdd += '<option value="Finance" selected>Finance</option>';
+//     } else {
+//         htmlToAdd += '<option value="Finance">Finance</option>';
+//     }
+//     if (tasks[i].compass === 'Art') {
+//         htmlToAdd += '<option value="Art" selected>Art</option>';
+//     } else {
+//         htmlToAdd += '<option value="Art">Art</option>';
+//     }
+//     if (tasks[i].compass === 'Chores') {
+//         htmlToAdd += '<option value="Chores" selected>Chores</option>';
+//     } else {
+//         htmlToAdd += '<option value="Chores">Chores</option>';
+//     }
+//     if (tasks[i].compass === 'Relations') {
+//         htmlToAdd += '<option value="Relations" selected>Relations</option>';
+//     } else {
+//         htmlToAdd += '<option value="Relations">Relations</option>';
+//     }
+//     if (tasks[i].compass === 'Projects') {
+//         htmlToAdd += '<option value="Projects" selected>Projects</option>';
+//     } else {
+//         htmlToAdd += '<option value="Projects">Projects</option>';
+//     }
+//     if (tasks[i].compass === 'Tools') {
+//         htmlToAdd += '<option value="Tools" selected>Tools</option>';
+//     } else {
+//         htmlToAdd += '<option value="Tools">Tools</option>';
+//     }
+//     htmlToAdd += '</select><br/>';
     
-    // date picker
-    var d = new Date(); // for setting the default to today's date
-    htmlToAdd += 'Date: <input type="date" id="dueDate" value="';
-    htmlToAdd += tasks[i].dueDate.slice(0, 10) + '"><br/>';
+//     // date picker
+//     var d = new Date(); // for setting the default to today's date
+//     htmlToAdd += 'Date: <input type="date" id="dueDate" value="';
+//     htmlToAdd += tasks[i].dueDate.slice(0, 10) + '"><br/>';
     
-    // repeat
-    htmlToAdd += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"><br/>';
-    htmlToAdd += 'Repeat from: <input type="radio" name="repeatFrom" value="due">Due Date ';
-    htmlToAdd += '<input type="radio" name="repeatFrom" value="completion" checked="true">Completion Date<br/>';
-    htmlToAdd += 'Every <input type="number" id="frequency" min="1"> ';
-    htmlToAdd += '<select id="interval"><option value="day">day</option>';
-    htmlToAdd += '<option value="week">week</option><option value="month">month</option>';
-    htmlToAdd += '<option value="year">year</option></select><br/>';
+//     // repeat
+//     htmlToAdd += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"><br/>';
+//     htmlToAdd += 'Repeat from: <input type="radio" name="repeatFrom" value="due">Due Date ';
+//     htmlToAdd += '<input type="radio" name="repeatFrom" value="completion" checked="true">Completion Date<br/>';
+//     htmlToAdd += 'Every <input type="number" id="frequency" min="1"> ';
+//     htmlToAdd += '<select id="interval"><option value="day">day</option>';
+//     htmlToAdd += '<option value="week">week</option><option value="month">month</option>';
+//     htmlToAdd += '<option value="year">year</option></select><br/>';
 
-    // save button
-    htmlToAdd += '<button onclick="editTaskButtonClicked()">Save Changes</button>';
+//     // save button
+//     htmlToAdd += '<button onclick="editTaskButtonClicked()">Save Changes</button>';
     
-    var ef = 'ef' + i.toString();
-    document.getElementById(ef).innerHTML = htmlToAdd;
+//     var ef = 'ef' + i.toString();
+//     document.getElementById(ef).innerHTML = htmlToAdd;
     
-    editTaskFormIsDisplayed = true;
-    currentTaskBeingEdited = t;
-}
+//     editTaskFormIsDisplayed = true;
+//     currentTaskBeingEdited = t;
+// }
 function hideEditTaskForm(t) {
     document.getElementById('ef' + t.slice(2)).innerHTML = '';
 }
@@ -720,7 +742,7 @@ function displayNewNoteForm() {
     
     htmlToAdd += 'Enter note description:<br/><input type="text" id="noteDescriptionInput"/><br/>';
     htmlToAdd += 'Note content:<br/>';
-    htmlToAdd += '<textarea rows="19" cols="50" id="noteContentInput"></textarea>';
+    htmlToAdd += '<textarea rows="7" cols="50" id="noteContentInput"></textarea>';
     htmlToAdd += '<button onclick="addNoteButtonClicked()">Add Note</button><br/>';
     
     document.getElementById('newNoteForm').innerHTML = htmlToAdd;
