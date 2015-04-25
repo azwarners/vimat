@@ -95,7 +95,8 @@ VIMAT.HTM.taskForm = (function (t, n) {
         h += ' checked="true"';
     }
     h += '>Completion Date<br/>';
-    h += 'Every <input type="number" id="frequency" min="1"> ';
+    h += 'Every <input type="number" id="frequency" min="1" value="';
+    h += t.getFrequency + '">';
     h += '<select id="interval"><option value="d">day</option>';
     h += '<option value="w">week</option><option value="m">month</option>';
     h += '<option value="y">year</option></select><br/>';

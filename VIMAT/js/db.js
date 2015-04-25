@@ -117,6 +117,26 @@ VIMAT.DB = (function () {
                 // code
         }
     }
+    function saveHistory() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveHistory();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadHistory() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadHistory();
+                break;
+            
+            default:
+                // code
+        }
+    }
     function getDbType() {
         return dbType;
     }
@@ -136,6 +156,8 @@ VIMAT.DB = (function () {
         loadListOfLists:    loadListOfLists,
         saveSettings:       saveSettings,
         loadSettings:       loadSettings,
+        saveHistory:        saveHistory,
+        loadHistory:        loadHistory,
         getDbType:          getDbType,
         setDbType:          setDbType
     };
@@ -149,7 +171,7 @@ VIMAT.DB.LOCALSTORAGE = (function () {
 
     // *** Private methods
     function saveTaskList() {
-        var taskStringArray = VIMAT.MODEL.TASKS.taskList.getAllTasksToStrings();
+        var taskStringArray = VIMAT.tl.getAllTasksToStrings();
         localStorage.taskListDb = JSON.stringify(taskStringArray);
     }
     function loadTaskList() {
@@ -163,31 +185,31 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             alert('Sorry, no local storage on this browser.');
             return;
         }
-        VIMAT.MODEL.TASKS.taskList.addTasksFromStrings(taskStringArray);
+        VIMAT.tl.addTasksFromStrings(taskStringArray);
     }
     function saveProjectList() {
-        var projectStringArray = VIMAT.MODEL.PROJECTS.projectList.getAllProjectsToStrings();
-        localStorage.projectListDb = JSON.stringify(projectStringArray);
+        var pa = VIMAT.pl.getList();
+        localStorage.projectListDb = JSON.stringify(pa);
     }
     function loadProjectList() {
-        var projectStringArray = [];
+        var pa;
         if(typeof(localStorage) !== "undefined") {
             if (localStorage.projectListDb) {
-                projectStringArray = JSON.parse(localStorage.projectListDb);
+                pa = JSON.parse(localStorage.projectListDb);
             }
+            VIMAT.pl.setList(pa);
         }
         else {
             alert('Sorry, no local storage on this browser.');
             return;
         }
-        VIMAT.MODEL.PROJECTS.projectList.addTasksFromStrings(projectStringArray);
     }
     function saveListOfLists() {
         var listArray = [],
-            l = VIMAT.MODEL.LISTS.listOfLists.getNumberOfLists(),
+            l = VIMAT.lol.getNumberOfLists(),
             i, list;
         for (i = 0; i < l; i++) {
-            list = VIMAT.MODEL.LISTS.listOfLists.getListAt(i);
+            list = VIMAT.lol.getListAt(i);
             listArray[i] = list;
         }    
         localStorage.listOfListsDb = JSON.stringify(listArray);
@@ -206,10 +228,16 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         }
         l = listArray.length;
         for (i = 0; i < l; i++) {
+            var j, acl, li;
             list = new VIMAT.MODEL.LISTS.List();
             list.setName(listArray[i].name);
-            list.arrayContent = listArray[i].arrayContent;
-            VIMAT.MODEL.LISTS.listOfLists.addList(list);
+            acl = listArray[i].arrayContent.length;
+            for (j = 0; j < acl; j++) {
+                li = new VIMAT.MODEL.LISTS.ListItem(listArray[i].arrayContent[j].description,
+                    listArray[i].arrayContent[j].checked);
+                list.addListItem(li);                
+            }
+            VIMAT.lol.addList(list);
         }
     }
     function saveSettings() {
@@ -234,6 +262,22 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             return;
         }
     }
+    
+    function saveHistory() {
+        localStorage.historyDb = JSON.stringify(VIMAT.HISTORY.taskHistory);
+    }
+    function loadHistory() {
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.historyDb) {
+                VIMAT.HISTORY.taskHistory = JSON.parse(localStorage.historyDb);
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
+    }
+
 
     // *** Initialization
 
@@ -246,59 +290,8 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         saveListOfLists:    saveListOfLists,
         loadListOfLists:    loadListOfLists,
         saveSettings:       saveSettings,
-        loadSettings:       loadSettings
+        loadSettings:       loadSettings,
+        saveHistory:        saveHistory,
+        loadHistory:        loadHistory
     };
 }());
-
-function loadData() {
-    if(typeof(Storage) !== "undefined") {
-        if (localStorage.tasksdb) {
-            var t = JSON.parse(localStorage.tasksdb);
-            // if (isArray(t)){
-                tasks = t;
-            // }
-        } 
-        if (localStorage.projectsdb) {
-            var p = JSON.parse(localStorage.projectsdb);
-            // if (isArray(p)){
-                projects = p;
-            // }
-        }
-        if (localStorage.notesdb) {
-            var n = JSON.parse(localStorage.notesdb);
-            // if (isArray(n)){
-                notes = n;
-            // }
-        }
-        if (localStorage.trackedTimesdb) {
-            var tt = JSON.parse(localStorage.trackedTimesdb);
-            // if (isArray(tt)){
-                trackedTimes = tt;
-            // }
-        }
-        if (localStorage.settingsdb) {
-            var s = JSON.parse(localStorage.settingsdb);
-            if (typeof s == 'object'){
-                settings = s;
-            }
-        }
-    }
-    else {
-        alert('Sorry, no local storage on this browser.');
-    }
-}
-function saveTasks() {
-    localStorage.tasksdb = JSON.stringify(tasks);
-}
-function saveProjects() {
-    localStorage.projectsdb = JSON.stringify(projects);
-}
-function saveNotes() {
-    localStorage.notesdb = JSON.stringify(notes);
-}
-function saveTrackedTimes() {
-    localStorage.trackedTimesdb = JSON.stringify(trackedTimes);
-}
-function saveSettings() {
-    localStorage.settingsdb = JSON.stringify(settings);
-}

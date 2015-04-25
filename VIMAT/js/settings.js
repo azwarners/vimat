@@ -36,11 +36,11 @@ VIMAT.SETTINGS.listOfLists = (function () {
         return currentListIndex;
     }
     function setCurrentListName(ln) {
-        var l = VIMAT.MODEL.LISTS.listOfLists.getNumberOfLists(),
+        var l = VIMAT.lol.getNumberOfLists(),
             i;
         currentListName = ln;
         for (i = 0; i < l; i++) {
-            if (VIMAT.MODEL.LISTS.listOfLists.getListNameAt(i) === ln) {
+            if (VIMAT.lol.getListNameAt(i) === ln) {
                 currentListIndex = i;
             }
         }
@@ -62,6 +62,73 @@ VIMAT.SETTINGS.listOfLists = (function () {
     };
 }());
 VIMAT.SETTINGS.taskList = (function () {
+    // *** Private Properties
+    var displayed = false;
+    var nextIdSuffix = 0;
+    var taskIdCurrentEdit = 0;
+    var groupBy = 'none';
+    var sortBy = 'dueDate';
+    
+    // *** Private Methods
+    function getTaskIdCurrentEdit () {
+        return taskIdCurrentEdit;
+    }
+    function setTaskIdCurrentEdit (i) {
+        taskIdCurrentEdit = i;
+    }
+    function getStateString() {
+        var s = groupBy + '|';
+        s += sortBy + '|';
+        s += nextIdSuffix;
+        return s;
+    }
+    function setStateFromString(s) {
+        var settingsProperties = [];
+        settingsProperties = s.split('|');
+        groupBy = settingsProperties[0];
+        sortBy = settingsProperties[1];
+        nextIdSuffix = settingsProperties[2];
+    }
+    function getDisplayed() {
+        return displayed;
+    }
+    function setDisplayed(b) {
+        displayed = b;
+    }
+    function getGroupBy() {
+        return groupBy;
+    }
+    function setGroupBy(g) {
+        groupBy = g;
+    }
+    function getSortBy() {
+        return sortBy;
+    }
+    function setSortBy(s) {
+        sortBy = s;
+    }
+    function getNextId() {
+        var nid = 't' + nextIdSuffix; // add userID prefix
+        nextIdSuffix++;
+        return nid;
+    }
+    
+    // *** Public API
+    return {
+        getTaskIdCurrentEdit:   getTaskIdCurrentEdit,
+        setTaskIdCurrentEdit:   setTaskIdCurrentEdit,
+        getStateString:         getStateString,
+        setStateFromString:     setStateFromString,
+        getDisplayed:           getDisplayed,
+        setDisplayed:           setDisplayed,
+        getGroupBy:             getGroupBy,
+        setGroupBy:             setGroupBy,
+        getSortBy:              getSortBy,
+        setSortBy:              setSortBy,
+        getNextId:              getNextId
+    };
+}());
+/*VIMAT.SETTINGS.history = (function () {
     // *** Private Properties
     var displayed = false;
     var nextIdSuffix = 0;
@@ -136,4 +203,4 @@ VIMAT.SETTINGS.projects = (function () {
         setDisplayed:           setDisplayed,
         getNextId:              getNextId
     };
-}());
+}());*/

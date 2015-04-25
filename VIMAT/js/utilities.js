@@ -23,17 +23,12 @@ var VIMAT = VIMAT || {};
 
 // General
 VIMAT.namespace = function (ns_string) {
-    var parts = ns_string.split('.'),
-        parent = VIMAT,
-        i;
+    var parts = ns_string.split('.'), parent = VIMAT, i;
         
-    // strip redundant leading global
     if (parts[0] === "VIMAT") {
         parts = parts.slice(1);
     }
-    
     for (i = 0; i < parts.length; i += 1) {
-        // create a property if it doesn't exist
         if (typeof parent[parts[i]] === "undefined") {
             parent[parts[i]] = {};
         }
@@ -44,14 +39,7 @@ VIMAT.namespace = function (ns_string) {
 
 VIMAT.namespace('VIMAT.UTILITIES');
 
-VIMAT.UTILITIES.isArray = (function (myArray) {
-    // This one appears to be broken. Maybe it can be fixed.
-    // http://www.w3schools.com/js/js_arrays.asp
-    // return myArray.constructor.toString().indexOf("Array") > -1;
-}());
-
-VIMAT.namespace('VIMAT.UTILITIES.MISC');
-VIMAT.UTILITIES.MISC = (function () {
+VIMAT.UTILITIES = (function () {
     // *** Private method
     function isNotInArray(o, a) {
         var l, i;
@@ -77,25 +65,126 @@ VIMAT.UTILITIES.MISC = (function () {
         }
         return false;
     }
+    function removeEmptyStrings(a) {
+        var returnArray = [];
+        a.forEach (function (item, i, array) {
+            if (item !== '' && item !== undefined) {
+                returnArray.push(item);
+            }
+        });
+        return returnArray;
+    }
+    function element(type) {
+        /*
+         *  Thanks to Marijn Haverbeke, the Eloquent Javascripter
+         *  "The following example defines a utility elt, which creates an element
+         *   node and treats the rest of its arguments as children to that node."
+         *  Chapter 13, eloquentjavascript.net
+         *  MIT license
+         */
+        var i, child, node = document.createElement(type);
+        for (i = 1; i < arguments.length; i++) {
+            child = arguments[i];
+            if (typeof child === "string") {
+                child = document.createTextNode(child);
+            }
+        node.appendChild(child);
+        }
+        return node;
+    }
+    function appendChildren(nodeId, children) {
+        var i, child, node = document.getElementById(nodeId);
+        for (i = 1; i < arguments.length; i++) {
+            child = arguments[i];
+            if (typeof child === "string") {
+                child = document.createTextNode(child);
+            }
+        node.appendChild(child);
+        }
+    }
+    function removeChildren(n) {
+        while (n.firstChild) {
+            n.removeChild(n.firstChild);
+        }
+    }
+    function addEventListenerList(list, event, fn) {
+        for (var i = 0, len = list.length; i < len; i++) {
+            list[i].addEventListener(event, fn, false);
+        }
+    }
+    function sortArrayOfObjectsByProperty(ao, p) {
+        ao.sort(function (a, b) {
+          if (a[p] > b[p]) {
+            return 1;
+          }
+          if (a[p] < b[p]) {
+            return -1;
+          }
+          return 0;
+        });        
+    }
+
+    function isSubContextOfContext(folder, context) {
+        var folderSubParts = folder.split('/'),
+            contextSubParts = context.split('/'),
+            newFolder, newContext, isSubFolder;
+
+        if (context === '' || context === '/') {
+            return true;
+        }
+        if (folderSubParts.length > 1 && contextSubParts.length > 1) {
+            if (folderSubParts[0] === contextSubParts[0]) {
+                contextSubParts.splice(0, 1);
+                folderSubParts.splice(0, 1);
+                newFolder = folderSubParts.join('/');
+                newContext = contextSubParts.join('/');
+                isSubFolder = isSubContextOfContext(newFolder, newContext);
+            } else {
+                isSubFolder = false;
+            }
+        }
+        else if (folderSubParts.length > 1 && contextSubParts.length === 1) {
+            if (folderSubParts[0] === contextSubParts[0]) {
+                isSubFolder = true;
+            }
+            else {
+                isSubFolder = false;
+            }
+        }
+        return isSubFolder;
+    }
+    
+    function isChildOfContext(folder, context) {
+        var folderSubParts = folder.split('/'),
+            contextSubParts = context.split('/');
+        
+        if (context === '' || context === '/') {
+            contextSubParts = [];
+        }
+        if ( (isSubContextOfContext(folder, context)) &&
+                (folderSubParts.length === contextSubParts.length + 1) ) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     // *** Public API
     return {
-        isNotInArray:           isNotInArray,
-        isInArray:              isInArray
+        isNotInArray:                   isNotInArray,
+        isInArray:                      isInArray,
+        element:                        element,
+        appendChildren:                 appendChildren,
+        removeChildren:                 removeChildren,
+        addEventListenerList:           addEventListenerList,
+        sortArrayOfObjectsByProperty:   sortArrayOfObjectsByProperty,
+        isSubContextOfContext:          isSubContextOfContext,
+        isChildOfContext:               isChildOfContext,
+        removeEmptyStrings:             removeEmptyStrings
     };
 }());
 
-// View
-// function returnCheckBoxMarkup(onChange, checkBoxId, checked) {
-//     var h = '<input type="checkbox" ';
-//     h += 'onchange="' + onChange + '" ';
-//     h += 'id="' + checkBoxId + '"';
-//     if (checked) {
-//         h += ' checked';
-//     }
-//     h += '>';
-//     return (h);
-// }
 VIMAT.namespace('VIMAT.UTILITIES.VIEW');
 VIMAT.UTILITIES.VIEW = (function () {
     // *** Private method
@@ -139,24 +228,4 @@ VIMAT.UTILITIES.VIEW = (function () {
         buildSelectTagFromList: buildSelectTagFromList,
         getCheckBoxMarkup:      getCheckBoxMarkup
     };
-}());
-VIMAT.UTILITIES.buildSelectTagFromList = (function (list, selected, id, onchange) {
-    var l,
-        h = '<select id="' + id + '" onchange="' + onchange + '"><option value="',
-        i;
-    if (typeof list === 'object') {
-        l = list.length;
-        for (i = 0; i < l; i++) {
-            h += l[i] + '"';
-            if (l[i] === selected) {
-                h += ' selected';
-            }
-            h += '>' + l[i] + '"</option><option value="';
-        }
-    }
-    h += '</select>';
-    return h;
-}());
-VIMAT.UTILITIES.createHTMLChecklistFromVimatList = (function (list) {
-
 }());

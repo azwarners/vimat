@@ -3,13 +3,18 @@ html, body {
     /*width:100%;*/
     margin: 1px;
     padding: 1px;
-    font-size: 6px;
+    /*font-size: 6px;*/
     color: #46220A;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
 button {
     height: 19px;
-    font-size: 6px;
+    /*font-size: 6px;*/
     color: PaleGreen;
     background: #46220A;
     border-radius: 10px;
@@ -19,9 +24,9 @@ button {
 input {
     /*height: 9px;*/
     /*border-style: inset;*/
-    max-height: 7px;
+    /*max-height: 7px;*/
     max-width: 88%;
-    font-size: 7px;
+    /*font-size: 7px;*/
     color: #46220A;
     border-radius: 10px;
     /*box-shadow: 4px 4px 5px Olive;*/
@@ -36,8 +41,8 @@ textarea {
 }
 
 select {
-    height: 11px;
-    font-size: 7px;
+/*    height: 11px;
+    font-size: 7px;*/
     color: #46220A;
     border-radius: 10px;
     /*box-shadow: 4px 4px 5px Olive;*/
@@ -94,22 +99,22 @@ ol {
 /* from http://jsfiddle.net/Friar_Broccoli/6LKc6/
     originally from http://www.thecssninja.com/css/css-tree-menu */
 .menutree {
-    padding-left: 7px;
+    padding-left: 1px;
     list-style: none;          /* all list item li dots invisible */
 }
 li .menu_label + input[type=checkbox] {
-    padding-left: 7px;
+    padding-left: 1px;
     opacity: 0;             /* checkboxes invisible and use no space */
 }                        /* display: none; is better but fails in ie8 */
 li .menu_label {
-    padding-left: 7px;
+    padding-left: 1px;
     cursor: pointer;        /* cursor changes when you mouse over this class */
 }                         /* could add the many user-select: none; commands here */
 li .menu_label + input[type=checkbox] + ol > li {
-    padding-left: 7px;
+    padding-left: 1px;
     display: none;         /* prevents sublists below unchecked labels from displaying */
 }
 li .menu_label + input[type=checkbox]:checked + ol > li {
-    padding-left: 7px;
+    padding-left: 1px;
     display: block;         /* display submenu on click */
 }

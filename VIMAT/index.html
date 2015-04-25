@@ -1,41 +1,134 @@
 <!DOCTYPE html>
 
-<!--
-	******************************************************************
-	 Copyright 2013 Nicholas Warner
+<!--/* 
+ * Copyright (C) 2013 nick
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* 
+ * The MIT License
+ *
+ * Copyright 2013 nick.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */-->
 
-	 This file is part of vimat.
+<html class="no-js">
+    <head>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>-->
+        <meta charset="utf-8">
+        <title>vimat</title>
+        <meta name="description" content="">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+        <meta http-equiv="cleartype" content="on">
 
-    vimat is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/touch/apple-touch-icon-144x144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/touch/apple-touch-icon-114x114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/touch/apple-touch-icon-72x72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="img/touch/apple-touch-icon-57x57-precomposed.png">
+        <link rel="shortcut icon" sizes="196x196" href="img/touch/touch-icon-196x196.png">
+        <link rel="shortcut icon" href="img/touch/apple-touch-icon.png">
 
-    vimat is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+        <!-- Tile icon for Win8 (144x144 + tile color) -->
+        <meta name="msapplication-TileImage" content="img/touch/apple-touch-icon-144x144-precomposed.png">
+        <meta name="msapplication-TileColor" content="#222222">
 
-    You should have received a copy of the GNU General Public License
-    along with vimat.  If not, see <http://www.gnu.org/licenses/>.
-	******************************************************************
--->
+        <!-- SEO: If mobile URL is different from desktop URL, add a canonical link to the desktop page -->
+        <!--
+        <link rel="canonical" href="http://www.example.com/" >
+        -->
 
-<html>
-  <head>
-    <title>vimat</title>
-      <meta name="viewport" content="width=min-width" maximum-scale="1.0" />
-      <link rel="icon" type="image/png" href="resources/rosiefavicon.png">
-      <link rel="stylesheet" type="text/css" href="vimat.css">
-  </head>
-  <body onload="initialize()" id="body">
+        <!-- Add to homescreen for Chrome on Android -->
+        
+        <!--<meta name="mobile-web-app-capable" content="yes">-->
+        
+
+        <!-- For iOS web apps. Delete if not needed. https://github.com/h5bp/mobile-boilerplate/issues/94 -->
+        <!--
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="">
+        -->
+
+        <!-- This script prevents links from opening in Mobile Safari. https://gist.github.com/1042026 -->
+        <!--
+        <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+        -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.7.1.min.js"></script>
+    </head>
+    <body onload="initialize()" id="body">
+
     <section class="tool">
       <h1>vimat</h1>
     </section>
 
     <section class="tool">
-      <h2 onclick="taskListModuleHeaderClicked()">Tasks</h2>
-      <div id="taskListModuleTool"></div>
+        <h2 onclick="taskListModuleHeaderClicked()">Tasks</h2>
+        <div id="taskListTool" class="hidden">
+            Sort by: <select id="sortBySelect">
+                <option value="description">description</option>
+                <option value="folder">folder</option>
+                <option value="context">context</option>
+                <option value="compass">compass</option>
+                <option value="dueDate">due date</option>
+                <option value="priority">priority</option>
+                <option value="urgency">urgency</option>
+                <option value="repeats">repeating</option>
+                <option value="finished">finished</option>
+                <!-- Add options for history stats by grouped property -->
+            </select>
+            Group by: <select id ="groupBySelect">
+                <option value="none">(no grouping)</option>
+                <option value="folder">folder</option>
+                <option value="context">context</option>
+                <option value="compass">compass</option>
+                <option value="dueDate">due date</option>
+                <option value="priority">priority</option>
+                <option value="urgency">urgency</option>
+                <option value="repeats">repeating</option>
+                <option value="finished">finished</option>
+            </select><br>
+            <button onclick="newTaskClicked()">New<br/>Task</button>
+            <button onclick="clearCompletedClicked()">Clear<br/>completed</button>
+            <!--<button onclick="moveToProjectClicked()">Move to<br/>project</button>-->
+            <button onclick="textExportClicked()">Text for<br/>Export</button>
+            <button onclick="textImportClicked()">Import<br/>Tasks</button>
+            <div id="divForStringify"></div>
+            <div id="newTaskForm"></div>
+            <div id="taskListDiv"></div>
+      </div>
     </section>
           
     <section class="tool">
@@ -43,97 +136,54 @@
       <div id="ticklerTool"></div>
     </section>
   
-    <!--<section class="tool">-->
-    <!--  <h2 onclick="projectsHeaderClicked()">Projects</h2>-->
-    <!--  <div id="projectsTool"></div>-->
-    <!--</section>-->
+<!--    <section class="tool">
+      <h2 onclick="projectsHeaderClicked()">Projects</h2>
+      <div id="projectsTool"></div>
+    </section>
           
     <section class="tool">
       <h2 onclick="compassHeaderClicked()">Compass</h2>
       <div id="compassTool"></div>
+    </section>-->
+          
+<!--    <section class="tool">
+      <h2 onclick="notesHeaderClicked()">Notes</h2>
+      <div id="notesTool"></div>
+    </section>-->
+          
+    <section class="tool">
+      <h2 onclick="listOfListsHeaderClicked()">List Of Lists</h2>
+      <div id="listOfListsTool"></div>
     </section>
-          
-    <!--<section class="tool">-->
-    <!--  <h2 onclick="notesHeaderClicked()">Notes</h2>-->
-    <!--  <div id="notesTool"></div>-->
-    <!--</section>-->
-          
-    <!--<section class="tool">-->
-    <!--  <h2 onclick="listOfListsHeaderClicked()">List Of Lists</h2>-->
-    <!--  <div id="listOfListsTool"></div>-->
-    <!--</section>-->
 
-    <!--css tree example -->
-    <!--<ol class="menutree">-->
-    <!--  <li>-->
-    <!--    <label class="menu_label" for="c1">Menu Gen14 Am0a1</label>-->
-    <!--    <input type="checkbox" id="c1" /> -->
-           <!--input must follow label for safari -->
-    <!--    <ol>-->
-    <!--      <li>-->
-    <!--        <label for="c2" class="menu_label">Menu Am1a1</label>-->
-    <!--        <input type="checkbox" id="c2" />-->
-    <!--        <ol>-->
-    <!--          <li class="page"><a href="#">Page Ap1a1</a></li>-->
-    <!--          <li class="page"><a href="#">Page Ap1a2</a></li>-->
-    <!--          <li class="page"><a href="#">Page Ap1a3</a></li>-->
-    <!--        </ol>-->
-    <!--      </li>-->
-    <!--      <li>-->
-    <!--        <label for="c3" class="menu_label">Menu Am1b1</label>-->
-    <!--        <input type="checkbox" id="c3" />-->
-    <!--        <ol>-->
-    <!--          <li class="page"><a href="#">Page Ap1b1</a></li>-->
-    <!--          <li>-->
-    <!--            <label for="c4" class="menu_label">Menu Am2b1 </label>-->
-    <!--            <input type="checkbox" id="c4" />-->
-    <!--            <ol>-->
-    <!--              <li class="page"><a href="#">Page Ap2b1</a></li>-->
-    <!--            </ol>-->
-    <!--          </li>-->
-    <!--        </ol>-->
-    <!--      </li>-->
-    <!--    </ol>-->
-    <!--  </li>-->
-    <!--  <li>-->
-    <!--    <label class="menu_label" for="c5">Menu Bm0a1</label>-->
-    <!--    <input type="checkbox" id="c5" />-->
-    <!--    <ol>-->
-    <!--      <li>-->
-    <!--        <label for="c6" class="menu_label">Menu Bm1a1</label>-->
-    <!--        <input type="checkbox" id="c6" />-->
-    <!--        <ol>-->
-    <!--          <li class="page"><a href="#">Page Bp1a1</a></li>-->
-    <!--        </ol>-->
-    <!--      </li>-->
-    <!--      <li>-->
-    <!--        <label for="c7" class="menu_label">Menu Bm1b1</label>-->
-    <!--        <input type="checkbox" id="c7" />-->
-    <!--        <ol>-->
-    <!--          <li class="page"><a href="#">Page Bp1b1</a></li>-->
-    <!--          <li>-->
-    <!--            <label for="c8" class="menu_label">Menu Bm2b1</label>-->
-    <!--            <input type="checkbox" id="c8" />-->
-    <!--            <ol>-->
-    <!--              <li class="page"><a href="#">Page Bp2b1</a></li>-->
-    <!--            </ol>-->
-    <!--          </li>-->
-    <!--        </ol>-->
-    <!--      </li>-->
-    <!--    </ol>-->
-    <!--  </li>-->
-    <!--</ol>-->
+    <section class="tool">
+        <h2><a href="mobile/index.html">vimat mobile</a></h2>
+      <div id="listOfListsTool"></div>
+    </section>
 
-
+        <!--<script src="js/vendor/jquery-2.1.0.min.js"></script>-->
         <script src="js/utilities.js"></script>
         <script src="js/settings.js"></script>
-        <script src="js/controller.js"></script>
+        <script src="js/model/tasks.js"></script>
+        <script src="js/model/projects.js"></script>
+        <script src="js/desktop/controller.js"></script>
         <script src="vimat.js"></script>
-        <script src="js/model.js"></script>
+        <script src="js/model/model.js"></script>
         <script src="htm/htm.js"></script>
-        <script src="js/view.js"></script>
+        <script src="js/desktop/view.js"></script>
         <script src="js/db.js"></script>
+        <script src="js/lists.js"></script>
+        <script src="js/history.js"></script>
 
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<!--        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>-->
     </body>
-    
 </html>
