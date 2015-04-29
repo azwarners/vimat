@@ -147,3 +147,19 @@ QUnit.test("isChildOfContext", function(assert) {
     c = 'yardwork/backyard';
     assert.ok(!(VIMAT.UTILITIES.isChildOfContext(f, c)), (f + ' is not child of ' + c + ' (parent)'));
 });
+
+QUnit.test('vimatToString', function(assert) {
+    var obj1 = {
+        'testprop1':    'testval1',
+        'testprop2':    'testval2',
+        'testprop3':    'testval3',
+        'testprop4':    'testval4',
+    }, obj1String;
+    obj1String = VIMAT.UTILITIES.vimatToString(obj1);
+    assert.ok(obj1String.string === 'testval1|testval2|testval3|testval4');
+    assert.ok(obj1String.key === 'testprop1|testprop2|testprop3|testprop4');
+    
+    // var t = new VIMAT.MODEL.TASKS.Task();
+    // t.description = 'test task';
+    // assert.ok(t.description === 'test task', 'test assertion');
+});

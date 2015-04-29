@@ -123,7 +123,6 @@ VIMAT.UTILITIES = (function () {
           return 0;
         });        
     }
-
     function isSubContextOfContext(folder, context) {
         var folderSubParts = folder.split('/'),
             contextSubParts = context.split('/'),
@@ -153,7 +152,6 @@ VIMAT.UTILITIES = (function () {
         }
         return isSubFolder;
     }
-    
     function isChildOfContext(folder, context) {
         var folderSubParts = folder.split('/'),
             contextSubParts = context.split('/');
@@ -169,7 +167,44 @@ VIMAT.UTILITIES = (function () {
             return false;
         }
     }
-
+    function vimatToString(obj) {
+        var i, l, string = '', key = '', stringKeyObject,
+            propArray = Object.keys(obj);
+                
+        l = propArray.length;
+        for (i = 0; i < l; i++) {
+            string += obj[propArray[i]] + '|';
+            key += propArray[i] + '|';
+        }
+        l = string.length;
+        string = string.substring(0, l - 1);
+        l = key.length;
+        key = key.substring(0, l - 1);
+        stringKeyObject = {
+            'string':   string,
+            'key':      key
+        };
+        
+        return stringKeyObject;
+    }
+    function vimatFromString(stringKeyObject) {
+        var string = stringKeyObject.string,
+            key = stringKeyObject.key,
+            objProperties = key.split('|'),
+            propValues = string.split('|'),
+            obj = {}, i, l = objProperties.length;
+        
+        if (!(propValues.length === objProperties.length)) {
+            // return -1 for mismatch between key and string
+            return -1;
+        }    
+        for (i = 0; i < l; i++) {
+            obj[objProperties[i]] = propValues[i];
+        }
+        
+        return obj;
+    }
+    
     // *** Public API
     return {
         isNotInArray:                   isNotInArray,
@@ -181,7 +216,9 @@ VIMAT.UTILITIES = (function () {
         sortArrayOfObjectsByProperty:   sortArrayOfObjectsByProperty,
         isSubContextOfContext:          isSubContextOfContext,
         isChildOfContext:               isChildOfContext,
-        removeEmptyStrings:             removeEmptyStrings
+        removeEmptyStrings:             removeEmptyStrings,
+        vimatToString:                  vimatToString,
+        vimatFromString:                vimatFromString
     };
 }());
 

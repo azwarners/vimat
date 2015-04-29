@@ -1,23 +1,42 @@
-/*
-	******************************************************************
-	 Copyright 2013 Nicholas Warner
-
-	 This file is part of vimat.
-
-    vimat is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    vimat is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with vimat.  If not, see <http://www.gnu.org/licenses/>.
-	******************************************************************
-*/
+/* 
+ * Copyright (C) 2013 nick
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* 
+ * The MIT License
+ *
+ * Copyright 2013 nick.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 var VIMAT = VIMAT || {};
 
@@ -39,87 +58,7 @@ VIMAT.MODEL.TASKS.Task = function(d) {
     this.interval = '';
 };
 
-// see about refactoring or eliminating the getter/setters
-
-VIMAT.MODEL.TASKS.Task.prototype.getId = function () {
-    return this.id;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setId = function (i) {
-    this.id = i;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getDescription = function () {
-    return this.description;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setDescription = function (d) {
-    this.description = d;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getFolder = function () {
-    return this.folder;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setFolder = function (f) {
-    this.folder = f;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getFinished = function () {
-    return this.finished;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setFinished = function (f) {
-    this.finished = f;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getContext = function () {
-    return this.context;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setContext = function (c) {
-    this.context = c;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getDueDate = function () {
-    return this.dueDate;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setDueDate = function (d) {
-    this.dueDate = d;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getCompass = function () {
-    return this.compass;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setCompass = function (c) {
-    this.compass = c;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getPriority = function () {
-    return this.priority;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setPriority = function (p) {
-    this.priority = p;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getUrgency = function () {
-    return this.urgency;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setUrgency = function (u) {
-    this.urgency = u;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getRepeats = function () {
-    return this.repeats;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setRepeats = function (r) {
-    this.repeats = r;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getDueOrCompletion = function () {
-    return this.dueOrCompletion;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setDueOrCompletion = function (doc) {
-    this.dueOrCompletion = doc;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getFrequency = function () {
-    return this.frequency;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setFrequency = function (f) {
-    this.frequency = f;
-};
-VIMAT.MODEL.TASKS.Task.prototype.getInterval = function () {
-    return this.interval;
-};
-VIMAT.MODEL.TASKS.Task.prototype.setInterval = function (i) {
-    this.interval = i;
-};
-
+// refactor to utility
 VIMAT.MODEL.TASKS.Task.prototype.toString = function () {
     var str = this.id;
     str += '|' + this.description;
@@ -184,7 +123,7 @@ VIMAT.MODEL.TASKS.Task.prototype.repeat = function () {
         d += this.frequency * VIMAT.MODEL.MISC.getMsInYear();
     }
     this.dueDate = (new Date(d)).toJSON();
-    this.setFinished(false);
+    this.finished = false;
 };
 
 VIMAT.MODEL.TASKS.Task.prototype.isDue = function () {
@@ -207,7 +146,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
     function idExists(id) {
         var i, l = getNumberOfTasks();
         for (i = 0; i < l; i++) {
-            if (tasks[i].getId() === id) {
+            if (tasks[i].id === id) {
                 return true;
             }
         }
@@ -216,7 +155,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
     function addTask(t) {
         // Any new task created for the task list must go through this function
         // in order to get the proper ID
-        t.setId(VIMAT.SETTINGS.taskList.getNextId()); // *** TODO Prefix ID with userID
+        t.id = VIMAT.SETTINGS.taskList.getNextId(); // *** TODO Prefix ID with userID
         tasks.push(t);
     }
     function addTaskNoId(t) {
@@ -393,7 +332,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
             blankFolderNamesExist = false;
         for (i = 0; i < l; i++) {
             task = tasks[i];
-            taskFolder = task.getFolder();
+            taskFolder = task.folder;
             if (taskFolder === '') {
                 blankFolderNamesExist = true;
             }
@@ -457,8 +396,6 @@ VIMAT.MODEL.TASKS.taskList = function () {
         
     }
 
-    // *** Initialization
-
     // *** Public API
     return {
         idExists:                   idExists,
@@ -487,4 +424,3 @@ VIMAT.MODEL.TASKS.taskList = function () {
         getTasksByFolder:           getTasksByFolder
     };
 };
-
