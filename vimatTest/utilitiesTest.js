@@ -158,8 +158,17 @@ QUnit.test('vimatToString', function(assert) {
     obj1String = VIMAT.UTILITIES.vimatToString(obj1);
     assert.ok(obj1String.string === 'testval1|testval2|testval3|testval4');
     assert.ok(obj1String.key === 'testprop1|testprop2|testprop3|testprop4');
+
+    var obj2 = {
+        'testprop1':    'testval1',
+        'testprop2':    'testval2',
+        'testprop3':    undefined,
+        'testprop4':    'testval4',
+    }, obj2String;
+    obj2String = VIMAT.UTILITIES.vimatToString(obj2);
+    assert.ok(obj2String.string === 'testval1|testval2|undefined|testval4');
+    assert.ok(obj2String.key === 'testprop1|testprop2|testprop3|testprop4');
     
-    // var t = new VIMAT.MODEL.TASKS.Task();
-    // t.description = 'test task';
-    // assert.ok(t.description === 'test task', 'test assertion');
+    var t = new VIMAT.MODEL.TASKS.Task('test task'),
+        taskString = VIMAT.UTILITIES.vimatToString(t);
 });

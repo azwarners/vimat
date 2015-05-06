@@ -4,9 +4,6 @@ var VIMAT = VIMAT || {};
 
 // time tracker
 var trackedTimes = [];
-var msInDay = 60000 * 60 * 24;
-var msInWeek = msInDay * 7;
-var msInMonth = msInWeek * (13/3);
 function TrackedTime(st, c) {
     // expects a JSON time/date string for st and a string for c
     this.startTime = st;
@@ -151,11 +148,6 @@ VIMAT.MODEL.MISC = (function () {
                                 "Relations",
                                 "Projects",
                                 "Tools" ];
-    var msInHour = 1000 * 60 * 60;
-    var msInDay = msInHour * 24;
-    var msInWeek = msInDay * 7;
-    var msInYear = msInDay * 365;
-    var msInMonth = msInYear / 12;
 
     // *** Private Methods
     function getCompassCategories() {

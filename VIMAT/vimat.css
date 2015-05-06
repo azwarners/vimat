@@ -90,9 +90,9 @@ h1, h2 {
     vertical-align: top;
 }
 
-ol {
-    list-style-position: inside; padding-left: 0;
-}
+/*ol {*/
+/*    list-style-position: inside; padding-left: 0;*/
+/*}*/
 
 /* Minimal css for clickable pure CSS collapsible tree menu */
 /* As specific as possible to prevent interference with other code */

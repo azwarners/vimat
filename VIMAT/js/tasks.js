@@ -108,19 +108,19 @@ VIMAT.MODEL.TASKS.Task.prototype.repeat = function () {
         d = Date.parse(new Date());
     }
     if (this.interval === 'h') {
-        d += this.frequency * VIMAT.MODEL.MISC.getMsInHour();
+        d += this.frequency * VIMAT.UTILITIES.msInHour;
     }
     if (this.interval === 'd') {
-        d += this.frequency * VIMAT.MODEL.MISC.getMsInDay();
+        d += this.frequency * VIMAT.UTILITIES.msInDay;
     }
     if (this.interval === 'w') {
-        d += this.frequency * VIMAT.MODEL.MISC.getMsInWeek();
+        d += this.frequency * VIMAT.UTILITIES.msInWeek;
     }
     if (this.interval === 'm') {
-        d += this.frequency * VIMAT.MODEL.MISC.getMsInMonth();
+        d += this.frequency * VIMAT.UTILITIES.msInMonth;
     }
     if (this.interval === 'y') {
-        d += this.frequency * VIMAT.MODEL.MISC.getMsInYear();
+        d += this.frequency * VIMAT.UTILITIES.msInYear;
     }
     this.dueDate = (new Date(d)).toJSON();
     this.finished = false;
@@ -211,7 +211,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
         var l = getNumberOfTasks(),
             i;
         for (i = 0; i < l; i++) {
-            if (tasks[i].getId() === id) {
+            if (tasks[i].id === id) {
                 return tasks[i];
             }
         }
@@ -231,7 +231,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
         var l = getNumberOfTasks(),
             i;
         for (i = 0; i < l; i++) {
-            if (tasks[i].getId() === id) {
+            if (tasks[i].id === id) {
                 return i;
             }
         }
@@ -256,9 +256,9 @@ VIMAT.MODEL.TASKS.taskList = function () {
             i, t;
         for (i = 0; i < l; i++) {
             t = getTaskByIndex(i);
-            if (t.getFinished()) {
+            if (t.finished) {
                 addToHistory(t);
-                if (t.getRepeats()) {
+                if (t.repeats) {
                     t.repeat();
                     deleteTask(i);
                     i--;

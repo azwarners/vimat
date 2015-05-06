@@ -24,6 +24,7 @@ var VIMAT = VIMAT || {};
 VIMAT.namespace("VIMAT.VIEW.TASKS");
 VIMAT.VIEW.TASKS = (function () {
     // *** Private Methods
+    // Utility Functions
     function ele(type) {
         var e;
         e = VIMAT.UTILITIES.element.apply(this, arguments);
@@ -31,6 +32,166 @@ VIMAT.VIEW.TASKS = (function () {
     }
     function empty(n) {
         VIMAT.UTILITIES.removeChildren(n);
+    }
+    // Task List Functions
+    function immediateChildrenOfContext(arrayOfValues, context) {
+        var children = [];
+    
+        arrayOfValues.forEach(function(element, index, array) {
+            if (VIMAT.UTILITIES.isChildOfContext(element, context)) {
+                children.push(element);
+            }
+        });
+        
+        return children;
+    }
+    function groupListItem(prop, val) {
+        var input, label, labelText, hoursSinceCompletion, msSinceCompletion;
+        
+        input = ele('input');
+        input.setAttribute('type', 'checkbox');
+        input.id = val;
+        labelText = '+ ' + val + ':  ';
+        msSinceCompletion = VIMAT.HISTORY.msSinceLastCompletionByPropertyValue(prop, val);
+        if (msSinceCompletion === '(none completed)') {
+            labelText += '(none completed)';
+        }
+        else {
+            hoursSinceCompletion = (msSinceCompletion / VIMAT.UTILITIES.msInHour).toFixed(2);
+            labelText += hoursSinceCompletion + ' hours since last completion';
+        }
+        label = ele('label', labelText);
+        label.className = 'menu_label';
+        label.setAttribute('for', val);
+        
+        return ele('li', label, input);
+    }
+    function ungroupedTaskList() {
+        var orderedListOfTasks, taskListItem, task, taskListIndex,
+            taskListLength = VIMAT.tl.getNumberOfTasks();
+        
+        orderedListOfTasks = ele('ol');
+        orderedListOfTasks.className = 'menutree';
+        for (taskListIndex = 0; taskListIndex < taskListLength; taskListIndex++) {
+            task = VIMAT.tl.getTaskByIndex(taskListIndex);
+            if (task.isDue()) {
+                taskListItem = ele('li');
+                taskListItem.innerHTML = VIMAT.HTM.getMarkupForTask(task);
+                orderedListOfTasks.appendChild(taskListItem);
+            }
+        }
+        
+        return orderedListOfTasks;
+    }
+    function groupedTaskList(groupBy, context) {
+        /*
+       
+       Collabsible folders/subfolders: 
+        start with root values
+            for each root value check for immediate children
+                for each immediate child check for grandchild
+                    for each grandchild check for great grandchild
+                    
+        need recursion to do this
+        
+        function that checks for children of the parameter passed to it
+        
+        function displayTaskList() {
+            tasklistDiv.appendChild(groupedTaskList(groupby, '/');
+        }
+        
+        function groupedTaskList(groupBy, context) {
+            var uniqueValues = VIMAT.tl.getUniqueValuesOfProperty(groupBy),
+                olMenutree = ele('ol'),
+                arrayOfChildrenIndex, groupLi, orderedListOfTasks, tasksByValue, taskLi,
+                arrayOfChildren = immediateChildrenOfContext(uniqueValues, context),
+                arrayOfChildrenLength = arrayOfChildren.length;
+                
+            olMenutree.className = 'menutree';
+            for (arrayOfChildrenIndex = 0; arrayOfChildrenIndex < arrayOfChildrenLength; arrayOfChildrenIndex++) {
+                if (arrayOfChildren[arrayOfChildrenIndex]) {
+                    groupLi = groupListItem(groupBy, arrayOfChildren[arrayOfChildrenIndex]);
+                    orderedListOfTasks = ele('ol');
+                }
+                if (!(immediateChildrenOfContext(uniqueValues, arrayOfChildren[arrayOfChildrenIndex]).length === 0)){
+                    orderedListOfTasks.appendChild(groupedTaskList(groupBy, arrayOfChildren[arrayOfChildrenIndex]));
+                }
+                tasksByValue = VIMAT.tl.getTasksByPropertyValue(groupBy, arrayOfChildren[arrayOfChildrenIndex]);
+                tasksByValue.forEach(function(element, index, array) {
+                    if (element.isDue()) {
+                        taskLi = ele('li');
+                        taskLi.innerHTML = VIMAT.HTM.getMarkupForTask(element);
+                        orderedListOfTasks.appendChild(taskLi);
+                    }
+                });
+                groupLi.appendChild(orderedListOfTasks);
+                olMenutree.appendChild(groupLi);
+            }
+            
+            return olMenutree;
+        }
+
+        */
+
+        // New function with recursion
+        var uniqueValues = VIMAT.tl.getUniqueValuesOfProperty(groupBy),
+            olMenutree = ele('ol'),
+            arrayOfChildrenIndex, groupLi, orderedListOfTasks, tasksByValue, taskLi,
+            arrayOfChildren = immediateChildrenOfContext(uniqueValues, context),
+            arrayOfChildrenLength = arrayOfChildren.length;
+            
+        olMenutree.className = 'menutree';
+        for (arrayOfChildrenIndex = 0; arrayOfChildrenIndex < arrayOfChildrenLength; arrayOfChildrenIndex++) {
+            if (arrayOfChildren[arrayOfChildrenIndex]) {
+                groupLi = groupListItem(groupBy, arrayOfChildren[arrayOfChildrenIndex]);
+                orderedListOfTasks = ele('ol');
+            }
+            if (!(immediateChildrenOfContext(uniqueValues, arrayOfChildren[arrayOfChildrenIndex]).length === 0)){
+                orderedListOfTasks.appendChild(ele('li', groupedTaskList(groupBy, arrayOfChildren[arrayOfChildrenIndex])));
+            }
+            tasksByValue = VIMAT.tl.getTasksByPropertyValue(groupBy, arrayOfChildren[arrayOfChildrenIndex]);
+            tasksByValue.forEach(function(element, index, array) {
+                if (element.isDue()) {
+                    taskLi = ele('li');
+                    taskLi.innerHTML = VIMAT.HTM.getMarkupForTask(element);
+                    orderedListOfTasks.appendChild(taskLi);
+                }
+            });
+            groupLi.appendChild(orderedListOfTasks);
+            olMenutree.appendChild(groupLi);
+        }
+        
+        return olMenutree;
+        
+
+
+        /* Old function without recursion
+        // TODO remove grouped property from individual task view
+        var uniqueValues = VIMAT.tl.getUniqueValuesOfProperty(groupBy),
+            lengthUniqueValues = uniqueValues.length,
+            olMenutree = ele('ol'),
+            uniqueValuesIndex, groupLi, orderedListOfTasks, tasksByValue, taskLi;
+            
+        olMenutree.className = 'menutree';
+        for (uniqueValuesIndex = 0; uniqueValuesIndex < lengthUniqueValues; uniqueValuesIndex++) {
+            if (uniqueValues[uniqueValuesIndex]) {
+                groupLi = groupListItem(groupBy, uniqueValues[uniqueValuesIndex]);
+                orderedListOfTasks = ele('ol');
+            }
+            tasksByValue = VIMAT.tl.getTasksByPropertyValue(groupBy, uniqueValues[uniqueValuesIndex]);
+            tasksByValue.forEach(function(element, index, array) {
+                if (element.isDue()) {
+                    taskLi = ele('li');
+                    taskLi.innerHTML = VIMAT.HTM.getMarkupForTask(element);
+                    orderedListOfTasks.appendChild(taskLi);
+                }
+            });
+            groupLi.appendChild(orderedListOfTasks);
+            olMenutree.appendChild(groupLi);
+        }
+        
+        return olMenutree;
+        */
     }
     
     // *** Public Methods
@@ -42,61 +203,24 @@ VIMAT.VIEW.TASKS = (function () {
         document.getElementById('newTaskForm').innerHTML = '';
     }
     function displayTaskList() {
-        // new task list grouped by any property
-        // TODO remove grouped property from individual task view
+        // new task list grouped by any property or not grouped
         // TODO displayed history needs reimplemented in new task list
-        var gb, uv, iuv, luv, it, t, tasksByValue,
-            lt = VIMAT.tl.getNumberOfTasks(),
-            olMenutree, groupLi, taskOl, taskLi, label, small, input,
+        var groupBy, taskList,
             tlDiv = document.getElementById('taskListDiv');
         
         VIMAT.tl.sortByProp(VIMAT.SETTINGS.taskList.getSortBy());
-        gb = VIMAT.SETTINGS.taskList.getGroupBy();
-        if (gb === 'none') {
-            taskOl = ele('ol');
-            taskOl.className = 'menutree';
-            for (it = 0; it < lt; it++) {
-                t = VIMAT.tl.getTaskByIndex(it);
-                if (t.isDue()) {
-                    taskLi = ele('li');
-                    taskLi.innerHTML = VIMAT.HTM.getMarkupForTask(t);
-                    taskOl.appendChild(taskLi);
-                }
-            }
-            empty(tlDiv);
-            tlDiv.appendChild(taskOl);
+        groupBy = VIMAT.SETTINGS.taskList.getGroupBy();
+        if (groupBy === 'none') {
+            taskList = ungroupedTaskList();
         }
         else {
-            uv = VIMAT.tl.getUniqueValuesOfProperty(gb);
-            luv = uv.length;
-            olMenutree = ele('ol');
-            olMenutree.className = 'menutree';
-            for (iuv = 0; iuv < luv; iuv++) {
-                if (uv[iuv]) {
-                    input = ele('input');
-                    input.setAttribute('type', 'checkbox');
-                    input.id = uv[iuv];
-                    label = ele('label', ('+ ' + uv[iuv]));
-                    label.className = 'menu_label';
-                    label.setAttribute('for', uv[iuv]);
-                    groupLi = ele('li',label, input);
-                    taskOl = ele('ol');
-                }
-                tasksByValue = VIMAT.tl.getTasksByPropertyValue(gb, uv[iuv]);
-                tasksByValue.forEach(function(element, index, array) {
-                    if (element.isDue()) {
-                        taskLi = ele('li');
-                        taskLi.innerHTML = VIMAT.HTM.getMarkupForTask(element);
-                        taskOl.appendChild(taskLi);
-                    }
-                });
-                groupLi.appendChild(taskOl);
-                olMenutree.appendChild(groupLi);
-            }
-            empty(tlDiv);
-            tlDiv.appendChild(olMenutree);
+            // taskList = groupedTaskList(groupBy);
+            taskList = groupedTaskList(groupBy, '/');
         }        
+        empty(tlDiv);
+        tlDiv.appendChild(taskList);
     }
+    
     // *** Public API
     return {
         displayNewTaskForm:     displayNewTaskForm,

@@ -44,29 +44,23 @@ VIMAT.namespace('VIMAT.HISTORY');
 
 VIMAT.HISTORY.taskHistory = [];
 
-VIMAT.HISTORY.CompletedTask = function(t, c) {
-    this.compass = t.getCompass();
-    this.JSONCompletedDate = c;
-    this.priority = t.getPriority();
-    this.urgency = t.getUrgency();
-    this.folder = t.getFolder();
+VIMAT.HISTORY.CompletedTask = function(task, completionTime) {
+    this.description = task.description;
+    this.compass = task.compass;
+    this.JSONCompletedDate = completionTime;
+    this.priority = task.priority;
+    this.urgency = task.urgency;
+    this.folder = task.folder;
     this.project = '';
-    this.context = t.getContext();
+    this.context = task.context;
 };
 
-/*VIMAT.HISTORY.CompletedTask.prototype.getCompass = function () {
-    return this.compass;
-};
-
-VIMAT.HISTORY.CompletedTask.prototype.getCompletedDate = function () {
-    return this.JSONCompletedDate;
-};*/
-
-VIMAT.HISTORY.completedTasksByPropertyValueInLastXMs = function (prop, val, ms) {
+VIMAT.HISTORY.completedTasksByPropertyValueInLastXMs = function (prop, val, ms, currentDate) {
     // Returns the number of completed tasks where a specific property is equal
     //      to a specific value in the last x amount of milliseconds.
     var i, sum = 0, ct,
         l = VIMAT.HISTORY.taskHistory.length,
+        // change new date below to currentDate
         d = Date.parse(new Date());
     
     for (i = 0; i < l; i++) {
@@ -80,152 +74,46 @@ VIMAT.HISTORY.completedTasksByPropertyValueInLastXMs = function (prop, val, ms) 
     return sum;
 };
 
-/*VIMAT.HISTORY.getNumberOfCompletedTasksByCompass = function (cmpss, intrvl) {
-    var i, sum = 0, ct,
-        l = VIMAT.HISTORY.taskHistory.length,
-        d = Date.parse(new Date());
-    
-    for (i = 0; i < l; i++) {
-        ct = VIMAT.HISTORY.taskHistory[i];
-        if (ct.compass === cmpss) {
-            if (d - Date.parse(ct.JSONCompletedDate) < VIMAT.MODEL.MISC.getMsInDay()) {
-                sum++;
-            }
-        }
-    }
-    
-    return sum;
-};*/
-
 VIMAT.HISTORY.completedTasksByPropertyValue = function (prop, val) {
-    var ctbc = [], ct, i, l = VIMAT.HISTORY.taskHistory.length;
+    var completedTasksByPropVal = [], completedTask,
+        index, length = VIMAT.HISTORY.taskHistory.length;
     
-    for (i = 0; i < l; i++) {
-        ct = VIMAT.HISTORY.taskHistory[i];
-        if (ct[prop] === val) {
-            ctbc.push(ct);
+    for (index = 0; index < length; index++) {
+        completedTask = VIMAT.HISTORY.taskHistory[index];
+        if (completedTask[prop] === val) {
+            completedTasksByPropVal.push(completedTask);
         }
     }
-    return ctbc;
+    return completedTasksByPropVal;
 };
 
-/*VIMAT.HISTORY.completedTasksByCompass = function (cmpss) {
-    var ctbc = [], ct, i, l = VIMAT.HISTORY.taskHistory.length;
-    
-    for (i = 0; i < l; i++) {
-        ct = VIMAT.HISTORY.taskHistory[i];
-        if (ct.compass === cmpss) {
-            ctbc.push(ct);
-        }
-    }
-    return ctbc;
-};
+VIMAT.HISTORY.msSinceLastCompletionByPropertyValue = function (prop, val, currentDate) {
+    var lastCompletionTimeByPropVal, ms,
+        // change new date below to currentDate
+        d = new Date();
 
-VIMAT.HISTORY.completedTasksByFolder = function (fldr) {
-    var ctbf = [], ct, i, l = VIMAT.HISTORY.taskHistory.length;
-    
-    for (i = 0; i < l; i++) {
-        ct = VIMAT.HISTORY.taskHistory[i];
-        if (ct.folder === fldr) {
-            ctbf.push(ct);
-        }
-    }
-    return ctbf;
-};*/
-
-VIMAT.HISTORY.msSinceLastCompletionByPropertyValue = function (prop, val) {
-    var lctbc, ms, d = new Date();
-
-    lctbc = VIMAT.HISTORY.lastCompletionTimeByPropertyValue(prop, val);
-    if (lctbc === '(none completed)') {
+    lastCompletionTimeByPropVal = VIMAT.HISTORY.lastCompletionTimeByPropertyValue(prop, val);
+    if (lastCompletionTimeByPropVal === '(none completed)') {
         return '(none completed)';
     }
-    ms = (Date.parse(d) - Date.parse(lctbc));   
+    ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));   
     return ms;
 };
 
-/*VIMAT.HISTORY.hoursSinceLastCompletionByCompass = function (cmpss) {
-    var lctbc, hours, d = new Date();
-
-    lctbc = VIMAT.HISTORY.lastCompletionTimeByCompass(cmpss);
-    if (lctbc === '(none completed)') {
-        return '(none completed)';
-    }
-    hours = (Date.parse(d) - Date.parse(lctbc)) / VIMAT.MODEL.MISC.getMsInHour();
-    
-    return (hours.toFixed(0));
-};
-
-VIMAT.HISTORY.hoursSinceLastCompletionByFolder = function (fldr) {
-    var lctbf, hours, d = new Date();
-
-    lctbf = VIMAT.HISTORY.lastCompletionTimeByFolder(fldr);
-    if (lctbf === '(none completed)') {
-        return '(none completed)';
-    }
-    hours = (Date.parse(d) - Date.parse(lctbf)) / VIMAT.MODEL.MISC.getMsInHour();
-    
-    return (hours.toFixed(0));
-};*/
-
-
-// refactor following functions to lastCompletionTimeByPropertyValue(property, value)
 VIMAT.HISTORY.lastCompletionTimeByPropertyValue = function (prop, val) {
-    var i, l, ctbc, lctbc, ct;
+    var completedTasksByPropertyValue = VIMAT.HISTORY.completedTasksByPropertyValue(prop, val),
+        lastCompletionTimeByPropVal = 0, index, length = completedTasksByPropertyValue.length,
+        completedTask;
     
-    ctbc = VIMAT.HISTORY.completedTasksByPropertyValue(prop, val);
-    l = ctbc.length;
-    if (l === 0) {
+    if (length === 0) {
         return '(none completed)';
     } 
-    ct = ctbc[0];
-    lctbc = ct.JSONCompletedDate;
-    for (i = 1; i < l; i++) {
-        if (ctbc[i].JSONCompletedDate > lctbc) {
-            ct = ctbc[i];
-            lctbc = ct.JSONCompletedDate;
+    for (index = 0; index < length; index++) {
+        if (completedTasksByPropertyValue[index].JSONCompletedDate > lastCompletionTimeByPropVal
+                || lastCompletionTimeByPropVal === 0) {
+            completedTask = completedTasksByPropertyValue[index];
+            lastCompletionTimeByPropVal = completedTask.JSONCompletedDate;
         }
     }   
-    return lctbc;
+    return lastCompletionTimeByPropVal;
 };
-
-/*VIMAT.HISTORY.lastCompletionTimeByCompass = function (cmpss) {
-    var i, l, ctbc, lctbc, ct;
-    
-    ctbc = VIMAT.HISTORY.completedTasksByCompass(cmpss);
-    l = ctbc.length;
-    if (l === 0) {
-        return '(none completed)';
-    } 
-    ct = ctbc[0];
-    lctbc = ct.JSONCompletedDate;
-    
-    for (i = 1; i < l; i++) {
-        if (ctbc[i].JSONCompletedDate > lctbc) {
-            ct = ctbc[i];
-            lctbc = ct.JSONCompletedDate;
-        }
-    }
-   
-    return lctbc;
-};
-VIMAT.HISTORY.lastCompletionTimeByFolder = function (fldr) {
-    var i, l, ctbf, lctbf, ct;
-    
-    ctbf = VIMAT.HISTORY.completedTasksByFolder(fldr);
-    l = ctbf.length;
-    if (l === 0) {
-        return '(none completed)';
-    } 
-    ct = ctbf[0];
-    lctbf = ct.JSONCompletedDate;
-    
-    for (i = 1; i < l; i++) {
-        if (ctbf[i].JSONCompletedDate > lctbf) {
-            ct = ctbf[i];
-            lctbf = ct.JSONCompletedDate;
-        }
-    }
-   
-    return lctbf;
-};*/

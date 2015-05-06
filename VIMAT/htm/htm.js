@@ -58,45 +58,52 @@ VIMAT.HTM.taskForm = (function (t, n) {
     
     // description text box
     h = '<section class="form">Description: <input type="text" id="taskInput"';
-    if (t.getDescription()) {
-        h += ' value="' + t.getDescription() + '"';
+    if (t.description) {
+        h += ' value="' + t.description + '"';
+    }
+    h += '/><br/>';
+    
+    // context input
+    h += 'Context: <input type="text" id ="contextInput"';
+    if (t.context) {
+        h += ' value="' + t.context + '"';
     }
     h += '/><br/>';
 
     // folder text box
     h += 'Folder: <input type="text" id="folderInput"';
-    if (t.getFolder()) {
-        h += ' value="' + t.getFolder() + '"';
+    if (t.folder) {
+        h += ' value="' + t.folder + '"';
     }
     h += '/><br/>';
 
     // compass drop down
     h += 'Compass: ' + VIMAT.UTILITIES.VIEW.buildSelectTagFromList(
-            VIMAT.MODEL.MISC.getCompassCategories(), t.getCompass(), 'compassInput',
+            VIMAT.MODEL.MISC.getCompassCategories(), t.compass, 'compassInput',
             false) + '<br/>';
     
     // date picker
     h += 'Date: <input type="date" id="dueDateInput" value="';
-    h += (t.getDueDate()).slice(0, 10) + '"><br/>';
+    h += (t.dueDate).slice(0, 10) + '"><br/>';
     
     // repeat
     h += 'Check to repeat: <input type="checkbox" id="repeatCheckBox"';
-    if (t.getRepeats()) {
+    if (t.repeats) {
         h += ' checked';
     }
     h += '><br/>';
     h += 'Repeat from: <input type="radio" name="repeatFrom" value="due"';
-    if (t.getDueOrCompletion() === 'd') {
+    if (t.dueOrCompletion === 'd') {
         h += ' checked="true"';
     }
     h += '>Due Date ';
     h += '<input type="radio" name="repeatFrom" value="completion"';
-    if (t.getDueOrCompletion() === 'c') {
+    if (t.dueOrCompletion === 'c') {
         h += ' checked="true"';
     }
     h += '>Completion Date<br/>';
     h += 'Every <input type="number" id="frequency" min="1" value="';
-    h += t.getFrequency + '">';
+    h += t.frequency + '">';
     h += '<select id="interval"><option value="d">day</option>';
     h += '<option value="w">week</option><option value="m">month</option>';
     h += '<option value="y">year</option></select><br/>';
@@ -117,29 +124,29 @@ VIMAT.HTM.getMarkupForTask = (function (t, condition) {
     var htm = '';
     // checkbox
     htm += VIMAT.UTILITIES.VIEW.getCheckBoxMarkup(
-            "checkBoxChanged(event)", t.getId(), t.getFinished());
+            "checkBoxChanged(event)", t.id, t.finished);
     htm += '<span class="task">';
     // description
     htm += '<span onclick="taskClicked(event)" id="';
-    htm += t.getId() + '">';
-    htm += t.getDescription();
+    htm += t.id + '">';
+    htm += t.description;
     htm += '</span><br/>';
     // compass
     if (!(condition === 'noCompass')) {
-        if (t.getCompass()) {
-            htm += t.getCompass() + '   ';
+        if (t.compass) {
+            htm += t.compass + '   ';
         }
     }
     // repeats
-    if (t.getRepeats()) {
+    if (t.repeats) {
         htm += 'R   ';
     }
     // due date
-    if (t.getDueDate()) {
-        htm += (new Date(t.getDueDate())).toDateString() + '<br/>';
+    if (t.dueDate) {
+        htm += (new Date(t.dueDate)).toDateString() + '<br/>';
     }
     // container for an optional edit form
-    htm += '<div id="ef' + t.getId() + '"></div>';
+    htm += '<div id="ef' + t.id + '"></div>';
     htm += '</span>';
     return htm;
 });

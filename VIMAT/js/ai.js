@@ -48,7 +48,11 @@ VIMAT.namespace("VIMAT.AI");
 VIMAT.AI.whatDoIDoNow = function() {
     // returns the task that should be worked on now
     
-    // check to see if we have appointments or scheduled events coming up 
+    // check to see if we have appointments or scheduled events coming up
+    
+    // check for highest priority and highest urgency items
+    
+    // check for neglected items
 };
 
 VIMAT.AI.whichTaskWithValueOfPropertyHasBeenNeglectedLongest = function(val, prop) {

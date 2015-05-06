@@ -295,3 +295,60 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         loadHistory:        loadHistory
     };
 }());
+
+
+// Code from another project of mine for refactoring this database helper
+
+    // *** Private Properties
+    // LL.settings.dbType is an integer representing the type of data storage in use
+    //      0   --  No persitence; RAM only storage
+    //      1   --  HTML5 LocalStorage
+
+    // *** Private methods
+    // function localStorageExists() {
+    //     var localStorageTest = 'localStorageTest';
+    //     try {
+    //         localStorage.setItem(localStorageTest, localStorageTest);
+    //         localStorage.removeItem(localStorageTest);
+    //         return true;
+    //     } catch(e) {
+    //         return false;
+    //     }
+    // }
+    // function storageTypeCheck() {
+    //     if(localStorageExists()) {
+    //         LL.settings.dbType = 1;
+    //     }
+    //     else {
+    //         LL.settings.dbType = 0;
+    //     }
+    // }
+    // function saveObject(objectToSave) {
+        // switch (LL.settings.dbType) {
+            // case 0:
+                // break;
+            
+            // case 1:
+                // LL.DB.LOCALSTORAGE.saveObject();
+                // break;
+            
+            // default:
+                // code
+        // }
+    // }
+    // function loadObject(objectString) {
+		// var loadedObject
+        // switch (LL.settings.dbType) {
+            // case 0:
+                // break;
+            
+            // case 1:
+                // loadedObject = LL.DB.LOCALSTORAGE.loadObject(objectString);
+                // break;
+            
+            // default:
+                // code
+        // }
+		// return loadedObject;
+    // }
+

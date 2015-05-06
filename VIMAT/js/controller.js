@@ -164,19 +164,19 @@ VIMAT.CONTROLLER = (function () {
             d;
 
         if (!(cxi === '')) {
-            task.setContext(cxi);
+            task.context = cxi;
         }
         if (!(ci === '')) {
-            task.setCompass(ci);
+            task.compass = ci;
         }
         else {
-            task.setCompass('Chores');
+            task.compass = 'Chores';
         }
         if (!(fi === '')) {
-            task.setFolder(fi);
+            task.folder = fi;
         }
         else {
-            task.setFolder('untitled');
+            task.folder = 'untitled';
         }
         if (!(di == '')) {
             d = new Date(di);
@@ -187,17 +187,17 @@ VIMAT.CONTROLLER = (function () {
         d.setHours(0);
         d.setMinutes(0);
 //        d.setDate(d.getDate() + 1);
-        task.setDueDate(d.toJSON());
-        task.setRepeats(r);
+        task.dueDate = d.toJSON();
+        task.repeats = r;
         if (rfRadios[0].checked) {
             rf = 'd';
         }
         else {
             rf = 'c';
         }
-        task.setDueOrCompletion(rf);
-        task.setFrequency(f);
-        task.setInterval(interv);
+        task.dueOrCompletion = rf;
+        task.frequency = f;
+        task.interval = interv;
         VIMAT.VIEW.TASKS.hideNewTaskForm();
         VIMAT.tl.addTask(task);
         VIMAT.DB.saveTaskList();
@@ -246,7 +246,7 @@ VIMAT.CONTROLLER = (function () {
         var et = e.currentTarget,
             tid = et.id,
             t = VIMAT.tl.getTaskById(tid);
-        t.setFinished(document.getElementById(tid).checked);
+        t.finished = document.getElementById(tid).checked;
         VIMAT.tl.removeTaskById(tid);
         VIMAT.tl.addTaskFromString(t.toString());
         VIMAT.DB.saveTaskList();

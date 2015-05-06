@@ -41,6 +41,15 @@ VIMAT.namespace('VIMAT.UTILITIES');
 
 VIMAT.UTILITIES = (function () {
     // *** Private method
+    var msInHour = 1000 * 60 * 60;
+    var msInDay = msInHour * 24;
+    var msInWeek = msInDay * 7;
+    var msInYear = msInDay * 365;
+    var msInMonth = msInYear / 12;
+    
+    function msToHours(ms) {
+        return ms / msInHour;
+    }
     function isNotInArray(o, a) {
         var l, i;
         if (a) {
@@ -207,6 +216,12 @@ VIMAT.UTILITIES = (function () {
     
     // *** Public API
     return {
+        msToHours:                      msToHours,
+        msInHour:                       msInHour,
+        msInDay:                        msInDay,
+        msInWeek:                       msInWeek,
+        msInMonth:                      msInMonth,
+        msInYear:                       msInYear,
         isNotInArray:                   isNotInArray,
         isInArray:                      isInArray,
         element:                        element,
