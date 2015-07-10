@@ -40,6 +40,10 @@ function initialize(){
     VIMAT.CONTROLLER.initialize();
 }
 
+function initializeMobile(){
+    VIMAT.CONTROLLER.initializeMobile();
+}
+
 // Task List Old
 function taskListHeaderClicked() {
     VIMAT.CONTROLLER.taskListHeaderClicked();

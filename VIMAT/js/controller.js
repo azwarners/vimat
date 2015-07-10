@@ -1,23 +1,42 @@
-/*
-	******************************************************************
-	 Copyright 2013 Nicholas Warner
-
-	 This file is part of vimat.
-
-    vimat is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    vimat is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with vimat.  If not, see <http://www.gnu.org/licenses/>.
-	******************************************************************
-*/
+/* 
+ * Copyright (C) 2013 nick
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/* 
+ * The MIT License
+ *
+ * Copyright 2013 nick.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 var VIMAT = VIMAT || {};
 
@@ -39,6 +58,22 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.VIEW.TASKS.displayTaskList();
         addTaskEventListeners();
     }
+    function initializeMobile(){
+        // All of this code is executed after the page has loaded
+        // var groupBySelect = document.getElementById('groupBySelect');
+        // VIMAT.SETTINGS.mobile = true;
+        VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
+        VIMAT.DB.loadTaskList();
+//        VIMAT.DB.loadProjectList();
+        VIMAT.DB.loadListOfLists();
+        VIMAT.DB.loadSettings();
+        VIMAT.DB.loadHistory();
+        applySettings();
+        VIMAT.VIEW.TASKS.displayTaskList();
+        addTaskEventListenersMobile();
+        addMobileSettingsEventListeners();
+        $(document).trigger('create');
+    }
     
     // Task List
     function addTaskEventListeners() {        
@@ -54,7 +89,46 @@ VIMAT.CONTROLLER = (function () {
             VIMAT.DB.saveSettings();
             VIMAT.VIEW.TASKS.displayTaskList();
         });
-    };
+        document.getElementById('addSampleDataButton').addEventListener('click', function() {
+            // add sample data
+            VIMAT.MODEL.TASKS.sampleData.forEach(function(dataElement, dataIndex, array) {
+                var propArray = Object.keys(dataElement),
+                    task = new VIMAT.MODEL.TASKS.Task();
+                
+                propArray.forEach(function(propElement, propIndex, array) {
+                    task[propElement] = dataElement[propElement];
+                });
+                VIMAT.tl.addTask(task);
+            });
+            VIMAT.DB.saveTaskList();
+            VIMAT.VIEW.TASKS.displayTaskList();
+        });
+    }
+    function addTaskEventListenersMobile() {
+        // document.getElementById('groupBySelect').addEventListener('change', function() {
+        //     var prop = document.getElementById('groupBySelect').value;
+        //     VIMAT.SETTINGS.taskList.setGroupBy(prop);
+        //     VIMAT.DB.saveSettings();
+        //     VIMAT.VIEW.TASKS.displayTaskList();
+        // });
+        // document.getElementById('sortBySelect').addEventListener('change', function() {
+        //     var prop = document.getElementById('sortBySelect').value;
+        //     VIMAT.SETTINGS.taskList.setSortBy(prop);
+        //     VIMAT.DB.saveSettings();
+        //     VIMAT.VIEW.TASKS.displayTaskList();
+        // });
+        // VIMAT.tl.getAllTasks().forEach(function(element, index, array) {
+        //     if (element.isDue()) {
+        //         console.log(element.id);
+        //         document.getElementById(element.id).addEventListener('change', function(event) {
+        //             var eventTarget = event.currentTarget,
+        //                 taskId = eventTarget.id;
+                    
+        //             // change task.finished to true
+        //         });
+        //     }
+        // });
+    }
     function taskListModuleHeaderClicked() {
         var tlt = document.getElementById('taskListTool');
         
@@ -160,24 +234,11 @@ VIMAT.CONTROLLER = (function () {
             rfRadios = document.getElementsByName("repeatFrom"),
             rf, f = document.getElementById("frequency").value,
             interv = document.getElementById("interval").value,
-            task = new VIMAT.MODEL.TASKS.Task(ti),
-            d;
+            task = new VIMAT.MODEL.TASKS.Task(ti), d;
 
-        if (!(cxi === '')) {
-            task.context = cxi;
-        }
-        if (!(ci === '')) {
-            task.compass = ci;
-        }
-        else {
-            task.compass = 'Chores';
-        }
-        if (!(fi === '')) {
-            task.folder = fi;
-        }
-        else {
-            task.folder = 'untitled';
-        }
+        task.context = cxi;
+        task.compass = ci;
+        task.folder = fi;
         if (!(di == '')) {
             d = new Date(di);
         }
@@ -186,7 +247,6 @@ VIMAT.CONTROLLER = (function () {
         }
         d.setHours(0);
         d.setMinutes(0);
-//        d.setDate(d.getDate() + 1);
         task.dueDate = d.toJSON();
         task.repeats = r;
         if (rfRadios[0].checked) {
@@ -531,10 +591,25 @@ VIMAT.CONTROLLER = (function () {
         }
         
     }
+    function addMobileSettingsEventListeners() {
+        document.getElementById('groupBySelect').addEventListener('change', function() {
+            var prop = document.getElementById('groupBySelect').value;
+            VIMAT.SETTINGS.taskList.setGroupBy(prop);
+            VIMAT.DB.saveSettings();
+            VIMAT.VIEW.TASKS.displayTaskList();
+        });
+        document.getElementById('sortBySelect').addEventListener('change', function() {
+            var prop = document.getElementById('sortBySelect').value;
+            VIMAT.SETTINGS.taskList.setSortBy(prop);
+            VIMAT.DB.saveSettings();
+            VIMAT.VIEW.TASKS.displayTaskList();
+        });
+    }
 
     // Public API
     return {
         initialize:                     initialize,
+        initializeMobile:               initializeMobile,
         textExportClicked:              textExportClicked,
         textImportClicked:              textImportClicked,
         importClicked:                  importClicked,

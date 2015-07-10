@@ -44,17 +44,73 @@
     <head>
         <title>vimat</title>
         <link rel="icon" type="image/png" href="resources/rosiefavicon.png"/>
-        <link rel="stylesheet" href="vimat.css"/>
+
+        <!-- Include meta tag to ensure proper rendering and touch zooming -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Include jQuery Mobile stylesheets -->
+        <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+        
+        <!-- Include the jQuery library -->
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+        
+        <!-- Include the jQuery Mobile library -->
+        <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="mobile.css"/>
     </head>
 
-    <body onload="initialize()" id="body">
-        <section class="tool">
-          <h1>vimat</h1>
-        </section>
-        <section class="tool">
-            <h2 onclick="taskListModuleHeaderClicked()">Tasks</h2>
-            <div id="taskListTool" class="hidden">
-                Sort by: <select id="sortBySelect">
+    <body onload="initializeMobile()">
+        
+        <div data-role="page" id="mainMenu">
+            <div data-role="header">
+                <h1>VIMAT MOBILE</h1>
+            </div>
+            <div data-role="main" class="ui-content">
+                <a href="#tasksView" class="ui-btn">Tasks View Mode</a>
+                <a href="#tasksEdit" class="ui-btn">Tasks Edit Mode</a>
+                <a href="#settings" class="ui-btn">Settings</a>
+            </div>
+            <div data-role="footer">
+            </div>
+        </div>
+        
+        <div data-role="page" id="tasksView">
+            <div data-role="header">
+                <h1>TASKS</h1>
+            </div>
+            <div data-role="main" class="ui-content" id="taskListDiv">
+            </div>
+            <div data-role="footer">
+                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            </div>
+        </div>
+        
+        <div data-role="page" id="tasksEdit">
+            <div data-role="header">
+                <h1>TASKS</h1>
+            </div>
+            <div data-role="main" class="ui-content" id="taskListDiv">
+            </div>
+            <div data-role="footer">
+                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="editTaskForm">
+            <div data-role="header">
+                <h2>Task Edit Form</h2>
+            </div>
+            <div role="main" class="ui-content">
+                <p>I am a task edit form</p>
+            </div>
+        </div>
+        
+        <div data-role="page" id="settings">
+            <div data-role="header">
+                <h1>Settings</h1>
+            </div>
+            <div data-role="main" class="ui-content" id="settingsDiv">
+                Sort Tasks by: <select id="sortBySelect">
                     <option value="description">description</option>
                     <option value="folder">folder</option>
                     <option value="context">context</option>
@@ -66,7 +122,7 @@
                     <option value="finished">finished</option>
                     <!-- Add options for history stats by grouped property -->
                 </select>
-                Group by: <select id="groupBySelect">
+                Group Tasks by: <select id="groupBySelect">
                     <option value="none">(no grouping)</option>
                     <option value="folder">folder</option>
                     <option value="context">context</option>
@@ -76,33 +132,17 @@
                     <option value="urgency">urgency</option>
                     <option value="repeats">repeating</option>
                     <option value="finished">finished</option>
-                </select><br>
-                <button onclick="newTaskClicked()">New<br/>Task</button>
-                <button onclick="clearCompletedClicked()">Clear<br/>completed</button>
-                <button onclick="textExportClicked()">Text for<br/>Export</button>
-                <button onclick="textImportClicked()">Import<br/>Tasks</button>
-                <div id="divForStringify"></div>
-                <div id="newTaskForm"></div>
-                <div id="taskListDiv"></div>
-          </div>
-        </section>
-              
-        <section class="tool">
-            <h2 onclick="ticklerHeaderClicked()">Tickler</h2>
-            <div id="ticklerTool"></div>
-        </section>
-      
-        <section class="tool">
-          <h2 onclick="listOfListsHeaderClicked()">List Of Lists</h2>
-          <div id="listOfListsTool"></div>
-        </section>
-    
-        <!--<section class="tool">-->
-        <!--    <h2><a href="mobile/index.html">vimat mobile</a></h2>-->
-        <!--    <div id="listOfListsTool"></div>-->
-        <!--</section>-->
-    
-        <script src="js/utilities.js"></script>
+                </select>
+            </div>
+            <div data-role="footer">
+                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            </div>
+        </div>
+
+        <script src="js/util/util.js"></script>
+        <script src="js/util/dom.js"></script>
+        <script src="js/util/jqm.js"></script>
+        <script src="js/util/context.js"></script>
         <script src="js/settings.js"></script>
         <script src="js/tasks.js"></script>
         <script src="js/projects.js"></script>

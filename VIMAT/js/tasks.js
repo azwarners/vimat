@@ -42,12 +42,14 @@ var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.MODEL.TASKS");
 
+
+
 VIMAT.MODEL.TASKS.Task = function(d) {
     this.id = '';
     this.description = d;
     this.folder = '';
     this.finished = false;
-    this.context;
+    this.context = '';
     this.dueDate = (new Date()).toJSON();
     this.compass = 'Chores';
     this.priority = '';
@@ -352,12 +354,24 @@ VIMAT.MODEL.TASKS.taskList = function () {
         }
         return uniqueFolderNames;
     }
-    function getUniqueValuesOfProperty(prop) {
-        var uniquePropVals = [], notInArray, blankPropValsExist;
+    function getTasksWithUndefinedProperty(prop) {
+        var undefinedTasks = [];
         
         tasks.forEach(function(element, index, array) {
-            if (element[prop] === '' || element[prop].toString() === 'undefined' || element[prop] === null) {
-                blankPropValsExist = true;
+            if (element[prop] === '' || element[prop] === 'undefined' || element[prop] === null) {
+                undefinedTasks.push(element);
+            }
+         });
+         
+         return undefinedTasks;
+    }
+    function getUniqueValuesOfProperty(prop) {
+        var uniquePropVals = [], notInArray, undefinedPropValsExist,
+            uniquePropValsObject = {};
+        
+        tasks.forEach(function(element, index, array) {
+            if (element[prop] === '' || element[prop] === 'undefined' || element[prop] === null) {
+                undefinedPropValsExist = true;
             }
             else {
                 notInArray = VIMAT.UTILITIES.isNotInArray(element[prop], uniquePropVals);
@@ -366,10 +380,12 @@ VIMAT.MODEL.TASKS.taskList = function () {
                 }
             }
         });
-        if (blankPropValsExist) {
-
+        if (undefinedPropValsExist) {
+            uniquePropValsObject['undefinedPropValsExist'] = undefinedPropValsExist;
         }
-        return uniquePropVals;
+        uniquePropValsObject['uniquePropVals'] = uniquePropVals;
+        
+        return uniquePropValsObject;
     }
     function getTasksByFolder(f) {
         var i, l = getNumberOfTasks(), tasksInFolder = [];
@@ -395,32 +411,393 @@ VIMAT.MODEL.TASKS.taskList = function () {
     function emptyTrash() {
         
     }
-
+    function getAllTasks() {
+        var allTasks = tasks;
+        
+        return allTasks;
+    }
+    
     // *** Public API
     return {
-        idExists:                   idExists,
-        addTask:                    addTask,
-        addTaskFromString:          addTaskFromString,
-        addTasksFromStrings:        addTasksFromStrings,
-        addTasksFromString:         addTasksFromString,
-        addTaskNoId:                addTaskNoId,
-        removeTaskById:             removeTaskById,
-        sortByProp:                 sortByProp,
-        deleteOrRepeatCompleted:    deleteOrRepeatCompleted,
-        getTextForCompleted:        getTextForCompleted,
-        getNumberOfTasks:           getNumberOfTasks,
-        getTaskByIndex:             getTaskByIndex,
-        getTaskById:                getTaskById,
-        getTasksByPropertyValue:    getTasksByPropertyValue,
-        getTaskIndexById:           getTaskIndexById,
-        getAllTasksToString:        getAllTasksToString,
-        getAllTasksToStrings:       getAllTasksToStrings,
-        getEditTaskId:              getEditTaskId,
-        setEditTaskId:              setEditTaskId,
-        getUniqueFolders:           getUniqueFolders,
-        getUniqueValuesOfProperty:  getUniqueValuesOfProperty,
-        permanentlyDeleteCompleted: permanentlyDeleteCompleted,
-        setFinishedById:            setFinishedById,
-        getTasksByFolder:           getTasksByFolder
+        idExists:                       idExists,
+        addTask:                        addTask,
+        addTaskFromString:              addTaskFromString,
+        addTasksFromStrings:            addTasksFromStrings,
+        addTasksFromString:             addTasksFromString,
+        addTaskNoId:                    addTaskNoId,
+        removeTaskById:                 removeTaskById,
+        sortByProp:                     sortByProp,
+        deleteOrRepeatCompleted:        deleteOrRepeatCompleted,
+        getTextForCompleted:            getTextForCompleted,
+        getNumberOfTasks:               getNumberOfTasks,
+        getTaskByIndex:                 getTaskByIndex,
+        getTaskById:                    getTaskById,
+        getTasksByPropertyValue:        getTasksByPropertyValue,
+        getTaskIndexById:               getTaskIndexById,
+        getAllTasksToString:            getAllTasksToString,
+        getAllTasksToStrings:           getAllTasksToStrings,
+        getEditTaskId:                  getEditTaskId,
+        setEditTaskId:                  setEditTaskId,
+        getUniqueFolders:               getUniqueFolders,
+        getUniqueValuesOfProperty:      getUniqueValuesOfProperty,
+        getTasksWithUndefinedProperty:  getTasksWithUndefinedProperty,
+        permanentlyDeleteCompleted:     permanentlyDeleteCompleted,
+        setFinishedById:                setFinishedById,
+        getTasksByFolder:               getTasksByFolder,
+        getAllTasks:                    getAllTasks
     };
 };
+
+VIMAT.MODEL.TASKS.sampleData = [
+    {
+        'id':               'tSAMPLE0',
+        'description':      'dishes',
+        'folder':           'housework',
+        'context':          '@home/@kitchen',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Chores',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE1',
+        'description':      'laundry',
+        'folder':           'housework',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Chores',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE2',
+        'description':      'sweep floors',
+        'folder':           'housework',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Chores',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE3',
+        'description':      'jog on treadmill',
+        'folder':           'exercise',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Wellness',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        2,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE4',
+        'description':      'stretching video',
+        'folder':           'exercise',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Wellness',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        2,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE5',
+        'description':      'practice math on Khan Academy',
+        'folder':           'math',
+        'context':          '@computer',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Education',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        2,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE6',
+        'description':      'read programming book on SafariBooksOnline',
+        'folder':           'computer science',
+        'context':          '@computer',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Education',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        3,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE7',
+        'description':      'practice programming with Project Euler',
+        'folder':           'computer science',
+        'context':          '@computer',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Education',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        3,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE8',
+        'description':      'update resume',
+        'folder':           'career',
+        'context':          '@computer',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Finance',
+        'repeats':          false,
+        'dueOrCompletion':  '',
+        'frequency':        0,
+        'interval':         ''
+    },
+    {
+        'id':               'tSAMPLE9',
+        'description':      'practice scales on guitar',
+        'folder':           'guitar',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        3,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE10',
+        'description':      'practice chords on guitar',
+        'folder':           'guitar',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        3,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE11',
+        'description':      'practice favorite riffs on guitar',
+        'folder':           'guitar',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        3,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE12',
+        'description':      'watch TV for an hour',
+        'folder':           'fun',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        2,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE13',
+        'description':      'play video games for an hour',
+        'folder':           'fun',
+        'context':          '@home',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        2,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE14',
+        'description':      'read for 45 minutes',
+        'folder':           'fun',
+        'context':          '',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Art',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE15',
+        'description':      'walk the dogs',
+        'folder':           'exercise',
+        'context':          '@outside',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Relations',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'w'
+    },
+    // {
+    //     'id':               'tSAMPLE16',
+    //     'description':      'laundry',
+    //     'folder':           'housework',
+    //     'context':          '@laundryRoom',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE17',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE18',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE19',
+    //     'description':      'laundry',
+    //     'folder':           'housework',
+    //     'context':          '@laundryRoom',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE20',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE21',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE22',
+    //     'description':      'laundry',
+    //     'folder':           'housework',
+    //     'context':          '@laundryRoom',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE23',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE24',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE25',
+    //     'description':      'laundry',
+    //     'folder':           'housework',
+    //     'context':          '@laundryRoom',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // },
+    // {
+    //     'id':               'tSAMPLE26',
+    //     'description':      'dishes',
+    //     'folder':           'housework',
+    //     'context':          '@kitchen',
+    //     'finished':         false,
+    //     'dueDate':          '2015-05-09T07:00:00.000Z',
+    //     'compass':          'Chores',
+    //     'repeats':          true,
+    //     'dueOrCompletion':  'c',
+    //     'frequency':        1,
+    //     'interval':         'd'
+    // }
+];
