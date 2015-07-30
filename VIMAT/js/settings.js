@@ -84,8 +84,6 @@ VIMAT.SETTINGS.listOfLists = (function () {
 VIMAT.SETTINGS.taskList = (function () {
     // *** Private Properties
     var displayed = false;
-    var nextIdSuffix = 0;
-    var taskIdCurrentEdit = 0;
     var groupBy = 'none';
     var sortBy = 'dueDate';
     var stat = 'hoursSinceCompletion';
@@ -97,16 +95,9 @@ VIMAT.SETTINGS.taskList = (function () {
     function setStat(s) {
         stat = s;
     }
-    function getTaskIdCurrentEdit () {
-        return taskIdCurrentEdit;
-    }
-    function setTaskIdCurrentEdit (i) {
-        taskIdCurrentEdit = i;
-    }
     function getStateString() {
         var s = groupBy + '|';
         s += sortBy + '|';
-        s += nextIdSuffix;
         return s;
     }
     function setStateFromString(s) {
@@ -114,7 +105,6 @@ VIMAT.SETTINGS.taskList = (function () {
         settingsProperties = s.split('|');
         groupBy = settingsProperties[0];
         sortBy = settingsProperties[1];
-        nextIdSuffix = settingsProperties[2];
     }
     function getDisplayed() {
         return displayed;
@@ -134,16 +124,9 @@ VIMAT.SETTINGS.taskList = (function () {
     function setSortBy(s) {
         sortBy = s;
     }
-    function getNextId() {
-        var nid = 't' + nextIdSuffix; // add userID prefix
-        nextIdSuffix++;
-        return nid;
-    }
-    
+
     // *** Public API
     return {
-        getTaskIdCurrentEdit:   getTaskIdCurrentEdit,
-        setTaskIdCurrentEdit:   setTaskIdCurrentEdit,
         getStateString:         getStateString,
         setStateFromString:     setStateFromString,
         getDisplayed:           getDisplayed,
@@ -151,8 +134,7 @@ VIMAT.SETTINGS.taskList = (function () {
         getGroupBy:             getGroupBy,
         setGroupBy:             setGroupBy,
         getSortBy:              getSortBy,
-        setSortBy:              setSortBy,
-        getNextId:              getNextId
+        setSortBy:              setSortBy
     };
 }());
 /*VIMAT.SETTINGS.history = (function () {

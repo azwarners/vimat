@@ -46,12 +46,12 @@ VIMAT.HISTORY.taskHistory = [];
 
 VIMAT.HISTORY.CompletedTask = function(task, completionTime) {
     this.description = task.description;
+    this.id = task.id;
     this.compass = task.compass;
     this.JSONCompletedDate = completionTime;
     this.priority = task.priority;
     this.urgency = task.urgency;
     this.folder = task.folder;
-    this.project = '';
     this.context = task.context;
 };
 
@@ -96,24 +96,59 @@ VIMAT.HISTORY.msSinceLastCompletionByPropertyValue = function (prop, val, curren
     if (lastCompletionTimeByPropVal === '(none completed)') {
         return '(none completed)';
     }
-    ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));   
+    ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));
+    if (ms < 0) {
+        ms *= -1;
+    }
     return ms;
 };
 
 VIMAT.HISTORY.lastCompletionTimeByPropertyValue = function (prop, val) {
     var completedTasksByPropertyValue = VIMAT.HISTORY.completedTasksByPropertyValue(prop, val),
-        lastCompletionTimeByPropVal = 0, index, length = completedTasksByPropertyValue.length,
+        lastTime = 0, index, length = completedTasksByPropertyValue.length,
         completedTask;
     
     if (length === 0) {
         return '(none completed)';
     } 
     for (index = 0; index < length; index++) {
-        if (completedTasksByPropertyValue[index].JSONCompletedDate > lastCompletionTimeByPropVal
-                || lastCompletionTimeByPropVal === 0) {
+        if (completedTasksByPropertyValue[index].JSONCompletedDate > lastTime
+                || lastTime === 0) {
             completedTask = completedTasksByPropertyValue[index];
-            lastCompletionTimeByPropVal = completedTask.JSONCompletedDate;
+            lastTime = completedTask.JSONCompletedDate;
         }
     }   
-    return lastCompletionTimeByPropVal;
+    return lastTime;
+};
+
+VIMAT.HISTORY.lastCompletionTimeByTaskId = function (id) {
+    var lastTime = '';
+    
+    VIMAT.HISTORY.taskHistory.forEach(function(element, index, array) {
+        if (element.id === id) {
+            if (element.JSONCompletedDate > lastTime) {
+                lastTime = element.JSONCompletedDate;
+            }
+        }
+    });
+    if (lastTime === '') {
+        lastTime = '(none completed)';
+    }
+    
+    return lastTime;
+};
+
+VIMAT.HISTORY.msSinceLastCompletionByTaskId = function (id) {
+    var lastTime = VIMAT.HISTORY.lastCompletionTimeByTaskId(id),
+        // change new date below to currentDate
+        d = new Date();
+
+    if (lastTime === '(none completed)') {
+        return '(none completed)';
+    }
+    lastTime = (Date.parse(d) - Date.parse(lastTime));
+    if (lastTime < 0) {
+        lastTime *= -1;
+    }
+    return lastTime;
 };

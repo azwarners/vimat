@@ -44,112 +44,157 @@
     <head>
         <title>vimat</title>
         <link rel="icon" type="image/png" href="resources/rosiefavicon.png"/>
-
-        <!-- Include meta tag to ensure proper rendering and touch zooming -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <!-- Include jQuery Mobile stylesheets -->
         <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-        
-        <!-- Include the jQuery library -->
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        
-        <!-- Include the jQuery Mobile library -->
         <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-        <link rel="stylesheet" href="mobile.css"/>
     </head>
 
-    <body onload="initializeMobile()">
+    <body onload="initialize()">
         
         <div data-role="page" id="mainMenu">
-            <div data-role="header">
-                <h1>VIMAT MOBILE</h1>
+            <div data-role="header" data-position="fixed">
+                <h1>VIMAT</h1>
             </div>
             <div data-role="main" class="ui-content">
-                <a href="#tasksView" class="ui-btn">Tasks View Mode</a>
-                <a href="#tasksEdit" class="ui-btn">Tasks Edit Mode</a>
-                <a href="#settings" class="ui-btn">Settings</a>
+                <a href="#tasksView" class="ui-btn">TASKS</a>
+                <a href="#listsView" class="ui-btn">LISTS</a>
+                <!--<a href="#settings" class="ui-btn">SETTINGS</a>-->
             </div>
-            <div data-role="footer">
+            <div data-role="footer" data-position="fixed">
             </div>
         </div>
         
         <div data-role="page" id="tasksView">
-            <div data-role="header">
+            <div data-role="header" data-position="fixed">
                 <h1>TASKS</h1>
             </div>
             <div data-role="main" class="ui-content" id="taskListDiv">
             </div>
-            <div data-role="footer">
+            <div data-role="footer" data-position="fixed">
+                <a href="#newTaskForm" class="ui-btn">New Task</a>
+                <button id="clearChecked">Clear Checked</button>
+                <button id="addSamples">Add Samples</button>
+                <a href="#taskSettings" class="ui-btn">Settings</a>
                 <a href="#mainMenu" class="ui-btn">Main Menu</a>
             </div>
         </div>
         
-        <div data-role="page" id="tasksEdit">
+        <div data-role="page" id="listsView">
             <div data-role="header">
-                <h1>TASKS</h1>
+                <h1>LISTS</h1>
             </div>
-            <div data-role="main" class="ui-content" id="taskListDiv">
+            <div data-role="main" class="ui-content" id="listsDiv">
             </div>
             <div data-role="footer">
                 <a href="#mainMenu" class="ui-btn">Main Menu</a>
             </div>
         </div>
 
-        <div data-role="page" id="editTaskForm">
-            <div data-role="header">
-                <h2>Task Edit Form</h2>
+        <div data-role="page" id="newTaskForm">
+            <div data-role="header" data-position="fixed">
+                <h2>NEW TASK</h2>
             </div>
-            <div role="main" class="ui-content">
-                <p>I am a task edit form</p>
+            <div data-role="main" class="ui-content">
+                <input type="text" id="description" placeholder="description">
+                <input type="text" id="folder" placeholder="folder">
+                <input type="text" id="context" placeholder="context">
+                <input type="text" id="compass" placeholder="compass">
+                <input type="text" id="priority" placeholder="priority">
+                <input type="text" id="urgency" placeholder="urgency">
+                <input type="date" id="dueDate">
+                <label><input type="checkbox" id="repeats"> Repeats?</label>
+                <label>
+                    <input type="radio" id="due" name="dueOrCompletion">from due date
+                </label>
+                <label>
+                    <input type="radio" id="completion" name="dueOrCompletion">from completion
+                </label>
+                Every: <input type="number" id="frequency">
+                <select id="interval">
+                    <option value="d">Day</option>
+                    <option value="w">Week</option>
+                    <option value="m">Month</option>
+                    <option value="y">Year</option>
+                </select>
             </div>
+            <div data-role="footer" data-position="fixed">
+                <a href="#tasksView" id="addTask" class="ui-btn">Add Task</a>
+                <a href="#tasksView" class="ui-btn">Cancel</a>
+            </div> 
         </div>
         
-        <div data-role="page" id="settings">
-            <div data-role="header">
+        <div data-role="page" id="taskSettings">
+            <div data-role="header" data-position="fixed">
                 <h1>Settings</h1>
             </div>
             <div data-role="main" class="ui-content" id="settingsDiv">
-                Sort Tasks by: <select id="sortBySelect">
-                    <option value="description">description</option>
-                    <option value="folder">folder</option>
-                    <option value="context">context</option>
-                    <option value="compass">compass</option>
-                    <option value="dueDate">due date</option>
-                    <option value="priority">priority</option>
-                    <option value="urgency">urgency</option>
-                    <option value="repeats">repeating</option>
-                    <option value="finished">finished</option>
-                    <!-- Add options for history stats by grouped property -->
-                </select>
-                Group Tasks by: <select id="groupBySelect">
-                    <option value="none">(no grouping)</option>
-                    <option value="folder">folder</option>
-                    <option value="context">context</option>
-                    <option value="compass">compass</option>
-                    <option value="dueDate">due date</option>
-                    <option value="priority">priority</option>
-                    <option value="urgency">urgency</option>
-                    <option value="repeats">repeating</option>
-                    <option value="finished">finished</option>
-                </select>
+                <div data-role="collapsible-set">
+                    <div data-role="collapsible">
+                        <h3>Sorting/Grouping</h3>
+                        Sort Tasks by: <select id="sortBySelect">
+                            <option value="description">description</option>
+                            <option value="folder">folder</option>
+                            <option value="context">context</option>
+                            <option value="compass">compass</option>
+                            <option value="dueDate">due date</option>
+                            <option value="priority">priority</option>
+                            <option value="urgency">urgency</option>
+                            <option value="repeats">repeating</option>
+                            <option value="finished">finished</option>
+                            <!-- Add options for history stats by grouped property -->
+                        </select>
+                        Group Tasks by: <select id="groupBySelect">
+                            <option value="none">(no grouping)</option>
+                            <option value="folder">folder</option>
+                            <option value="context">context</option>
+                            <option value="compass">compass</option>
+                            <option value="dueDate">due date</option>
+                            <option value="priority">priority</option>
+                            <option value="urgency">urgency</option>
+                            <option value="repeats">repeating</option>
+                            <option value="finished">finished</option>
+                        </select>
+                    </div>
+                    <div data-role="collapsible">
+                        <h3>Task attribute displayed</h3>
+                        <label><input type="checkbox" id="idDisplayed">ID</label>
+                        <label><input type="checkbox" id="descriptionDisplayed">description</label>
+                        <label><input type="checkbox" id="folderDisplayed">folder</label>
+                        <label><input type="checkbox" id="finishedDisplayed">completion status</label>
+                        <label><input type="checkbox" id="contextDisplayed">context</label>
+                        <label><input type="checkbox" id="dueDateDisplayed">due date</label>
+                        <label><input type="checkbox" id="compassDisplayed">compass</label>
+                        <label><input type="checkbox" id="priorityDisplayed">priority</label>
+                        <label><input type="checkbox" id="urgencyDisplayed">urgency</label>
+                        <label><input type="checkbox" id="repeatsDisplayed">repeats</label>
+                        <label><input type="checkbox" id="dueOrCompletionDisplayed">Repeats from due date or completion date</label>
+                        <label><input type="checkbox" id="frequencyAndIntervalDisplayed">How often it repeats</label>
+                        <label><input type="checkbox" id=""></label>
+                        <label><input type="checkbox" id=""></label>
+                        <label><input type="checkbox" id=""></label>
+                        <label><input type="checkbox" id=""></label>
+                    </div>
+                </div>
+                
             </div>
-            <div data-role="footer">
-                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            <div data-role="footer" data-position="fixed">
+                <a href="#tasksView" class="ui-btn">Back</a>
             </div>
         </div>
 
         <script src="js/util/util.js"></script>
+        <script src="js/util/misc.js"></script>
         <script src="js/util/dom.js"></script>
         <script src="js/util/jqm.js"></script>
         <script src="js/util/context.js"></script>
+        <script src="js/util/array.js"></script>
         <script src="js/settings.js"></script>
-        <script src="js/tasks.js"></script>
-        <script src="js/projects.js"></script>
+        <script src="js/core/tasks/task.js"></script>
+        <script src="js/core/tasks/tasklist.js"></script>
         <script src="js/controller.js"></script>
         <script src="vimat.js"></script>
         <script src="js/model.js"></script>
-        <script src="htm/htm.js"></script>
         <script src="js/view.js"></script>
         <script src="js/db.js"></script>
         <script src="js/lists.js"></script>

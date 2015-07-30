@@ -40,14 +40,16 @@
 
 var VIMAT = VIMAT || {};
 
+VIMAT.namespace("VIMAT.VIEW.TASKS");
+
 /*  Requires:
     VIMAT.DOM.ele,
-    VIMAT.DOM.empty,
     VIMAT.JQM.checklist,
     VIMAT.JQM.checklistItem,
     VIMAT.JQM.collapsible,
     VIMAT.JQM.collapsibleSet,
     VIMAT.CONTEXT.childrenOfContext,
+    VIMAT.HISTORY.msSinceLastCompletionByTaskId,
     
     'VIMAT.HISTORY.msSinceLastCompletionByPropertyValue',
     'VIMAT.UTILITIES.msInHour',
@@ -57,28 +59,41 @@ var VIMAT = VIMAT || {};
     'getStatByPropertyValue',
     'VIMAT.tl.getTasksByPropertyValue',
     'VIMAT.SETTINGS.taskList.getGroupBy',
-    'VIMAT.tl.sortByProp',
-    'VIMAT.SETTINGS.taskList.getSortBy',
     '$'
 
     Contains:
     'function getStatByPropertyValue',
 */
 
-VIMAT.namespace("VIMAT.VIEW.TASKS");
 VIMAT.VIEW.TASKS = (function () {
 
-    // Tasks View Internal Functions
+    // *** Private Methods
     function getStatByPropertyValue(prop, val) {
         var stat;
         
         stat = VIMAT.HISTORY.msSinceLastCompletionByPropertyValue(prop, val);
         stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
-        if (stat === 'NaN') {
-            stat = 'None completed';
-        }
+
+        return stat;
+    }
+    function getStatByTaskId(id) {
+        var stat;
+        
+        stat = VIMAT.HISTORY.msSinceLastCompletionByTaskId(id);
+        stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
         
         return stat;
+    }
+    function eliminateOrphans(array) {
+        while (VIMAT.CONTEXT.arrayHasOrphans(array)) {
+            array.forEach(function(element, index) {
+                if (VIMAT.CONTEXT.contextHasNoParent(array, element)) {
+                    array.push(VIMAT.CONTEXT.createParent(element));
+                }
+            });
+        }
+        
+        return array;
     }
     function ungroupedTasklist(tasks) {
         var div, taskListItems = [];
@@ -96,13 +111,15 @@ VIMAT.VIEW.TASKS = (function () {
             uniqueValuesObject = VIMAT.tl.getUniqueValuesOfProperty(groupBy),
             uniqueValues = uniqueValuesObject['uniquePropVals'],
             undefinedPropValsExist = uniqueValuesObject['undefinedPropValsExist'],
-            children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context),
-            undefinedTasks = [], collapsible, tasksByValue, stat;
-            
+            children, undefinedTasks = [], collapsible, tasksByValue, stat;
+        
+        // uniqueValues = eliminateOrphans(uniqueValues);
+        children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context);
         if (undefinedPropValsExist && (context === '/' || context === '')) {
             undefinedTasks = VIMAT.tl.getTasksWithUndefinedProperty(groupBy);
             collapsibleSet.appendChild(ungroupedTasklist(undefinedTasks));
         }
+
         children.forEach(function(element, index, array) {
             if (element) {
                 stat = getStatByPropertyValue(groupBy, element);
@@ -117,10 +134,11 @@ VIMAT.VIEW.TASKS = (function () {
         return collapsibleSet;
     }
     function convertTasksToTaskListItems(tasks) {
-        var taskListItems = [], item;
+        var taskListItems = [], item, stat;
         
         tasks.forEach(function(element, index, array) {
-            item = VIMAT.JQM.checklistItem(element.description, '69', element.id);
+            stat = getStatByTaskId(element.id);
+            item = VIMAT.JQM.checklistItem(element.description, stat, element.id, element.finished, 'taskListItem');
             taskListItems.push(item);
         });
 
@@ -128,18 +146,19 @@ VIMAT.VIEW.TASKS = (function () {
     }
 
     // *** Public Methods
-    function displayTaskList(tasks, sortBy, groupBy) {
-        var groupBy = VIMAT.SETTINGS.taskList.getGroupBy(), taskList,
-            tlDiv = document.getElementById('taskListDiv');
-        
-        VIMAT.tl.sortByProp(VIMAT.SETTINGS.taskList.getSortBy());
+    function displayTaskList(tasks, groupBy) {
+        console.log('displayTaskList executed');
+        var taskList, tlDiv = document.getElementById('taskListDiv');
+        if (!(groupBy)) {
+            groupBy = VIMAT.SETTINGS.taskList.getGroupBy();
+        }
         if (groupBy === 'none') {
             taskList = ungroupedTasklist();
         }
         else {
             taskList = groupedTasklist(groupBy, '/');
         }        
-        VIMAT.DOM.empty(tlDiv);
+        $(tlDiv).empty();
         tlDiv.appendChild(taskList);
         $(document).trigger('create');
     }
