@@ -147,7 +147,6 @@ VIMAT.VIEW.TASKS = (function () {
 
     // *** Public Methods
     function displayTaskList(tasks, groupBy) {
-        console.log('displayTaskList executed');
         var taskList, tlDiv = document.getElementById('taskListDiv');
         if (!(groupBy)) {
             groupBy = VIMAT.SETTINGS.taskList.getGroupBy();

@@ -74,8 +74,9 @@ VIMAT.CONTROLLER = (function () {
     function addEventListeners() {
         addTaskEventListeners();
         addSettingsEventListeners();
+        addTaskEditorListeners()
     }
-    function fetchTaskFormData() {
+    function fetchNewTaskFormData() {
         var description = document.getElementById('description').value,
             task = new VIMAT.MODEL.TASKS.Task(description),
             folder = document.getElementById('folder').value,
@@ -108,14 +109,85 @@ VIMAT.CONTROLLER = (function () {
         
         return task;
     }
+    function fetchEditTaskFormData() {
+        var description = document.getElementById('editDescription').value,
+            task = new VIMAT.MODEL.TASKS.Task(description),
+            folder = document.getElementById('editFolder').value,
+            context = document.getElementById('editContext').value,
+            compass = document.getElementById('editCompass').value,
+            priority = document.getElementById('editPriority').value,
+            urgency = document.getElementById('editUrgency').value,
+            dueDate = document.getElementById('editDueDate').value.toJSON,
+            frequency = document.getElementById('editFrequency').value,
+            interval = document.getElementById('editInterval').value,
+            repeats = document.getElementById('editRepeats').checked;
+            
+        if (repeats) {
+            task.repeats = true;
+            if (document.getElementById('editDue').checked) {
+                task.dueOrCompletion = 'd';
+            }
+            else {
+                task.dueOrCompletion = 'c';
+            }
+            task.frequency = frequency;
+            task.interval = interval;
+        }
+        task.folder = folder;
+        task.context = context;
+        task.compass = compass;
+        task.priority = priority;
+        task.urgency = urgency;
+        task.dueDate = dueDate;
+        
+        return task;
+    }
+    function populateEditTaskForm(task) {
+        document.getElementById('editDescription').value = task.description;
+        document.getElementById('editFolder').value = task.folder;
+        document.getElementById('editContext').value = task.context;
+        document.getElementById('editCompass').value = task.compass;
+        document.getElementById('editPriority').value = task.priority;
+        document.getElementById('editUrgency').value = task.urgency,
+        document.getElementById('editDueDate').valueAsDate = new Date(task.dueDate);
+        document.getElementById('editFrequency').value = task.frequency;
+        document.getElementById('editInterval').value = task.interval;
+        if (task.repeats) {
+            $("#editRepeats").prop("checked", true).checkboxradio('refresh');
+        }
+        if (task.dueOrCompletion === 'd') {
+            $("#editDue").prop("checked", true).checkboxradio('refresh');
+        }
+        else {
+            $("#editCompletion").prop("checked", true).checkboxradio('refresh');
+        }
+    }
+    function saveEditorTaskId(taskId) {
+        VIMAT.TASKLIST.CONFIG.editorCurrentTaskId = taskId;
+    }
+    function loadEditorTaskId() {
+        return VIMAT.TASKLIST.CONFIG.editorCurrentTaskId;
+    }
 
     // *** Event Listener Handlers
     function addTask() {
-        VIMAT.tl.addTask(fetchTaskFormData());
+        VIMAT.tl.addTask(fetchNewTaskFormData());
         VIMAT.DB.saveTaskList();
         VIMAT.DB.saveSettings();
         removeTaskEventListeners();
         VIMAT.VIEW.TASKS.displayTaskList();
+        addTaskEventListeners();
+    }
+    function saveTask() {
+        var taskId = loadEditorTaskId(),
+            taskIndex = VIMAT.tl.getTaskIndexById(taskId);
+            
+        VIMAT.tl.deleteTask(taskIndex);
+        VIMAT.tl.addTask(fetchEditTaskFormData());
+        VIMAT.DB.saveTaskList();
+        VIMAT.DB.saveSettings();
+        removeTaskEventListeners();
+        VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
         addTaskEventListeners();
     }
     function toggleTaskCheckBox(event) {
@@ -171,6 +243,16 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.VIEW.TASKS.displayTaskList();
         addTaskEventListeners();
     }
+    function editTask(event) {
+        var eventTarget = event.currentTarget,
+            liId = eventTarget.id,
+            taskId = liId.replace('edit', ''),
+            task = VIMAT.tl.getTaskById(taskId);
+            
+        saveEditorTaskId(taskId);
+        window.location.assign('#editTaskForm');
+        populateEditTaskForm(task);
+    }
 
     // *** Event Listener Bindings
     function addTaskEventListeners() {
@@ -178,6 +260,10 @@ VIMAT.CONTROLLER = (function () {
         $('#addTask').on('click', addTask);
         $('#clearChecked').on('click', clearChecked);
         $('#addSamples').on('click', addSamples);
+    }
+    function addTaskEditorListeners() {
+        $('.taskEditorListItem').on('click', editTask);
+        $('#saveTask').on('click', saveTask);
     }
     function removeTaskEventListeners() {
         $('.taskListItem').off('change', toggleTaskCheckBox);
@@ -197,6 +283,7 @@ VIMAT.CONTROLLER = (function () {
         loadData();
         applySettings();
         VIMAT.VIEW.TASKS.displayTaskList();
+        VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
         addEventListeners();
         $(document).trigger('create');
     }

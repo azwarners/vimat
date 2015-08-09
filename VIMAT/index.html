@@ -57,7 +57,8 @@
                 <h1>VIMAT</h1>
             </div>
             <div data-role="main" class="ui-content">
-                <a href="#tasksView" class="ui-btn">TASKS</a>
+                <a href="#tasksView" class="ui-btn">TASK LIST</a>
+                <a href="#editTaskView" class="ui-btn">TASK EDITOR</a>
                 <a href="#listsView" class="ui-btn">LISTS</a>
                 <!--<a href="#settings" class="ui-btn">SETTINGS</a>-->
             </div>
@@ -76,6 +77,17 @@
                 <button id="clearChecked">Clear Checked</button>
                 <button id="addSamples">Add Samples</button>
                 <a href="#taskSettings" class="ui-btn">Settings</a>
+                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="editTaskView">
+            <div data-role="header" data-position="fixed">
+                <h1>TASK EDITOR</h1>
+            </div>
+            <div data-role="main" class="ui-content" id="taskEditorDiv">
+            </div>
+            <div data-rol="footer" data-position="fixed">
                 <a href="#mainMenu" class="ui-btn">Main Menu</a>
             </div>
         </div>
@@ -124,6 +136,39 @@
             </div> 
         </div>
         
+        <div data-role="page" id="editTaskForm">
+            <div data-role="header" data-position="fixed">
+                <h2>EDIT TASK</h2>
+            </div>
+            <div data-role="main" class="ui-content">
+                <input type="text" id="editDescription" placeholder="description">
+                <input type="text" id="editFolder" placeholder="folder">
+                <input type="text" id="editContext" placeholder="context">
+                <input type="text" id="editCompass" placeholder="compass">
+                <input type="text" id="editPriority" placeholder="priority">
+                <input type="text" id="editUrgency" placeholder="urgency">
+                <input type="date" id="editDueDate">
+                <label><input type="checkbox" id="editRepeats"> Repeats?</label>
+                <label>
+                    <input type="radio" id="editDue" name="editDueOrCompletion">from due date
+                </label>
+                <label>
+                    <input type="radio" id="editCompletion" name="editDueOrCompletion">from completion
+                </label>
+                Every: <input type="number" id="editFrequency">
+                <select id="editInterval">
+                    <option value="d">Day</option>
+                    <option value="w">Week</option>
+                    <option value="m">Month</option>
+                    <option value="y">Year</option>
+                </select>
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <a href="#editTaskView" id="saveTask" class="ui-btn">Save Task</a>
+                <a href="#editTaskView" class="ui-btn">Cancel</a>
+            </div> 
+        </div>
+
         <div data-role="page" id="taskSettings">
             <div data-role="header" data-position="fixed">
                 <h1>Settings</h1>
@@ -192,10 +237,12 @@
         <script src="js/settings.js"></script>
         <script src="js/core/tasks/task.js"></script>
         <script src="js/core/tasks/tasklist.js"></script>
+        <script src="js/config/taskList.config.js"></script>
         <script src="js/controller.js"></script>
         <script src="vimat.js"></script>
         <script src="js/model.js"></script>
         <script src="js/view.js"></script>
+        <script src="js/core/tasks/taskeditview.js"></script>
         <script src="js/db.js"></script>
         <script src="js/lists.js"></script>
         <script src="js/history.js"></script>
