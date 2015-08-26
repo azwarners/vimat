@@ -1,0 +1,38 @@
+CACHE MANIFEST
+# v0003 2015-07-28
+# needs unit tests maybe Jasmine with Karma
+# v0002 2015-07-24
+# added CDNs to cache
+# v0001 2015-07-24
+# Cache manifest for VIMAT
+
+CACHE:
+//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css
+//code.jquery.com/jquery-1.11.2.min.js
+//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js
+//preview.c9.io/_static/preview/livecss.js
+//code.jquery.com/mobile/1.4.5/images/ajax-loader.gif
+index.html
+vimat.js
+js/util/util.js
+js/util/misc.js
+js/util/dom.js
+js/util/jqm.js
+js/util/context.js
+js/util/array.js
+js/settings.js
+js/core/tasks/task.js
+js/core/tasks/tasklist.js
+js/controller.js
+vimat.js
+js/model.js
+js/view.js
+js/db.js
+js/lists.js
+js/history.js
+
+# Use from network if available
+NETWORK:
+
+# Fallback content
+FALLBACK:
