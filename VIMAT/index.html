@@ -59,6 +59,7 @@
             <div data-role="main" class="ui-content">
                 <a href="#tasksView" class="ui-btn">TASK LIST</a>
                 <a href="#editTaskView" class="ui-btn">TASK EDITOR</a>
+                <a href="#timeTrackerView" class="ui-btn">TIME TRACKER</a>
                 <a href="#listsView" class="ui-btn">LISTS</a>
                 <!--<a href="#settings" class="ui-btn">SETTINGS</a>-->
             </div>
@@ -77,6 +78,18 @@
                 <button id="clearChecked">Clear Checked</button>
                 <button id="addSamples">Add Samples</button>
                 <a href="#taskSettings" class="ui-btn">Settings</a>
+                <a href="#mainMenu" class="ui-btn">Main Menu</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="timeTrackerView">
+            <div data-role="header" data-position="fixed">
+                <h1>TIME TRACKER</h1>
+            </div>
+            <div data-role="main" class="ui-content" id="timeTrackerDiv">
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <!--<a href="#timeTrackerSettings" class="ui-btn">Settings</a>-->
                 <a href="#mainMenu" class="ui-btn">Main Menu</a>
             </div>
         </div>
@@ -236,13 +249,18 @@
         <script src="js/util/array.js"></script>
         <script src="js/settings.js"></script>
         <script src="js/core/tasks/task.js"></script>
+        <script src="js/core/samples/sampletasks.js"></script>
         <script src="js/core/tasks/tasklist.js"></script>
         <script src="js/config/taskList.config.js"></script>
+        <script src="js/core/tasklist/tasklist.controller.js"></script>
         <script src="js/controller.js"></script>
         <script src="vimat.js"></script>
         <script src="js/model.js"></script>
         <script src="js/view.js"></script>
         <script src="js/core/tasks/taskeditview.js"></script>
+        <script src="js/core/timetracker/timetracker.js"></script>
+        <script src="js/core/timetracker/timetracker.view.js"></script>
+        <script src="js/core/timetracker/timetracker.controller.js"></script>
         <script src="js/db.js"></script>
         <script src="js/lists.js"></script>
         <script src="js/history.js"></script>

@@ -57,6 +57,26 @@ VIMAT.DB = (function () {
                 // code
         }
     }
+    function saveTimeTracker() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.saveTimeTracker();
+                break;
+            
+            default:
+                // code
+        }
+    }
+    function loadTimeTracker() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.loadTimeTracker();
+                break;
+            
+            default:
+                // code
+        }
+    }
     function saveProjectList() {
         switch (dbType) {
             case 0:
@@ -150,6 +170,8 @@ VIMAT.DB = (function () {
     return {
         saveTaskList:       saveTaskList,
         loadTaskList:       loadTaskList,
+        saveTimeTracker:    saveTimeTracker,
+        loadTimeTracker:    loadTimeTracker,
         saveProjectList:    saveProjectList,
         loadProjectList:    loadProjectList,
         saveListOfLists:    saveListOfLists,
@@ -186,6 +208,20 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             return;
         }
         VIMAT.tl.addTasksFromStrings(taskStringArray);
+    }
+    function saveTimeTracker() {
+        localStorage.timeTrackerDb = JSON.stringify(VIMAT.TIMETRACKER.getTrackedTimes());
+    }
+    function loadTimeTracker() {
+        if(typeof(localStorage) !== "undefined") {
+            if (localStorage.timeTrackerDb) {
+                VIMAT.TIMETRACKER.setTrackedTimes(JSON.parse(localStorage.timeTrackerDb));
+            }
+        }
+        else {
+            alert('Sorry, no local storage on this browser.');
+            return;
+        }
     }
     function saveProjectList() {
         var pa = VIMAT.pl.getList();
@@ -285,6 +321,8 @@ VIMAT.DB.LOCALSTORAGE = (function () {
     return {
         saveTaskList:       saveTaskList,
         loadTaskList:       loadTaskList,
+        saveTimeTracker:    saveTimeTracker,
+        loadTimeTracker:    loadTimeTracker,
         saveProjectList:    saveProjectList,
         loadProjectList:    loadProjectList,
         saveListOfLists:    saveListOfLists,

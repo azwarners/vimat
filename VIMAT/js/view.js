@@ -42,30 +42,27 @@ var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.VIEW.TASKS");
 
-/*  Requires:
-    VIMAT.DOM.ele,
-    VIMAT.JQM.checklist,
-    VIMAT.JQM.checklistItem,
-    VIMAT.JQM.collapsible,
-    VIMAT.JQM.collapsibleSet,
-    VIMAT.CONTEXT.childrenOfContext,
-    VIMAT.HISTORY.msSinceLastCompletionByTaskId,
-    
-    'VIMAT.HISTORY.msSinceLastCompletionByPropertyValue',
-    'VIMAT.UTILITIES.msInHour',
-    'VIMAT.tl.getAllTasks',
-    'VIMAT.tl.getUniqueValuesOfProperty',
-    'VIMAT.tl.getTasksWithUndefinedProperty',
-    'getStatByPropertyValue',
-    'VIMAT.tl.getTasksByPropertyValue',
-    'VIMAT.SETTINGS.taskList.getGroupBy',
-    '$'
-
-    Contains:
-    'function getStatByPropertyValue',
-*/
-
 VIMAT.VIEW.TASKS = (function () {
+    /*  Requires:
+        VIMAT.DOM.ele,
+        VIMAT.JQM.checklist,
+        VIMAT.JQM.checklistItem,
+        VIMAT.JQM.collapsible,
+        VIMAT.JQM.collapsibleSet,
+        VIMAT.CONTEXT.childrenOfContext,
+        VIMAT.CONTEXT.arrayHasOrphans,
+        VIMAT.CONTEXT.contextHasNoParent,
+        VIMAT.CONTEXT.createParent,
+        VIMAT.HISTORY.msSinceLastCompletionByTaskId,
+        VIMAT.HISTORY.msSinceLastCompletionByPropertyValue,
+        VIMAT.UTILITIES.msInHour,
+        VIMAT.tl.getAllTasks,
+        VIMAT.tl.getUniqueValuesOfProperty,
+        VIMAT.tl.getTasksWithUndefinedProperty,
+        VIMAT.tl.getTasksByPropertyValue,
+        VIMAT.SETTINGS.taskList.getGroupBy,
+        $
+    */
 
     // *** Private Methods
     function getStatByPropertyValue(prop, val) {
@@ -74,14 +71,6 @@ VIMAT.VIEW.TASKS = (function () {
         stat = VIMAT.HISTORY.msSinceLastCompletionByPropertyValue(prop, val);
         stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
 
-        return stat;
-    }
-    function getStatByTaskId(id) {
-        var stat;
-        
-        stat = VIMAT.HISTORY.msSinceLastCompletionByTaskId(id);
-        stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
-        
         return stat;
     }
     function eliminateOrphans(array) {
@@ -106,12 +95,50 @@ VIMAT.VIEW.TASKS = (function () {
 
         return div;
     }
+    function addChildToCollapsibleSet(collapsibleSet, child, groupBy) {
+        var collapsible, tasksByValue, stat;
+        
+        if (child) {
+            stat = getStatByPropertyValue(groupBy, child);
+            collapsible = VIMAT.JQM.collapsible(child, stat);
+        }
+        tasksByValue = VIMAT.tl.getTasksByPropertyValue(groupBy, child);
+        collapsible.appendChild(ungroupedTasklist(tasksByValue));
+        collapsible.appendChild(groupedTasklist(groupBy, child));
+        collapsibleSet.appendChild(collapsible);
+
+        return collapsibleSet;
+    }
+    function addChildrenToCollapsibleSet(collapsibleSet, children, groupBy) {
+        children.forEach(function(element, index, array) {
+            collapsibleSet = addChildToCollapsibleSet(collapsibleSet, element, groupBy);
+        });
+        
+        return collapsibleSet;
+    }
+    function groupedCheckList(groupBy, context, array, checkListItemConfig) {
+        var collapsibleSet = VIMAT.JQM.collapsibleSet(),
+            uniqueValuesObject = VIMAT.ARRAY.getUniqueValuesOfProperty(array, groupBy),
+            uniqueValues = uniqueValuesObject['uniquePropVals'],
+            undefinedPropValsExist = uniqueValuesObject['undefinedPropValsExist'],
+            children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context),
+            undefinedObjects = [];
+        
+        // uniqueValues = eliminateOrphans(uniqueValues);
+        if (undefinedPropValsExist && (context === '/' || context === '')) {
+            undefinedObjects = VIMAT.ARRAY.objectsWithMissingProperties(array, groupBy);
+            collapsibleSet.appendChild(VIMAT.JQM.checklist(undefinedObjects, checkListItemConfig));
+        }
+        collapsibleSet = addChildrenToCollapsibleSet(collapsibleSet, children, groupBy);
+        
+        return collapsibleSet;
+    }
     function groupedTasklist(groupBy, context) {
         var collapsibleSet = VIMAT.JQM.collapsibleSet(),
             uniqueValuesObject = VIMAT.tl.getUniqueValuesOfProperty(groupBy),
             uniqueValues = uniqueValuesObject['uniquePropVals'],
             undefinedPropValsExist = uniqueValuesObject['undefinedPropValsExist'],
-            children, undefinedTasks = [], collapsible, tasksByValue, stat;
+            children, undefinedTasks = [];
         
         // uniqueValues = eliminateOrphans(uniqueValues);
         children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context);
@@ -119,27 +146,26 @@ VIMAT.VIEW.TASKS = (function () {
             undefinedTasks = VIMAT.tl.getTasksWithUndefinedProperty(groupBy);
             collapsibleSet.appendChild(ungroupedTasklist(undefinedTasks));
         }
-
-        children.forEach(function(element, index, array) {
-            if (element) {
-                stat = getStatByPropertyValue(groupBy, element);
-                collapsible = VIMAT.JQM.collapsible(element, stat);
-            }
-            tasksByValue = VIMAT.tl.getTasksByPropertyValue(groupBy, element);
-            collapsible.appendChild(ungroupedTasklist(tasksByValue));
-            collapsible.appendChild(groupedTasklist(groupBy, element));
-            collapsibleSet.appendChild(collapsible);
-        });
+        collapsibleSet = addChildrenToCollapsibleSet(collapsibleSet, children, groupBy);
         
         return collapsibleSet;
     }
+    function convertTaskToTaskListItem(task) {
+        var checkListItemConfig = {
+                'label':    task.description,
+                'count':    task.stat,
+                'id':       task.id,
+                'checked':  task.finished,
+                'cssClass': 'taskListItem'
+            };
+
+        return VIMAT.JQM.checklistItem(checkListItemConfig);
+    }
     function convertTasksToTaskListItems(tasks) {
-        var taskListItems = [], item, stat;
+        var taskListItems = [];
         
         tasks.forEach(function(element, index, array) {
-            stat = getStatByTaskId(element.id);
-            item = VIMAT.JQM.checklistItem(element.description, stat, element.id, element.finished, 'taskListItem');
-            taskListItems.push(item);
+            taskListItems.push(convertTaskToTaskListItem(element));
         });
 
         return taskListItems;
