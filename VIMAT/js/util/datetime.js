@@ -40,74 +40,35 @@
 
 var VIMAT = VIMAT || {};
 
-VIMAT.namespace('VIMAT.STRING');
+VIMAT.namespace("VIMAT.DATETIME");
 
-/*
-    Requires:
-    (None)
-*/
+VIMAT.DATETIME = (function () {
+    /*  Requires:
+    */
 
-VIMAT.STRING = (function () {
-    // *** Public
-    function objectToStringKeyObject(obj) {
-        var i, l, string = '', key = '', stringKeyObject,
-            propArray = Object.keys(obj);
-                
-        l = propArray.length;
-        for (i = 0; i < l; i++) {
-            string += obj[propArray[i]] + '|';
-            key += propArray[i] + '|';
-        }
-        l = string.length;
-        string = string.substring(0, l - 1);
-        l = key.length;
-        key = key.substring(0, l - 1);
-        stringKeyObject = {
-            'string':   string,
-            'key':      key
-        };
-        
-        return stringKeyObject;
-    }
-    function objectFromStringKeyObject(stringKeyObject) {
-        var string = stringKeyObject.string,
-            key = stringKeyObject.key,
-            objProperties = key.split('|'),
-            propValues = string.split('|'),
-            obj = {}, i, l = objProperties.length;
-        
-        if (!(propValues.length === objProperties.length)) {
-            // return -1 for mismatch between key and string
-            return -1;
-        }    
-        for (i = 0; i < l; i++) {
-            obj[objProperties[i]] = propValues[i];
+    // *** Private Methods
+
+    // *** Public Methods
+    function msBetweenTwoDates(date1, date2) {
+        var date1ms = Date.parse(date1),
+            date2ms = Date.parse(date2);
+            
+        if (date1ms < date2ms) {
+            return date2ms - date1ms;
         }
         
-        return obj;
+        return date1ms - date2ms;
     }
-    function stringKeyObjectToString(stringKeyObject) {
-        var string = '';
-        
-        // implementation
-        
-        return string;
-    }
-    function stringKeyObjectFromString(string) {
-        var stringKeyObject = {};
-        
-        //  implementation
-        //      stringKeyObject['string'] = 
-        //      stringKeyObject['key'] = 
-        
-        return stringKeyObject;
+    function msBetweenTwoJsonDates(jsonDate1, jsonDate2) {
+        var date1 = new Date(jsonDate1),
+            date2 = new Date(jsonDate2);
+            
+        return msBetweenTwoDates(date1, date2);
     }
 
     // *** Public API
     return {
-        objectToStringKeyObject:    objectToStringKeyObject,
-        objectFromStringKeyObject:  objectFromStringKeyObject,
-        stringKeyObjectToString:    stringKeyObjectToString,
-        stringKeyObjectFromString:  stringKeyObjectFromString
+        msBetweenTwoDates:          msBetweenTwoDates,
+        msBetweenTwoJsonDates:      msBetweenTwoJsonDates
     };
 }());

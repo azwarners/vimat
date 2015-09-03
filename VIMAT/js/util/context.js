@@ -159,6 +159,17 @@ VIMAT.CONTEXT = (function () {
         
         return false;
     }
+    function eliminateOrphans(array) {
+        while (arrayHasOrphans(array)) {
+            array.forEach(function(element, index) {
+                if (contextHasNoParent(array, element)) {
+                    array.push(createParent(element));
+                }
+            });
+        }
+        
+        return array;
+    }
 
     return {
         isSubContextOfContext:  isSubContextOfContext,
@@ -166,6 +177,8 @@ VIMAT.CONTEXT = (function () {
         childrenOfContext:      childrenOfContext,
         contextHasNoParent:     contextHasNoParent,
         createParent:           createParent,
-        arrayHasOrphans:        arrayHasOrphans
+        arrayHasOrphans:        arrayHasOrphans,
+        eliminateOrphans:       eliminateOrphans
+        
     };
 }());

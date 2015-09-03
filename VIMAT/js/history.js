@@ -152,3 +152,54 @@ VIMAT.HISTORY.msSinceLastCompletionByTaskId = function (id) {
     }
     return lastTime;
 };
+
+VIMAT.HISTORY.msSinceLastTrackedTimeByTaskId = function(taskId) {
+    var taskHasntBeenStartedBefore = true,
+        trackedTimes = VIMAT.TIMETRACKER.getTrackedTimes(), ms = 0, msForThisTrackedTime;
+    
+    trackedTimes.forEach(function(element, index, array) {
+        if (element.trackedTaskId === taskId) {
+            taskHasntBeenStartedBefore = false;
+            if (element.endTime === '') {
+                return 0;
+            }
+            else {
+                msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates((new Date()).toJSON(), element.endTime);
+                if (msForThisTrackedTime > ms) {
+                    ms = msForThisTrackedTime;
+                }
+            }
+        }
+    });
+    if (taskHasntBeenStartedBefore) {
+        return '(never started)';
+    }
+    
+    return ms;
+};
+
+VIMAT.HISTORY.msSinceLastTrackedTimeByPropertyValue = function(prop, val) {
+    var taskHasntBeenStartedBefore = true, task,
+        trackedTimes = VIMAT.TIMETRACKER.getTrackedTimes(), ms = 0, msForThisTrackedTime;
+    
+    trackedTimes.forEach(function(element, index, array) {
+        task = VIMAT.tl.getTaskById(element.trackedTaskId);
+        if (task[prop] === val) {
+            taskHasntBeenStartedBefore = false;
+            if (element.endTime === '') {
+                return 0;
+            }
+            else {
+                msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates((new Date()).toJSON(), element.endTime);
+                if (msForThisTrackedTime > ms) {
+                    ms = msForThisTrackedTime;
+                }
+            }
+        }
+    });
+    if (taskHasntBeenStartedBefore) {
+        return '(never started)';
+    }
+    
+    return ms;
+};

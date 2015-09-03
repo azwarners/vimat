@@ -46,6 +46,8 @@ VIMAT.TIMETRACKER.CONTROLLER = (function () {
     // *** Private
     function toggleTrackedTime(taskId) {
         VIMAT.TIMETRACKER.toggleTimeTracker(taskId);
+        VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
+        VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
     }
     
     // *** Event Listener Handlers
@@ -63,10 +65,10 @@ VIMAT.TIMETRACKER.CONTROLLER = (function () {
 
     // *** Event Listener Bindings
     function addTimeTrackerEventListeners() {
-        $('.timeTrackerListItem').on('click', toggleTimeTracker);
+        $('.timeTrackerPunchButton').on('click', toggleTimeTracker);
     }
     function removeTimeTrackerEventListeners() {
-        $('.timeTrackerListItem').off('click', toggleTimeTracker);
+        $('.timeTrackerPunchButton').off('click', toggleTimeTracker);
     }
 
     // *** Public functions

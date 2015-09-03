@@ -57,7 +57,6 @@ VIMAT.TIMETRACKER = (function () {
                 ttIndex = index;
             }
         });
-        console.log('index: ' + ttIndex);
         return ttIndex;
     }
     function elapsedTimeBetween2JsonDates(start, end) {
@@ -74,20 +73,16 @@ VIMAT.TIMETRACKER = (function () {
         this.endTime = '';
         this.trackedTaskId = taskId;
     }
-
     function punchIn(taskId) {
         var date = (new Date()).toJSON();
 
         trackedTimes.push(new TrackedTime(date, taskId));
-        console.log('in');
 }
     function punchOut(taskId) {
         var index = getIndexOfUnEndedTrackedTime(taskId),
             date = (new Date()).toJSON();
 
         trackedTimes[index].endTime = date;
-        console.log('out');
-        console.log('time:' + elapsedTimeSinceCompletion(taskId));
     }
     function toggleTimeTracker(taskId) {
         if (getIndexOfUnEndedTrackedTime(taskId) === -1) {
@@ -122,6 +117,23 @@ VIMAT.TIMETRACKER = (function () {
     function setTrackedTimes(tt) {
         trackedTimes = tt;
     }
+    function timeTrackerIsOn(taskId) {
+        var trackedTimesForThisTask = [], isOn = false,
+            task = VIMAT.tl.getTaskById(taskId);
+        
+        trackedTimes.forEach(function(element, index, array) {
+            if (element.trackedTaskId === taskId) {
+                trackedTimesForThisTask.push(element);
+            }
+        });
+        trackedTimesForThisTask.forEach(function(element, index, array) {
+            if (element.endTime === '') {
+                isOn = true;
+            }
+        });
+
+        return isOn;
+    }
     return {
         TrackedTime:                TrackedTime,
         punchIn:                    punchIn,
@@ -129,6 +141,7 @@ VIMAT.TIMETRACKER = (function () {
         toggleTimeTracker:          toggleTimeTracker,
         elapsedTimeSinceCompletion: elapsedTimeSinceCompletion,
         getTrackedTimes:            getTrackedTimes,
-        setTrackedTimes:            setTrackedTimes
+        setTrackedTimes:            setTrackedTimes,
+        timeTrackerIsOn:            timeTrackerIsOn
     };
 }());

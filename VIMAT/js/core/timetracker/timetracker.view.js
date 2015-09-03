@@ -55,32 +55,49 @@ VIMAT.TIMETRACKER.VIEW = (function () {
         
         return tasks;
     }
-    function timeTrackerListItem(task) {
-        var description = task.description, li;
+    function timeTrackerTableRow(task) {
+        var tr = VIMAT.DOM.ele('tr'), elapsedTime = task.elapsedTime + ' min', button, inOrOut;
         
-        if (task.elapsedTime > 0) {
-            description = description + ' ' + task.elapsedTime + ' min';
+        if (VIMAT.TIMETRACKER.timeTrackerIsOn(task.id)) {
+            inOrOut = ' Out';
         }
-        li = VIMAT.DOM.ele('li', description);
-        li.setAttribute('id', 'tt' + task.id);
-        li.setAttribute('class', 'timeTrackerListItem');
+        else {
+            inOrOut = ' In';
+        }
+        button = VIMAT.DOM.ele('button', 'Punch' + inOrOut);
+        button.setAttribute('id', 'tt' + task.id);
+        button.setAttribute('class', 'timeTrackerPunchButton');
+        tr.appendChild(VIMAT.DOM.ele('td', button));
+        tr.appendChild(VIMAT.DOM.ele('td', elapsedTime));
+        tr.appendChild(VIMAT.DOM.ele('td', task.description));
 
-        return li;
+        return tr;
     }
 
     // *** Public
     function displayTimeTracker(tasks) {
-        var listView = VIMAT.DOM.ele('ul'),
+        var table = VIMAT.DOM.ele('table'),
             timeTrackerDiv = document.getElementById('timeTrackerDiv');
         
-        listView.setAttribute('data-role', 'listview');
+        table.setAttribute('data-role', 'table');
         $(timeTrackerDiv).empty();
         tasks = addElapsedTimesToTasks(tasks);
         tasks.forEach(function(element, index, array) {
-            listView.appendChild(timeTrackerListItem(element));
+            table.appendChild(timeTrackerTableRow(element));
         });
-        timeTrackerDiv.appendChild(listView);
-        $(document).trigger('create');
+        timeTrackerDiv.appendChild(table);
+        // $(document).trigger('create');
+        // var listView = VIMAT.DOM.ele('ul'),
+        //     timeTrackerDiv = document.getElementById('timeTrackerDiv');
+        
+        // listView.setAttribute('data-role', 'listview');
+        // $(timeTrackerDiv).empty();
+        // tasks = addElapsedTimesToTasks(tasks);
+        // tasks.forEach(function(element, index, array) {
+        //     listView.appendChild(timeTrackerListItem(element));
+        // });
+        // timeTrackerDiv.appendChild(listView);
+        // $(document).trigger('create');
     }
     // *** Public API
     return {

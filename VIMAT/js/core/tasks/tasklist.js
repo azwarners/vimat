@@ -159,14 +159,34 @@ VIMAT.MODEL.TASKS.taskList = function () {
         return uniquePropValsObject;
     }
     function addStatToTasks() {
-        var stat;
+        var stat, msTrackedTime = 0, msCompletion = 0;
         
         tasks.forEach(function(element, index, array) {
-            stat = VIMAT.HISTORY.msSinceLastCompletionByTaskId(element.id);
-            stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+            msCompletion = VIMAT.HISTORY.msSinceLastCompletionByTaskId(element.id);
+            msTrackedTime = VIMAT.HISTORY.msSinceLastTrackedTimeByTaskId(element.id);
+            if ( !(msCompletion === '(none completed)') && !(msTrackedTime === '(never started)') ) {
+                if (msTrackedTime < msCompletion) {
+                    stat = msTrackedTime;
+                }
+                else {
+                    stat = msCompletion;
+                }
+                stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+            }
+            else if (!(msTrackedTime === '(never started)')) {
+                stat = msTrackedTime;
+                stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+            }
+            else if (!(msCompletion === '(none completed)')) {
+                stat = msCompletion;
+                stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+            }
+            else {
+                stat = 'none';
+            }
             element['stat'] = stat;
         });
-    };
+    }
     
     // *** Refactor/Throw Away
     function addTaskFromString(s) {

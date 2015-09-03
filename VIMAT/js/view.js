@@ -66,23 +66,32 @@ VIMAT.VIEW.TASKS = (function () {
 
     // *** Private Methods
     function getStatByPropertyValue(prop, val) {
-        var stat;
+        var stat, msCompletion, msTrackedTime;
         
-        stat = VIMAT.HISTORY.msSinceLastCompletionByPropertyValue(prop, val);
-        stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
-
-        return stat;
-    }
-    function eliminateOrphans(array) {
-        while (VIMAT.CONTEXT.arrayHasOrphans(array)) {
-            array.forEach(function(element, index) {
-                if (VIMAT.CONTEXT.contextHasNoParent(array, element)) {
-                    array.push(VIMAT.CONTEXT.createParent(element));
-                }
-            });
+        msCompletion = VIMAT.HISTORY.msSinceLastCompletionByPropertyValue(prop, val);
+        msTrackedTime = VIMAT.HISTORY.msSinceLastTrackedTimeByPropertyValue(prop, val);
+        if ( !(msCompletion === '(none completed)') && !(msTrackedTime === '(never started)') ) {
+            if (msTrackedTime < msCompletion) {
+                stat = msTrackedTime;
+            }
+            else {
+                stat = msCompletion;
+            }
+            stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+        }
+        else if (!(msTrackedTime === '(never started)')) {
+            stat = msTrackedTime;
+            stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+        }
+        else if (!(msCompletion === '(none completed)')) {
+            stat = msCompletion;
+            stat = (stat / VIMAT.UTILITIES.msInHour).toFixed(2).toString();
+        }
+        else {
+            stat = 'none';
         }
         
-        return array;
+        return stat;
     }
     function ungroupedTasklist(tasks) {
         var div, taskListItems = [];
@@ -95,7 +104,7 @@ VIMAT.VIEW.TASKS = (function () {
 
         return div;
     }
-    function addChildToCollapsibleSet(collapsibleSet, child, groupBy) {
+    function addCollapsibleToCollapsibleSet(collapsibleSet, child, groupBy) {
         var collapsible, tasksByValue, stat;
         
         if (child) {
@@ -109,27 +118,10 @@ VIMAT.VIEW.TASKS = (function () {
 
         return collapsibleSet;
     }
-    function addChildrenToCollapsibleSet(collapsibleSet, children, groupBy) {
+    function addCollapsiblesToCollapsibleSet(collapsibleSet, children, groupBy) {
         children.forEach(function(element, index, array) {
-            collapsibleSet = addChildToCollapsibleSet(collapsibleSet, element, groupBy);
+            collapsibleSet = addCollapsibleToCollapsibleSet(collapsibleSet, element, groupBy);
         });
-        
-        return collapsibleSet;
-    }
-    function groupedCheckList(groupBy, context, array, checkListItemConfig) {
-        var collapsibleSet = VIMAT.JQM.collapsibleSet(),
-            uniqueValuesObject = VIMAT.ARRAY.getUniqueValuesOfProperty(array, groupBy),
-            uniqueValues = uniqueValuesObject['uniquePropVals'],
-            undefinedPropValsExist = uniqueValuesObject['undefinedPropValsExist'],
-            children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context),
-            undefinedObjects = [];
-        
-        // uniqueValues = eliminateOrphans(uniqueValues);
-        if (undefinedPropValsExist && (context === '/' || context === '')) {
-            undefinedObjects = VIMAT.ARRAY.objectsWithMissingProperties(array, groupBy);
-            collapsibleSet.appendChild(VIMAT.JQM.checklist(undefinedObjects, checkListItemConfig));
-        }
-        collapsibleSet = addChildrenToCollapsibleSet(collapsibleSet, children, groupBy);
         
         return collapsibleSet;
     }
@@ -140,13 +132,12 @@ VIMAT.VIEW.TASKS = (function () {
             undefinedPropValsExist = uniqueValuesObject['undefinedPropValsExist'],
             children, undefinedTasks = [];
         
-        // uniqueValues = eliminateOrphans(uniqueValues);
         children = VIMAT.CONTEXT.childrenOfContext(uniqueValues, context);
         if (undefinedPropValsExist && (context === '/' || context === '')) {
             undefinedTasks = VIMAT.tl.getTasksWithUndefinedProperty(groupBy);
             collapsibleSet.appendChild(ungroupedTasklist(undefinedTasks));
         }
-        collapsibleSet = addChildrenToCollapsibleSet(collapsibleSet, children, groupBy);
+        collapsibleSet = addCollapsiblesToCollapsibleSet(collapsibleSet, children, groupBy);
         
         return collapsibleSet;
     }
@@ -185,7 +176,7 @@ VIMAT.VIEW.TASKS = (function () {
         }        
         $(tlDiv).empty();
         tlDiv.appendChild(taskList);
-        $(document).trigger('create');
+        // $(document).trigger('create');
     }
 
     // *** Public API

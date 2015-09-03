@@ -49,7 +49,7 @@ VIMAT.namespace('VIMAT.UTIL');
 
 VIMAT.UTIL = (function () {
     // *** Public
-    function newId(uid) {
+    function newId() {
         /*
             Creates an Ascii85 id
             Generates same level of uniqueness as hex with only 20 characters
@@ -64,12 +64,27 @@ VIMAT.UTIL = (function () {
         for (var index = 0; index < 20; index++) {
             id += characters[Math.floor(Math.random() * 85)];
         }
-        
+    
         return id;
     }
+    function log(text) {
+        console.log(text);
+    }
+    function logProperties(jsObject, jsObjectName) {
+        /*  Thanks to Mozilla for this one!
+            https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
+        */
+        for (var prop in jsObject) {
+            if (jsObject.hasOwnProperty(prop)) 
+                log(jsObjectName + '.' + prop + ' = ' + jsObject[prop]);
+        }    
+    } 
+    
 
     // *** Public API
     return {
-        newId:  newId
+        newId:          newId,
+        log:            log,
+        logProperties:  logProperties
     };
 }());
