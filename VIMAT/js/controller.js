@@ -65,7 +65,7 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.TASKLIST.CONTROLLER.addEventListeners();
         VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
         VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
-        // $(document).trigger('create');
+        $(document).trigger('create');
     }
     
 

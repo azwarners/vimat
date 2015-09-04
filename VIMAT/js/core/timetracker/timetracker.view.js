@@ -56,16 +56,17 @@ VIMAT.TIMETRACKER.VIEW = (function () {
         return tasks;
     }
     function timeTrackerTableRow(task) {
-        var tr = VIMAT.DOM.ele('tr'), elapsedTime = task.elapsedTime + ' min', button, inOrOut;
+        var tr = VIMAT.DOM.ele('tr'), elapsedTime = task.elapsedTime + ' min', button, startOrStop;
         
         if (VIMAT.TIMETRACKER.timeTrackerIsOn(task.id)) {
-            inOrOut = ' Out';
+            startOrStop = 'STOP';
         }
         else {
-            inOrOut = ' In';
+            startOrStop = 'START';
         }
-        button = VIMAT.DOM.ele('button', 'Punch' + inOrOut);
+        button = VIMAT.DOM.ele('button', startOrStop);
         button.setAttribute('id', 'tt' + task.id);
+        button.setAttribute('data-inline', 'true');
         button.setAttribute('class', 'timeTrackerPunchButton');
         tr.appendChild(VIMAT.DOM.ele('td', button));
         tr.appendChild(VIMAT.DOM.ele('td', elapsedTime));
@@ -73,20 +74,40 @@ VIMAT.TIMETRACKER.VIEW = (function () {
 
         return tr;
     }
+    function addHeader(table) {
+        var tHead = VIMAT.DOM.ele('thead'),
+            tRow = VIMAT.DOM.ele('tr'),
+            tHeader;
+            
+        tHeader = VIMAT.DOM.ele('th', 'Timer');
+        tRow.appendChild(tHeader);
+        tHeader = VIMAT.DOM.ele('th', 'Total Time');
+        tRow.appendChild(tHeader);
+        tHeader = VIMAT.DOM.ele('th', 'Task Description');
+        tRow.appendChild(tHeader);
+        tHead.appendChild(tRow);
+        table.appendChild(tHead);
+        
+        return table;
+    }
 
     // *** Public
     function displayTimeTracker(tasks) {
         var table = VIMAT.DOM.ele('table'),
+            tableBody = VIMAT.DOM.ele('tbody'),
             timeTrackerDiv = document.getElementById('timeTrackerDiv');
         
         table.setAttribute('data-role', 'table');
+        table.setAttribute('class', 'ui-responsive');
+        table = addHeader(table);
         $(timeTrackerDiv).empty();
         tasks = addElapsedTimesToTasks(tasks);
         tasks.forEach(function(element, index, array) {
-            table.appendChild(timeTrackerTableRow(element));
+            tableBody.appendChild(timeTrackerTableRow(element));
         });
+        table.appendChild(tableBody);
         timeTrackerDiv.appendChild(table);
-        // $(document).trigger('create');
+        $(document).trigger('create');
         // var listView = VIMAT.DOM.ele('ul'),
         //     timeTrackerDiv = document.getElementById('timeTrackerDiv');
         

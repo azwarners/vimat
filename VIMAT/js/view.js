@@ -176,7 +176,7 @@ VIMAT.VIEW.TASKS = (function () {
         }        
         $(tlDiv).empty();
         tlDiv.appendChild(taskList);
-        // $(document).trigger('create');
+        $(document).trigger('create');
     }
 
     // *** Public API

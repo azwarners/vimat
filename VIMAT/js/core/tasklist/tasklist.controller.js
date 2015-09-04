@@ -52,7 +52,7 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
             compass = document.getElementById('compass').value,
             priority = document.getElementById('priority').value,
             urgency = document.getElementById('urgency').value,
-            dueDate = document.getElementById('dueDate').value.toJSON,
+            dueDate = document.getElementById('dueDate').value,
             frequency = document.getElementById('frequency').value,
             interval = document.getElementById('interval').value,
             repeats = document.getElementById('repeats').checked;
@@ -73,7 +73,7 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
         task.compass = compass;
         task.priority = priority;
         task.urgency = urgency;
-        task.dueDate = dueDate;
+        task.dueDate = (new Date(dueDate)).toJSON();
         
         return task;
     }
@@ -106,7 +106,7 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
         task.compass = compass;
         task.priority = priority;
         task.urgency = urgency;
-        task.dueDate = dueDate;
+        task.dueDate = (new Date(dueDate)).toJSON();
         
         return task;
     }
