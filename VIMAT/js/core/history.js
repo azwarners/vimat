@@ -111,9 +111,7 @@ VIMAT.HISTORY = (function () {
             ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));
         }
         for (index = 0; index < length; index++) {
-            console.log(uniqueValues[index] + ': checking for descendants...');
             if (VIMAT.CONTEXT.isSubContextOfContext(uniqueValues[index], val)) {
-                console.log(uniqueValues[index] + ' is a descendant of ' + val);
                 descendantsCompletionTime = lastCompletionTimeByPropertyValue(uniqueValues[index]);
                 if (!(descendantsCompletionTime === "(none completed)")) {
                     descendantsCompletionTime = (Date.parse(d) - Date.parse(descendantsCompletionTime));
@@ -123,7 +121,6 @@ VIMAT.HISTORY = (function () {
                 }
             }
         }
-        console.log(val + ' ' + ms);
         return ms;
     }
     function lastCompletionTimeByPropertyValue(prop, val) {
