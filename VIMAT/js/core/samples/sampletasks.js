@@ -251,32 +251,32 @@ VIMAT.MODEL.TASKS.sampleData = [
         'frequency':        1,
         'interval':         'w'
     },
-    // {
-    //     'id':               'tSAMPLE16',
-    //     'description':      'laundry',
-    //     'folder':           'housework',
-    //     'context':          '@laundryRoom',
-    //     'finished':         false,
-    //     'dueDate':          '2015-05-09T07:00:00.000Z',
-    //     'compass':          'Chores',
-    //     'repeats':          true,
-    //     'dueOrCompletion':  'c',
-    //     'frequency':        1,
-    //     'interval':         'd'
-    // },
-    // {
-    //     'id':               'tSAMPLE17',
-    //     'description':      'dishes',
-    //     'folder':           'housework',
-    //     'context':          '@kitchen',
-    //     'finished':         false,
-    //     'dueDate':          '2015-05-09T07:00:00.000Z',
-    //     'compass':          'Chores',
-    //     'repeats':          true,
-    //     'dueOrCompletion':  'c',
-    //     'frequency':        1,
-    //     'interval':         'd'
-    // },
+    {
+        'id':               'tSAMPLE16',
+        'description':      'declutter end table',
+        'folder':           'housework/declutter/front room',
+        'context':          '@frontRoom',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Chores',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
+    {
+        'id':               'tSAMPLE17',
+        'description':      'declutter floors',
+        'folder':           'housework/declutter',
+        'context':          '@kitchen',
+        'finished':         false,
+        'dueDate':          '2015-05-09T07:00:00.000Z',
+        'compass':          'Chores',
+        'repeats':          true,
+        'dueOrCompletion':  'c',
+        'frequency':        1,
+        'interval':         'd'
+    },
     // {
     //     'id':               'tSAMPLE18',
     //     'description':      'dishes',

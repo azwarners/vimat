@@ -52,25 +52,41 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.DB.loadHistory();
     }
 
-
     // *** Public
-    function initialize(){
-        // All of this code is executed after the page has loaded
-        VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
-        loadData();
-        VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
-        VIMAT.tl.addStatToTasks();
-        VIMAT.VIEW.TASKS.displayTaskList();
-        VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
-        VIMAT.TASKLIST.CONTROLLER.addEventListeners();
-        VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
-        VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
-        $(document).trigger('create');
-    }
-    
+
+    // *** Initialize
+    VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
+    loadData();
+    VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
+    VIMAT.tl.addStatToTasks();
+    VIMAT.VIEW.TASKS.displayTaskList();
+    VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
+    VIMAT.TASKLIST.CONTROLLER.addEventListeners();
+    VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
+    VIMAT.TIMETRACKER.VIEW.displayTimeTrackerStats();
+    VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
+    $(document).trigger('create');
+    // console.log(VIMAT.CONTEXT.isSubContextOfContext('pictures/wallpaper/nerdy', 'pictures/wallpaper'));
 
     // Public API
     return {
-        initialize: initialize
+        // initialize: initialize
     };
 }());
+
+
+
+    /*  function initialize(){
+    //     // All of this code is executed after the page has loaded
+    //     VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
+    //     loadData();
+    //     VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
+    //     VIMAT.tl.addStatToTasks();
+    //     VIMAT.VIEW.TASKS.displayTaskList();
+    //     VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
+    //     VIMAT.TASKLIST.CONTROLLER.addEventListeners();
+    //     VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
+    //     VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
+    //     $(document).trigger('create');
+    // }
+    */

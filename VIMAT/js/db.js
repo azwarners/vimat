@@ -285,9 +285,12 @@ VIMAT.DB.LOCALSTORAGE = (function () {
     function loadSettings() {
         var s;
         if(typeof(localStorage) !== "undefined") {
-            if (localStorage.listOfListsSettingsDb) {
-                VIMAT.SETTINGS.listOfLists.setCurrentListName(JSON.parse(localStorage.listOfListsSettingsDb));
-            }
+            // **************
+            // *** FIX ME ***
+            // **************
+            // if (localStorage.listOfListsSettingsDb) {
+            //     VIMAT.SETTINGS.listOfLists.setCurrentListName(JSON.parse(localStorage.listOfListsSettingsDb));
+            // }
             if (localStorage.taskListSettingsDb) {
                 s = JSON.parse(localStorage.taskListSettingsDb);
                 VIMAT.SETTINGS.taskList.setStateFromString(s);
@@ -300,12 +303,20 @@ VIMAT.DB.LOCALSTORAGE = (function () {
     }
     
     function saveHistory() {
-        localStorage.historyDb = JSON.stringify(VIMAT.HISTORY.taskHistory);
+        var historyObject = {
+            taskHistory:    VIMAT.HISTORY.getTaskHistory(),
+            trackedTimes:   VIMAT.HISTORY.getTrackedTimes(),
+        };
+        
+        localStorage.historyDb = JSON.stringify(historyObject);
     }
     function loadHistory() {
         if(typeof(localStorage) !== "undefined") {
             if (localStorage.historyDb) {
-                VIMAT.HISTORY.taskHistory = JSON.parse(localStorage.historyDb);
+                var historyObject = JSON.parse(localStorage.historyDb);
+                
+                VIMAT.HISTORY.setTaskHistory(historyObject['taskHistory']);
+                VIMAT.HISTORY.setTrackedTimes(historyObject['trackedTimes']);
             }
         }
         else {

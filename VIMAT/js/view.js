@@ -90,7 +90,6 @@ VIMAT.VIEW.TASKS = (function () {
         else {
             stat = 'none';
         }
-        
         return stat;
     }
     function ungroupedTasklist(tasks) {

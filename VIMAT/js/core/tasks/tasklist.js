@@ -44,7 +44,7 @@ VIMAT.namespace("VIMAT.MODEL.TASKS");
 
 /*
     Requires:
-    
+    VIMAT.HISTORY.addToHistory
     
 */
 
@@ -96,7 +96,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
         var completedTasks = getTasksByPropertyValue('finished', true);
         
         completedTasks.forEach(function(element, index, array) {
-            addToHistory(element);
+            VIMAT.HISTORY.addToHistory(element);
             if (element.repeats) {
                 repeatIt(element);
             }
@@ -160,7 +160,6 @@ VIMAT.MODEL.TASKS.taskList = function () {
     }
     function addStatToTasks() {
         var stat, msTrackedTime = 0, msCompletion = 0;
-        
         tasks.forEach(function(element, index, array) {
             msCompletion = VIMAT.HISTORY.msSinceLastCompletionByTaskId(element.id);
             msTrackedTime = VIMAT.HISTORY.msSinceLastTrackedTimeByTaskId(element.id);
@@ -274,10 +273,6 @@ VIMAT.MODEL.TASKS.taskList = function () {
                 return;
             }
         }
-    }
-    function addToHistory(t) {
-        var ct = new VIMAT.HISTORY.CompletedTask(t, (new Date()).toJSON());
-        VIMAT.HISTORY.taskHistory.push(ct);
     }
     function getTasksWithUndefinedProperty(prop) {
         var undefinedTasks = [];

@@ -74,15 +74,19 @@ VIMAT.TIMETRACKER = (function () {
         this.trackedTaskId = taskId;
     }
     function punchIn(taskId) {
-        var date = (new Date()).toJSON();
+        var date = (new Date()).toJSON(),
+            trackedtimes = VIMAT.HISTORY.getTrackedTimes();
 
-        trackedTimes.push(new TrackedTime(date, taskId));
+        trackedtimes.push(new TrackedTime(date, taskId));
+        VIMAT.HISTORY.setTrackedTimes(trackedtimes);
 }
     function punchOut(taskId) {
         var index = getIndexOfUnEndedTrackedTime(taskId),
-            date = (new Date()).toJSON();
+            date = (new Date()).toJSON(),
+            trackedtimes = VIMAT.HISTORY.getTrackedTimes();
 
-        trackedTimes[index].endTime = date;
+        trackedtimes[index].endTime = date;
+        VIMAT.HISTORY.setTrackedTimes(trackedtimes);
     }
     function toggleTimeTracker(taskId) {
         if (getIndexOfUnEndedTrackedTime(taskId) === -1) {
@@ -111,12 +115,6 @@ VIMAT.TIMETRACKER = (function () {
         elapsedTime = elapsedTime / 1000;
         return elapsedTime;
     }
-    function getTrackedTimes() {
-        return trackedTimes;
-    }
-    function setTrackedTimes(tt) {
-        trackedTimes = tt;
-    }
     function timeTrackerIsOn(taskId) {
         var trackedTimesForThisTask = [], isOn = false,
             task = VIMAT.tl.getTaskById(taskId);
@@ -140,8 +138,6 @@ VIMAT.TIMETRACKER = (function () {
         punchOut:                   punchOut,
         toggleTimeTracker:          toggleTimeTracker,
         elapsedTimeSinceCompletion: elapsedTimeSinceCompletion,
-        getTrackedTimes:            getTrackedTimes,
-        setTrackedTimes:            setTrackedTimes,
         timeTrackerIsOn:            timeTrackerIsOn
     };
 }());

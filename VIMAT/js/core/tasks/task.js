@@ -42,8 +42,6 @@ var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.MODEL.TASKS");
 
-
-
 VIMAT.MODEL.TASKS.Task = function(d) {
     this.id = '';
     this.description = d;

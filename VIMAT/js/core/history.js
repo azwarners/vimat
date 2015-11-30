@@ -41,15 +41,14 @@
 var VIMAT = VIMAT || {};
 
 VIMAT.namespace("VIMAT.HISTORY");
-
-/*  Requires:
-    
-*/
-
 VIMAT.HISTORY = (function () {
+    /*  Requires:
+        VIMAT.CONTEXT.isSubContextOfContext
+    */
 
     // *** Private
     var taskHistory = [];
+    var trackedTimes = [];
 
     // *** Public
     function CompletedTask(task, completionTime) {
@@ -61,6 +60,10 @@ VIMAT.HISTORY = (function () {
         this.urgency = task.urgency;
         this.folder = task.folder;
         this.context = task.context;
+    }
+    function addToHistory(t) {
+        var ct = new CompletedTask(t, (new Date()).toJSON());
+        taskHistory.push(ct);
     }
     function completedTasksByPropertyValueInLastXMs(prop, val, ms, currentDate) {
         // Returns the number of completed tasks where a specific property is equal
@@ -94,37 +97,54 @@ VIMAT.HISTORY = (function () {
         return completedTasksByPropVal;
     }
     function msSinceLastCompletionByPropertyValue(prop, val, currentDate) {
-        var lastCompletionTimeByPropVal, ms,
-            // change new date below to currentDate
-            d = new Date();
-    
-        lastCompletionTimeByPropVal = lastCompletionTimeByPropertyValue(prop, val);
+        var lastCompletionTimeByPropVal = lastCompletionTimeByPropertyValue(prop, val),
+            ms, d = new Date(),
+            uniqueValues = VIMAT.tl.getUniqueValuesOfProperty(prop)['uniquePropVals'],
+            descendantsCompletionTime,
+            index, length = uniqueValues.length;
+
+        lastCompletionTimeByPropVal;
         if (lastCompletionTimeByPropVal === '(none completed)') {
-            return '(none completed)';
+            ms = '(none completed)';
         }
-        ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));   
+        else {
+            ms = (Date.parse(d) - Date.parse(lastCompletionTimeByPropVal));
+        }
+        for (index = 0; index < length; index++) {
+            console.log(uniqueValues[index] + ': checking for descendants...');
+            if (VIMAT.CONTEXT.isSubContextOfContext(uniqueValues[index], val)) {
+                console.log(uniqueValues[index] + ' is a descendant of ' + val);
+                descendantsCompletionTime = lastCompletionTimeByPropertyValue(uniqueValues[index]);
+                if (!(descendantsCompletionTime === "(none completed)")) {
+                    descendantsCompletionTime = (Date.parse(d) - Date.parse(descendantsCompletionTime));
+                    if (descendantsCompletionTime < ms || ms === '(none completed)') {
+                        ms = descendantsCompletionTime;
+                    }
+                }
+            }
+        }
+        console.log(val + ' ' + ms);
         return ms;
     }
     function lastCompletionTimeByPropertyValue(prop, val) {
-        var completedTasksByPropertyValue = completedTasksByPropertyValue(prop, val),
-            lastCompletionTimeByPropVal = 0, index, length = completedTasksByPropertyValue.length,
+        var completedTasksByPropVal = completedTasksByPropertyValue(prop, val),
+            lastCompletionTimeByPropVal = 0, index, length = completedTasksByPropVal.length,
             completedTask;
         
         if (length === 0) {
             return '(none completed)';
         } 
         for (index = 0; index < length; index++) {
-            if (completedTasksByPropertyValue[index].JSONCompletedDate > lastCompletionTimeByPropVal
+            if (completedTasksByPropVal[index].JSONCompletedDate > lastCompletionTimeByPropVal
                     || lastCompletionTimeByPropVal === 0) {
-                completedTask = completedTasksByPropertyValue[index];
+                completedTask = completedTasksByPropVal[index];
                 lastCompletionTimeByPropVal = completedTask.JSONCompletedDate;
             }
         }   
         return lastCompletionTimeByPropVal;
     }
     function lastCompletionTimeByTaskId(id) {
-        var completionTimes = [], lastTime = 0;
-        
+        var completionTimes = [], lastTime = '0';
         taskHistory.forEach(function(element, index, array) {
             if (element.id === id) {
                 completionTimes.push(element.JSONCompletedDate);
@@ -135,17 +155,111 @@ VIMAT.HISTORY = (function () {
                 lastTime = element;
             }
         });
+        return lastTime;
+    }
+    function timeOfLastTrackedTimeByPropertyValue(prop, val) {
+        var lastTime = '', tt, task;
+        
+        for (tt in trackedTimes) {
+            task = VIMAT.tl.getTaskById(tt.trackedTaskId);
+            if (task[prop] === val) {
+                if (tt.endTime > lastTime) {
+                    lastTime = tt.endTime;
+                }
+            }
+        }
         
         return lastTime;
     }
-    
+    function msSinceLastCompletionByTaskId(id) {
+        var lastTime = lastCompletionTimeByTaskId(id),
+            // change new date below to currentDate
+            d = new Date();
+        if (lastTime === '0') {
+            return '(none completed)';
+        }
+        lastTime = (Date.parse(d) - Date.parse(lastTime));
+        if (lastTime < 0) {
+            lastTime *= -1;
+        }
+        return lastTime;
+    }
+    function msSinceLastTrackedTimeByTaskId(taskId) {
+        var taskHasntBeenStartedBefore = true, ms = 0, msForThisTrackedTime;
+        
+        trackedTimes.forEach(function(element, index, array) {
+            if (element.trackedTaskId === taskId) {
+                taskHasntBeenStartedBefore = false;
+                if (element.endTime === '') {
+                    return 0;
+                }
+                else {
+                    msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates((new Date()).toJSON(), element.endTime);
+                    if (msForThisTrackedTime > ms) {
+                        ms = msForThisTrackedTime;
+                    }
+                }
+            }
+        });
+        if (taskHasntBeenStartedBefore) {
+            return '(never started)';
+        }
+        
+        return ms;
+    }
+    function msSinceLastTrackedTimeByPropertyValue(prop, val) {
+        var taskHasntBeenStartedBefore = true, task, ms = 0, msForThisTrackedTime;
+        
+        trackedTimes.forEach(function(element, index, array) {
+            task = VIMAT.tl.getTaskById(element.trackedTaskId);
+            if (task[prop] === val) {
+                taskHasntBeenStartedBefore = false;
+                if (element.endTime === '') {
+                    return 0;
+                }
+                else {
+                    msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates((new Date()).toJSON(), element.endTime);
+                    if (msForThisTrackedTime > ms) {
+                        ms = msForThisTrackedTime;
+                    }
+                }
+            }
+        });
+        if (taskHasntBeenStartedBefore) {
+            return '(never started)';
+        }
+        
+        return ms;
+    }
+    function getTrackedTimes() {
+        return trackedTimes;
+    }
+    function setTrackedTimes(tt) {
+        trackedTimes = tt;
+    }
+    function getTaskHistory() {
+        return taskHistory;
+    }
+    function setTaskHistory(th) {
+        taskHistory = th;
+    }
+
     // *** Public API
     return {
         CompletedTask:                          CompletedTask,
+        addToHistory:                           addToHistory,
+        getTaskHistory:                         getTaskHistory,
+        setTaskHistory:                         setTaskHistory,
+        getTrackedTimes:                        getTrackedTimes,
+        setTrackedTimes:                        setTrackedTimes,
         completedTasksByPropertyValueInLastXMs: completedTasksByPropertyValueInLastXMs,
         completedTasksByPropertyValue:          completedTasksByPropertyValue,
         msSinceLastCompletionByPropertyValue:   msSinceLastCompletionByPropertyValue,
         lastCompletionTimeByPropertyValue:      lastCompletionTimeByPropertyValue,
-        lastCompletionTimeByTaskId:             lastCompletionTimeByTaskId
+        lastCompletionTimeByTaskId:             lastCompletionTimeByTaskId,
+        timeOfLastTrackedTimeByPropertyValue:   timeOfLastTrackedTimeByPropertyValue,
+        msSinceLastCompletionByTaskId:          msSinceLastCompletionByTaskId,
+        msSinceLastTrackedTimeByTaskId:         msSinceLastTrackedTimeByTaskId,
+        msSinceLastTrackedTimeByPropertyValue:  msSinceLastTrackedTimeByPropertyValue
     };
 }());

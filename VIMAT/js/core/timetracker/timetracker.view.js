@@ -108,20 +108,24 @@ VIMAT.TIMETRACKER.VIEW = (function () {
         table.appendChild(tableBody);
         timeTrackerDiv.appendChild(table);
         $(document).trigger('create');
-        // var listView = VIMAT.DOM.ele('ul'),
-        //     timeTrackerDiv = document.getElementById('timeTrackerDiv');
-        
-        // listView.setAttribute('data-role', 'listview');
-        // $(timeTrackerDiv).empty();
-        // tasks = addElapsedTimesToTasks(tasks);
-        // tasks.forEach(function(element, index, array) {
-        //     listView.appendChild(timeTrackerListItem(element));
-        // });
-        // timeTrackerDiv.appendChild(listView);
-        // $(document).trigger('create');
     }
+    function displayTimeTrackerStats() {
+        // **************
+        // *** FIX ME ***
+        // **************
+        // var lastTime, li, uniqueFolders = VIMAT.tl.getUniqueValuesOfProperty('folder')['uniquePropVals'];
+        
+        // console.log(uniqueFolders);
+        // uniqueFolders.forEach(function(element, index, array) {
+        //     lastTime = VIMAT.HISTORY.timeOfLastTrackedTimeByPropertyValue('folder', element);
+        //     li = VIMAT.DOM.ele('span', 'Last time ' + element + ' folder was tracked: ' + lastTime);
+        //     document.getElementById('timeTrackerStatsDiv').appendChild(li);
+        // });
+    }
+
     // *** Public API
     return {
-        displayTimeTracker: displayTimeTracker
+        displayTimeTracker:         displayTimeTracker,
+        displayTimeTrackerStats:    displayTimeTrackerStats
     };
 }());
