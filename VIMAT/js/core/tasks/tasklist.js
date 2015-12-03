@@ -50,8 +50,7 @@ VIMAT.namespace("VIMAT.MODEL.TASKS");
 
 VIMAT.MODEL.TASKS.taskList = function () {
     // *** Private Properties
-    var tasks = [],
-        editTaskId = false;
+    var tasks = [];
     
     // *** Private Methods
     function repeatIt(task) {
@@ -61,6 +60,9 @@ VIMAT.MODEL.TASKS.taskList = function () {
     }
     
     // *** Public Methods
+    function removeSamples() {
+        
+    }
     function idExists(id) {
         tasks.forEach(function(element, index, array) {
             if (element.id === id) {
@@ -312,6 +314,7 @@ VIMAT.MODEL.TASKS.taskList = function () {
         permanentlyDeleteCompleted:     permanentlyDeleteCompleted,
         setFinishedById:                setFinishedById,
         getAllTasks:                    getAllTasks,
-        addStatToTasks:                 addStatToTasks
+        addStatToTasks:                 addStatToTasks,
+        removeSamples:                  removeSamples
     };
 };

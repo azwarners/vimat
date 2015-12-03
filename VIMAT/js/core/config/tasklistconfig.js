@@ -40,8 +40,8 @@
 
 var VIMAT = VIMAT || {};
 
-VIMAT.namespace("VIMAT.TASKLIST.CONFIG");
-VIMAT.TASKLIST.CONFIG = {
+VIMAT.namespace("VIMAT.CONFIG.TASKLIST");
+VIMAT.CONFIG.TASKLIST = {
     /*
         Enable display for task properties in the view for
             task checklist items
@@ -82,7 +82,7 @@ VIMAT.TASKLIST.CONFIG = {
                     repeats:            'RPT',
                     dueOrCompletion:    'text',
                     undefinedDisplayedPropertiesReminderBy:
-                                        '*',
+                                        '*', // character string displayed in red
                     taskStatBubble:     'hoursSinceCompletion',
                     propertyStatBubble: 'hoursSinceCompletion'
                 },
@@ -93,5 +93,5 @@ VIMAT.TASKLIST.CONFIG = {
     editorCurrentTaskId:    ''
 };
 
-VIMAT.namespace("VIMAT.TASKLIST.CONFIG.DEFAULT");
-VIMAT.TASKLIST.CONFIG.DEFAULT = VIMAT.TASKLIST.CONFIG;
+VIMAT.namespace("VIMAT.CONFIG.TASKLIST.DEFAULT");
+VIMAT.CONFIG.TASKLIST.DEFAULT = VIMAT.CONFIG.TASKLIST;

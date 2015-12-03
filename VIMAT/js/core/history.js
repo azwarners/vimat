@@ -155,17 +155,17 @@ VIMAT.HISTORY = (function () {
         return lastTime;
     }
     function timeOfLastTrackedTimeByPropertyValue(prop, val) {
-        var lastTime = '', tt, task;
+        var lastTime = '', task;
         
-        for (tt in trackedTimes) {
-            task = VIMAT.tl.getTaskById(tt.trackedTaskId);
+        trackedTimes.forEach(function(element, index, array) {
+            task = VIMAT.tl.getTaskById(element.trackedTaskId);
             if (task[prop] === val) {
-                if (tt.endTime > lastTime) {
-                    lastTime = tt.endTime;
+                if (element.endTime > lastTime) {
+                    lastTime = element.endTime;
                 }
             }
-        }
-        
+        });
+
         return lastTime;
     }
     function msSinceLastCompletionByTaskId(id) {
@@ -205,23 +205,38 @@ VIMAT.HISTORY = (function () {
         return ms;
     }
     function msSinceLastTrackedTimeByPropertyValue(prop, val) {
-        var taskHasntBeenStartedBefore = true, task, ms = 0, msForThisTrackedTime;
+        var taskHasntBeenStartedBefore = true, task, ms = 0, msForThisTrackedTime,
+            uniqueValues = VIMAT.tl.getUniqueValuesOfProperty(prop)['uniquePropVals'],
+            descendantsLastTrackedTime, d = new Date(),
+            index, length = uniqueValues.length;
         
         trackedTimes.forEach(function(element, index, array) {
             task = VIMAT.tl.getTaskById(element.trackedTaskId);
             if (task[prop] === val) {
                 taskHasntBeenStartedBefore = false;
                 if (element.endTime === '') {
-                    return 0;
+                    ms = 0;
                 }
                 else {
-                    msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates((new Date()).toJSON(), element.endTime);
+                    msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates(d.toJSON(), element.endTime);
                     if (msForThisTrackedTime > ms) {
                         ms = msForThisTrackedTime;
                     }
                 }
             }
         });
+        for (index = 0; index < length; index++) {
+            if (VIMAT.CONTEXT.isSubContextOfContext(uniqueValues[index], val)) {
+                descendantsLastTrackedTime = timeOfLastTrackedTimeByPropertyValue(prop, uniqueValues[index]);
+                if (!(descendantsLastTrackedTime === "")) {
+                    taskHasntBeenStartedBefore = false;
+                    msForThisTrackedTime = VIMAT.DATETIME.msBetweenTwoJsonDates(d.toJSON(), descendantsLastTrackedTime);
+                    if (msForThisTrackedTime > ms || ms === 0) {
+                        ms = msForThisTrackedTime;
+                    }
+                }
+            }
+        }
         if (taskHasntBeenStartedBefore) {
             return '(never started)';
         }

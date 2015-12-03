@@ -188,9 +188,11 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
             VIMAT.tl.addTask(task);
         });
         VIMAT.DB.saveTaskList();
-        removeTaskEventListeners();
-        VIMAT.VIEW.TASKS.displayTaskList();
-        addTaskEventListeners();
+        VIMAT.CONTROLLER.initialize();
+    }
+    function removeSamples() {
+        VIMAT.tl.removeSamples();
+        VIMAT.CONTROLLER.initialize();
     }
     function changeGroupBy() {
         var prop = document.getElementById('groupBySelect').value;
@@ -221,6 +223,12 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
         window.location.assign('#editTaskForm');
         populateEditTaskForm(task);
     }
+    function clearAllData() {
+        if (confirm('Are you sure you want to erase everything?')) {
+            VIMAT.DB.wipeData();
+            VIMAT.CONTROLLER.initialize();
+        }
+    }
 
     // *** Event Listener Bindings
     function addTaskEventListeners() {
@@ -228,6 +236,7 @@ VIMAT.TASKLIST.CONTROLLER = (function () {
         $('#addTask').on('click', addTask);
         $('#clearChecked').on('click', clearChecked);
         $('#addSamples').on('click', addSamples);
+        $('#clearAllData').on('click', clearAllData);
     }
     function addTaskEditorListeners() {
         $('.taskEditorListItem').on('click', editTask);

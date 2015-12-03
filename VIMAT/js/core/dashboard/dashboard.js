@@ -38,30 +38,37 @@
  * THE SOFTWARE.
  */
 
+
 var VIMAT = VIMAT || {};
 
-VIMAT.namespace('VIMAT.CALENDAR');
+/*
+
+Time tracker running with stop button
+Upcoming calendar events
+Notes in the inbox for over 12 hours
+Display 3 random tasks not started // all tasks have checkboxes and timetracker start buttons
+Display 3 most stale values of each attribute // All numbers would be configureable
+Display 3 most urgent tasks assigned by others
+Display time tracker stats
+Display 7 longest chains // Thanks be to Jerry Seinfeld
+
+*/
+
+VIMAT.namespace('VIMAT.DASHBOARD');
 
 /*
     Requires:
     (None)
 */
 
-VIMAT.CALENDAR = (function () {
-    // *** Private
-    var calendarEvents = [];
+VIMAT.DASHBOARD = (function () {
+    // Model
     
-    // *** Public
-    function CalendarEvent(description, eventDateJSON) {
-        // new event constructor
-    }
-    function addEvent(calendarEvent) {
-        calendarEvents.push(calendarEvent);
-    }
     
-    // *** Public API
-    return {
-        addEvent:       addEvent,
-        CalendarEvent:  CalendarEvent  
-    };
+    // View
+    
+    
+    // Controller
+    
+    
 }());

@@ -44,14 +44,13 @@ VIMAT.namespace("VIMAT.TASKEDIT.VIEW");
 
 /*
     Requires:
-    
+    VIMAT.DOM.ele
     
 */
 
 VIMAT.TASKEDIT.VIEW = (function () {
     // *** Private
     function taskEditorListItem(task) {
-        // console.log(task.id);
         var liTop = task.description + ' ID:' + task.id,
             liMid = task.compass + ' ' + task.folder + ' ' + task.context,
             // taskDate = (task.dueDate === '' || task.dueDate === 'undefined') ? '' : task.dueDate,

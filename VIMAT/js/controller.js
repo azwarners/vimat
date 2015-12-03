@@ -44,6 +44,23 @@ VIMAT.namespace("VIMAT.CONTROLLER");
 
 VIMAT.CONTROLLER = (function () {
     // *** Private
+
+    // *** Public
+    function createGlobals() {
+        VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
+    }
+    function displayViews() {
+        VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
+        VIMAT.VIEW.TASKS.displayTaskList();
+        VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
+        VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
+        VIMAT.TIMETRACKER.VIEW.displayTimeTrackerStats();
+        $(document).trigger('create');
+    }
+    function addEvents() {
+        VIMAT.TASKLIST.CONTROLLER.addEventListeners();
+        VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
+    }
     function loadData() {
         VIMAT.DB.loadTaskList();
         VIMAT.DB.loadTimeTracker();
@@ -51,42 +68,23 @@ VIMAT.CONTROLLER = (function () {
         VIMAT.DB.loadSettings();
         VIMAT.DB.loadHistory();
     }
-
-    // *** Public
-
+    function initialize() {
+        createGlobals();
+        loadData();
+        VIMAT.tl.addStatToTasks();
+        displayViews();
+        addEvents();
+    }
+    
     // *** Initialize
-    VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
-    loadData();
-    VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
-    VIMAT.tl.addStatToTasks();
-    VIMAT.VIEW.TASKS.displayTaskList();
-    VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
-    VIMAT.TASKLIST.CONTROLLER.addEventListeners();
-    VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
-    VIMAT.TIMETRACKER.VIEW.displayTimeTrackerStats();
-    VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
-    $(document).trigger('create');
-    // console.log(VIMAT.CONTEXT.isSubContextOfContext('pictures/wallpaper/nerdy', 'pictures/wallpaper'));
+    initialize();
 
     // Public API
     return {
-        // initialize: initialize
+        displayViews:   displayViews,
+        addEvents:      addEvents,
+        loadData:       loadData,
+        createGlobals:  createGlobals,
+        initialize:     initialize
     };
 }());
-
-
-
-    /*  function initialize(){
-    //     // All of this code is executed after the page has loaded
-    //     VIMAT.tl = new VIMAT.MODEL.TASKS.taskList();
-    //     loadData();
-    //     VIMAT.TASKLIST.CONTROLLER.applyTaskListSettings();
-    //     VIMAT.tl.addStatToTasks();
-    //     VIMAT.VIEW.TASKS.displayTaskList();
-    //     VIMAT.TASKEDIT.VIEW.displayTasks(VIMAT.tl.getAllTasks());
-    //     VIMAT.TASKLIST.CONTROLLER.addEventListeners();
-    //     VIMAT.TIMETRACKER.VIEW.displayTimeTracker(VIMAT.tl.getAllTasks());
-    //     VIMAT.TIMETRACKER.CONTROLLER.addEventListeners();
-    //     $(document).trigger('create');
-    // }
-    */

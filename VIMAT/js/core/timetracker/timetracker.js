@@ -44,19 +44,26 @@ VIMAT.namespace('VIMAT.TIMETRACKER');
 
 VIMAT.TIMETRACKER = (function () {
     /*  Requires:
-    
+        VIMAT.HISTORY.getTrackedTimes
+        VIMAT.HISTORY.setTrackedTimes
     */
-    
+    /*
+        Make it so that when puching in while time tracker is running it stops
+            the old task before starting the new one.
+        Make it so you can edit the last three tracked times
+        Make it so completing a task also stops its time tracker
+    */
     // *** Private
-    var trackedTimes = [];
-    
     function getIndexOfUnEndedTrackedTime(taskId) {
-        var ttIndex = -1;
+        var ttIndex = -1,
+            trackedTimes = VIMAT.HISTORY.getTrackedTimes();
+            
         trackedTimes.forEach(function(element, index, array) {
             if (element.trackedTaskId === taskId && (element.endTime === '')) {
                 ttIndex = index;
             }
         });
+        
         return ttIndex;
     }
     function elapsedTimeBetween2JsonDates(start, end) {
@@ -79,7 +86,7 @@ VIMAT.TIMETRACKER = (function () {
 
         trackedtimes.push(new TrackedTime(date, taskId));
         VIMAT.HISTORY.setTrackedTimes(trackedtimes);
-}
+    }
     function punchOut(taskId) {
         var index = getIndexOfUnEndedTrackedTime(taskId),
             date = (new Date()).toJSON(),
@@ -98,7 +105,8 @@ VIMAT.TIMETRACKER = (function () {
     }
     function elapsedTimeSinceCompletion(taskId) {
         var lastCompletionTime = VIMAT.HISTORY.lastCompletionTimeByTaskId(taskId),
-            elapsedTime = 0;
+            elapsedTime = 0,
+            trackedTimes = VIMAT.HISTORY.getTrackedTimes();
             
         trackedTimes.forEach(function(element, index, array) {
             if (element.trackedTaskId === taskId) {
@@ -113,11 +121,12 @@ VIMAT.TIMETRACKER = (function () {
             }
         });
         elapsedTime = elapsedTime / 1000;
+        
         return elapsedTime;
     }
     function timeTrackerIsOn(taskId) {
         var trackedTimesForThisTask = [], isOn = false,
-            task = VIMAT.tl.getTaskById(taskId);
+            trackedTimes = VIMAT.HISTORY.getTrackedTimes();
         
         trackedTimes.forEach(function(element, index, array) {
             if (element.trackedTaskId === taskId) {
@@ -132,6 +141,7 @@ VIMAT.TIMETRACKER = (function () {
 
         return isOn;
     }
+
     return {
         TrackedTime:                TrackedTime,
         punchIn:                    punchIn,

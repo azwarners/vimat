@@ -163,7 +163,16 @@ VIMAT.DB = (function () {
     function setDbType(dbt) {
         dbType = dbt;
     }
-
+    function wipeData() {
+        switch (dbType) {
+            case 0:
+                VIMAT.DB.LOCALSTORAGE.wipeData();
+                break;
+            
+            default:
+                // code
+        }
+    }
     // *** Initialization
 
     // *** Public API
@@ -181,7 +190,8 @@ VIMAT.DB = (function () {
         saveHistory:        saveHistory,
         loadHistory:        loadHistory,
         getDbType:          getDbType,
-        setDbType:          setDbType
+        setDbType:          setDbType,
+        wipeData:           wipeData
     };
 }());
 
@@ -210,12 +220,12 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         VIMAT.tl.addTasksFromStrings(taskStringArray);
     }
     function saveTimeTracker() {
-        localStorage.timeTrackerDb = JSON.stringify(VIMAT.TIMETRACKER.getTrackedTimes());
+        localStorage.timeTrackerDb = JSON.stringify(VIMAT.HISTORY.getTrackedTimes());
     }
     function loadTimeTracker() {
         if(typeof(localStorage) !== "undefined") {
             if (localStorage.timeTrackerDb) {
-                VIMAT.TIMETRACKER.setTrackedTimes(JSON.parse(localStorage.timeTrackerDb));
+                VIMAT.HISTORY.setTrackedTimes(JSON.parse(localStorage.timeTrackerDb));
             }
         }
         else {
@@ -301,7 +311,6 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             return;
         }
     }
-    
     function saveHistory() {
         var historyObject = {
             taskHistory:    VIMAT.HISTORY.getTaskHistory(),
@@ -324,7 +333,15 @@ VIMAT.DB.LOCALSTORAGE = (function () {
             return;
         }
     }
-
+    function wipeData() {
+        localStorage.removeItem('listOfListsSettingsDb');
+        localStorage.removeItem('taskListDb');
+        localStorage.removeItem('taskListSettingsDb');
+        localStorage.removeItem('timeTrackerDb');
+        localStorage.removeItem('projectListDb');
+        localStorage.removeItem('listOfListsDb');
+        localStorage.removeItem('historyDb');
+    }
 
     // *** Initialization
 
@@ -341,7 +358,8 @@ VIMAT.DB.LOCALSTORAGE = (function () {
         saveSettings:       saveSettings,
         loadSettings:       loadSettings,
         saveHistory:        saveHistory,
-        loadHistory:        loadHistory
+        loadHistory:        loadHistory,
+        wipeData:           wipeData
     };
 }());
 
@@ -350,7 +368,7 @@ VIMAT.DB.LOCALSTORAGE = (function () {
 
     // *** Private Properties
     // LL.settings.dbType is an integer representing the type of data storage in use
-    //      0   --  No persitence; RAM only storage
+    //      0   --  No persistence; RAM only storage
     //      1   --  HTML5 LocalStorage
 
     // *** Private methods
